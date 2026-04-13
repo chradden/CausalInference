@@ -1,0 +1,391 @@
+Intro
+Our next goal is to develop a robust loss function for
+heterogeneous treatment effects.
+Once we have it, we're going to be able to use it for
+treatment effect estimation in a generic machine learning setup.
+Just to go over our statistical setting, it's the same as always.
+We have Xs, Ys, Ws.
+Ws are treatment, Ys are outcomes.
+Outcomes are generated in terms of the potential outcomes model as usual.
+And what we want to do is estimate the conditional average treatment effect, that
+is the expected difference in potential outcomes conditionally on features X.
+In this setting, to do this, we're going to assume unconfoundedness,
+that is that treatment is as good as random conditionally on covariates X.
+And the propensity score, that is the probability
+of being treated conditionally on X, is going to play a central role.
+So here,
+I'm going quickly because this builds on things we've already seen last week.
+But essentially under uncomfoundedness,
+you can always write that the expectation of Y given X and
+W is mu(0)(X), the baseline effect, + W times tau(X).
+That is, your expected outcome is baseline effect plus if
+you're treated also the treatment effect.
+And since there's an expectation, you can also write it
+that Yi is actually mu(0)(X) + W tau + epsilon i.
+For some epsilon implicitly defined in terms of potential outcomes, where we
+know that the property of epsilon is just that it has mean 0 conditional on X and W.
+Like when estimating constant treatment effects,
+we're going to want to re-express this so that Yi is m(Xi) +
+Wi minus the propensity score times the CATE, plus noise.
+Where e(X) is the propensity score, m(X) is this kind of marginalized baseline
+effect, your best prediction of Y given X without knowledge of treatment.
+And once we have this, we're going to land on Robinson's
+transformation like before, that is under unconfounded,
+and that's Y-m(X) = W-e times tau(X) + mu(0) noise.
+What we emphasized last week is that if you were to assume
+further that tau(x) = theta is constant across all units.
+Then essentially up here,
+you could replace this tau(X) with just a constant theta.
+And you could estimate this constant treatment effect
+parameter by regressing Y-m on W-e.
+We talked about properties of this estimator.
+And we found that kind of this residual-on-residual regression,
+even if you have to estimate m hats and e hats reasonably accurately,
+using some machine learning method.
+This residual-on-residual regression is going to give
+you a central limit theorem and very good guarantees for
+estimating theta because of kind of its nice robustness properties.
+The difference between last week and today is that now we're not going to assume that
+the treatment effect function is constant, that tau(x) is theta for all values of X.
+But we're going to let tau(x) vary,
+because we want to estimate this tau(x) function more broadly.
+And here, essentially the useful thing to notice is that, of course,
+we can't do a global regression to recover kind of the single parameter
+theta anymore because there is no single parameter theta anymore.
+But what you can do is imagine kind of filtering for
+each value of X only to the samples at X, and then regressing
+Y-m(X) against W-e(X) only for units with a specific value of X.
+And kind of what this thought experiment shows you is that by
+Robertsons transformation
+Robinson's transformation, tau(X), the CATE function,
+is actually the minimizer of this following quadratic function.
+So tau(X) is the minimizer of this function L,
+where L is (Y-m)- tau(W-e(X) squared.
+Essentially, what this is telling you is
+that if I fix X, and now at a fixed value of X,
+I asked you to predict Y-m from W-e,
+then tau(X) is the best thing for doing so.
+So here I just want to emphasize that this kind of minimization is to
+be taken nonparametrically, that is,
+tau is no longer a number that minimizes some objective function.
+But tau is a function of X, where at each value of X, tau(X) can be unrestricted.
+But it actually turns out that the CATE function, the thing we want,
+is a thing that over the population at each value of X,
+minimizes the expectation of this loss function or this quadratic function L.
+So it might seem like I haven't done much here.
+I just took the CATE representation, I rearranged it a little bit.
+And I noted that from this rearranging,
+we see that tau(X) can be characterized as this
+minimizer of this quadratic functional.
+But it turns out that actually,
+if you're thinking about estimating tau(X), this is super helpful.
+Lasso
+And just to kind of give one example, Let's think back to the lasso.
+So here, you just saw this a few weeks ago.
+The lasso, usually we think of it as a method for prediction.
+We want to use the lasso to predict Y from X.
+And we're going to use the lasso if we think that there's a linear
+model that's good for predicting Y from X.
+But this linear model may be very high dimensional.
+The number of the parameter in the model p may be much larger than n.
+And in this setup, what the lasso does is it tries to predict Y from X.
+So it minimizes a squared error loss.
+But linear regression would only minimize this red thing.
+So it actually kind of finds the beta that predicts Y from X the best in a sample,
+but the lasso does something else.
+It adds this L1 penalty of beta to the objective also.
+Where kind of what this is saying is it's looking for
+parameter vectors beta that predict Y from X well, but kind of with a preference for
+simpler parameter vectors beta, the small L1 norm.
+There are many reasons to like this, kind of putting this L1 norm here
+reserves sparsity, and it makes sure that kind of predictions is kind of
+good prediction's still a meaningful objective in high dimensions.
+But anyway, so this is the lasso, this is something people do a lot.
+And now,
+a natural follow-up question would be, let's say we're still in high dimensions.
+We still like linear models, but
+We don't want to just have a high dimensional linear prediction model.
+We now have x's, y's and also treatments w.
+And we wanted to fit a cate function of tau of X,
+where now tau of X is linear in X, but where X is high dimensional,
+so beta is a high dimensional vector.
+How can you fit this beta?
+This might seem like a tricky problem that you kind of have to think about for
+a long time to come up with appropriate methods.
+But actually kind of once you realize that machine learning is
+about minimizing loss functions in some specific way.
+So kind of any specific machine learning algorithms should combine a loss function
+and kind of an algorithm by which you minimize it.
+Well, how do you think about the lasso?
+The lasso, here's the loss function, that's in red.
+And the thing in blue,
+that's like the algorithmic choice that makes it the lasso.
+You don't just kind of minimize the loss directly, but you make it
+fit a linear model and you end one penalize the coefficients for sparsity.
+So what are we going to do for fitting cate?
+Well, again, we want to run something like the lasso, so
+we're going to linearly parameterize our CATE predictions.
+Our CATE prediction, we're going to have to form x beta, and
+we're going to put an L1 penalty on the parameters beta.
+On the other hand, whether we're going to use the loss function.
+Well, instead of using squared error loss like for prediction,
+we're going to use this loss from the previous slide.
+I just described that is kind of the thing you get out of Robinson's
+transformation and essentially the claim is that the problem is essentially solved.
+You want to have a lasso-like estimator for the CATE,
+just run the lasso, but swap out your squared error loss for
+this CATE appropriate loss function and you're in business.
+So there of course is one wrinkles of the problem, and that gets kind of
+Loss Functions
+a wrinkle we've seen many times, which is that this loss function here.
+It depends on, can remember, that this loss function
+is something that you want it to just depend on the data x,
+y w, and tau, the thing you want to estimate.
+And then you'd kind of want to find tau that minimizes the loss function,
+averaged over the data with some regularization.
+But the problem is that, in this loss function, you don't just have your x, y,
+w and tau.
+You also have M and E, these kind of other functions that are just hanging out there.
+You're not interested in them, but
+you can't form the loss function without having them and this is a problem.
+If you knew then what I just described would have been exactly
+the same as what we saw in the earlier slides with inventory management.
+That is, there was a task, there was a loss function.
+You learn your decision rule by minimizing that loss function and
+there's nothing else to say.
+But here, we can't actually form our loss function,
+because the loss function depends on these M's and
+E's which are unknown, and so what are we going to do?
+I think given the theme of the class, it's quite clear what we should do.
+That is we're going to need to first somehow estimate M hats and
+E hats using some first step regressions, this is what we did.
+First meeting concentrating the effects using Robinson method,
+this is what we did in causal forests.
+This is what we're going to have to do again, and
+then the question is, can you still learn CATE
+using this kind of loss function on if M hat and
+E hat were learned from data.
+R Learner
+But luckily I believe the answer is yes, so
+this is an algorithm referred to as the R-learner.
+Kind of extending the alphabet soup for different types of algorithmic strategies.
+You can think of four generic machine learning based CATE estimation and
+the R-learner involves first fitting M hat and
+E hat by learning to predict y and w respectively from x.
+And then what we're going to do is we're going to form this loss function here,
+but with cross fitted plug in values of M and E.
+And then we're going to fit tau hat by minimizing
+this loss function with plugg-in values of M and
+E, and this term here, this lambda n,
+this is kind of some amount of some type of regularizer on tau.
+The regularization could be explicit, give us the lasso,
+then tau is actually going to be of the form x beta and
+your regularizer is going to be an element of beta.
+But in other types of settings like if you wanted to minimize this loss function by
+boosting or by deep nets, then this lambda n could be something much more implicit.
+For example in deep learning, one common idea is to
+regularize the network using this technique called dropout,
+where you kind of get training randomly, commit some nodes from the network.
+That gives you a type of regularization, but
+it's more implicit, but anyways with this notation,
+I'm trying to capture both explicit and implicit regularization.
+And anyways, the formal result is, and
+I'm not going to go into here, because kind of just
+stating it is more technical than what I want to do now.
+But the point is that you get similar robustness properties,
+as we saw with Robinson's method,
+with constant treatment effects, and as we saw with AIP w,.
+That is, as long as you estimate M hat and E hat, using reasonable accuracy,
+then your guarantees going to indicate using this kind of loss function,
+are as good as you would have gotten using kind of a power,
+are perfectly known M and E in the loss function.
+So the reason I don't want to talk about this is, we haven't in this class talked
+about, say optimal rates for estimating functions over nonparametric classes.
+So even kind of talk about what would be a good rate of convergence of tau hat.
+With tau hat under different regularity assumptions on the function
+class containing tau of x tend to be a long aside from the class.
+So I'm not going to go there, but the main point is that, if M hat and
+E hat are reasonably accurate, then you can get guarantees for tau hat that
+are as good as though you had plugged in the true values of M and E into the loss.
+And it's possible to get guarantees with tau hat, where tau hat converges and
+squared their loss much faster on order of magnitude faster than M hat or E hat.
+So this is a nice property, this is a property we saw out of say,
+constant treatment effect estimators This is not a property
+that any of the meta learners we talked about last week have.
+So that s t and x learners, in general, are not going to have
+a property where they can achieve faster rates of convergence for
+the CATE, than they do for their nuisance component estimates.
+Claim
+But, so anyways, the claim is that kind of the R learning framework.
+The claim is that you can essentially do most things you want
+to do in the world of CATE estimation by just first estimating m hat e hat,
+then forming this as your loss function.
+And then just applying machine learning generically using this loss function.
+In the next part of this lecture, I'll go into more details of how
+you can use this loss function for model choice, for model validation.
+So you can use this loss function for cross validation, or for
+comparing causal force or the x learner, for example.
+But in this segment, I'll focus on kind of using this loss function for
+just kind of learning tau directly.
+That is we're going to try to get tau of x by
+minimizing this loss function by a different means.
+Example
+And, okay, just one example showing kind of a semi-synthetic example
+where we see kind of the different trade offs and choices involved in doing so.
+So this is an example motivated by this paper by Arceneaux
+et al on the effect of get-out-the-vote-calls on turnout.
+So, we're going to take the real data, this data set has confounding,
+essentially because, and it's documented in the paper.
+In some districts, you were more likely to get called than other districts,
+essentially, based on the competitiveness of the election.
+So it has a selection of the unobservable thing,
+that is kind of you need to control for some x's to get rid of that.
+But what we know also is that there's essentially no treatment effect.
+This is because, kind of, and is the point made in the paper also,
+this paper is trying to measure the effect of one get-out-the-vote-call on turnout,
+and for all intensive purposes, right?
+One phone call,
+think about how many phone calls one might get during the competitive election.
+The effect of one phone call alone is essentially zero.
+So the main point of the paper was that here's a setup where obviously
+the treatment effect has to be zero.
+But if you don't control for confounding carefully,
+you'll find something that's not zero.
+But anyways, for our purposes, what we're going to do,
+is we're going to take the real data,
+assume that the treatment effect is actually zero in the original data.
+And then we're going to spike in a little bit of synthetic
+treatment effects by strategically flipping some outcomes.
+So now, we've spiked in a treatment effect, and the question is,
+can we use various machine learning-based methods to recover it?
+So here you see a histogram of the magnitude of the CATE we've spiked into
+the problem.
+And what do we need to do or
+to carry this out using our learner approach?
+So, what we're going to do, is first we need to learn m hat and
+e hat that is to predict y and w from x respectively.
+Then we're going to need to combine all this into the R-loss and
+then we're going to need to run some third machine learning step,
+where we use the R-loss as the loss function for learning.
+So, first, we need to fit e hat and
+m hat of course, and here for both tasks,
+we tried both the lasso and boost.
+And in both cases, we can cross-validate it and see which one was doing better.
+And in both cases,
+cross-validation told us that boosting was more accurate than the lasso, yeah.
+So then we got crossfitted e hat and
+m hat estimates from boost.
+Then in the second step, what we're going to do is we take the R-loss or
+the R-objective, and we're, again,
+going to try to minimize it using lasso or boost.
+So for lasso, we're going to run lasso on the R-loss objective,
+so we're going to do just what I described earlier.
+That is, we're going to do this except here instead of using
+the L that depends on the true unknown,
+the m and e, we're going to run this with plug in values of m and e.
+We're also going to consider boosting.
+If you know what boosting is, then we're just going to run boosting as you know it,
+but we swap out the squared error loss with R-loss.
+If you don't know what boosting is, well, then,
+you can just know that if you wanted to do this, all you'd have to
+do is read about boosting and then swap out the loss function.
+But anyways, we ran this and then we cross validated again based on R-loss,
+not squared error loss, and here cross validation prefers the lasso.
+So we ended up getting m hats and e hats out of boosting, but a final fit for
+tau of x, that's going to be linear in x and fit by the lasso.
+And, So
+now what's nice is that this is actually the semi-synthetic, kind of in the end,
+we know what the true tau of x was, so we can see how well we did.
+And we were right, our mean squared error kind of scaled
+up by a 1,000 for the R-lasso with 0.47,
+whereas, kind of R-boosting would have gotten 1.23.
+So kind of cross validating on the R-loss not only helped us train the lasso well,
+but help us correctly notice that the lasso was doing better than boosting here.
+On the other hand, other things you might have tried here is you might have
+been interested in kind of, Just kind of
+fitting everything by a single lasso, something like that x lasso.
+Here, that did worse than the R-lasso, or you could have just kind of thrown,
+I haven't talked about it here much, but BART,
+it's a popular Bayesian crit approach and here it also is less accurate.
+So, The main point is that, again,
+this kind of R learning approach is flexible,
+once you're using it, everything just looks kind of very
+familiar, From kind of a machine learning workflow.
+You pick the best e according to squared error loss,
+you pick the best m according to squared error loss,
+you pick the best R according to tau loss and then you proceed.
+So this is one thing you can do.
+Stacking
+Another kind of Nice application just to show that
+kind of once you have a loss function, you can really do a lot of things with it.
+So one popular idea in machine learning is what's called stacking.
+Stacking starts from kind of you have capital K different estimates.
+You say you have kind of K experts you hired to give you CATE estimates.
+And they all give you different estimates, and now you don't know which one to pick.
+And really, you think maybe all your experts are onto something and
+maybe they're onto something slightly different.
+So you'd want to find a consensus estimate that kind of averages all of your experts'
+predictions.
+And let's say you wanted a consensus estimate, that's here,
+some offset plus a positive weighted average of all the tau k's.
+So you don't want to insult anyone.
+You don't want to give any of your experts negative weight in your model.
+But kind of what this thing could do is it could
+just kind of say the fifth expert is the best.
+So just set tau(x) to tau 5, or
+it could kind of give some positive weight to a number of different experts.
+And then, of course, if you want to stack the remaining questions,
+how do you pick these weights out the CATE?
+How do you choose how much weight to give each expert?
+And, This might seem like a difficult problem,
+but again, once you have a loss function for CATE, it's very clear what to do,
+just, Write tau(x) in the form as usual, and
+then fit these parameters by minimizing the loss function for CATE.
+And here, the kind of only difference from what we do usually is that
+there's also this constraint saying that here,
+the parameters we want to learn are these alphas, mostly.
+And we're going to add a constraint that these alphas should be positive.
+Solving this optimization problem,
+this is going to be kind of a quadratic objective with positivity constraints.
+It's a quadratic program.
+If you kind of want to learn how to solve this kind of optimization problem,
+you can, say, take a class in complex optimization.
+But the point is that once you have this loss function kind of work
+to do is immediate, and then kind of all the difficulties are just
+routine machine learning type difficulties.
+Say, how do you solve a complex optimization problem?
+And just kind of to see this working, again, here,
+Simulations
+we had one example where there's a simulation study.
+I won't go into details here, but kind of this paper,
+there's a reference on the last slide to this one if you want to read more.
+But essentially, in a pair of simulation studies, we tried building causal forests.
+So this is kind of complicated forest-based method, right,
+that does a lot of things.
+Causal forests, like the R-learner, are built on this Robinson based insight.
+But, of course, causal forests aren't the direct consequence of kind of Robinson's
+transformation.
+There's a lot more going into it kind of how exactly we chose to implement
+the algorithm.
+Then I tried running something else here.
+I tried running BART.
+BART is, like I mentioned earlier, it's another popular tree-based method,
+but kind of based on hierarchical Bayesian model.
+So algorithmically, it's very different.
+And tried fitting causal forest, tried fitting BART.
+Which one is better?
+Well, at least in this one, what's interesting is you see,
+I tried stacking causal forest and BART using the method from the previous slide.
+And what you see in green here is the mean squared error for the stack estimator.
+It actually ends up being better than either causal forest or BART on their own.
+So guess this makes a couple of points.
+First, in machine learning, kind of this inherently an engineering focused area.
+So what's going to work best?
+It's kind of unpredictable.
+The kind of best thing to do generally is to be empirically driven and
+try a bunch of things and see what works.
+And the other thing is in order to be empirically driven,
+you need a criterion of success or failure.
+Otherwise, you're kind of flying blind, and the claim is that of CATE estimation.
+The R-loss provides one such measure of how accurate the CATE estimate
+is that you can use for many purposes, ranging from learning to model averaging.

@@ -1,0 +1,356 @@
+Intro
+All right, now I finally get to share with you a method for average treatment effect estimation based on machine learning.
+That's actually good, so all right. What do I mean by this?
+The average treatment effect. We've been talking about it for a while. We want to estimate the average treatment effect under uncompounded anus.
+There's no question here, but of course the thing I like more implicit, what do you mean by actually good.
+And by this, I mean an estimator with kind of parametric type guarantees. We want an estimator tau hat that converges to the average treatment
+effect at a rodent scale that satisfies the central limit theorem.
+And that's going to enable us to build confidence intervals in the usual way,
+why is this a notion of good? Well, in the classical setting of parametric modeling if you work around
+linear regression with a well specified model, this is essentially what you'd expect.
+You could get rude and red carpet samples. So using machine learning, then you'd hope that at the end of the day,
+you get something with comparatively good properties as to what you could get out of traditional parametric modeling.
+Just kind of under more flexibility. So this is what we want, what do we have?
+Machine Learning
+We have machine learning. But that's of course, again rather nebulous. So now I'll need to be more specific I can about what I mean by access
+to machine learning. And this by this I mean we have access to a predictive black box that's good.
+That's flexible, but that's not too good.
+And what else in specifically is that we have a way of estimating. This new hat and e functions, the conditional response, function
+of the propensity score that converges in add a fourth root n right here.
+Remember n is the sample size. So, this might look like something of a strange assumption.
+Why this, well first, the first thing to note is kind of how are we writing this assumption down.
+We're writing this assumption down in terms of the root mean squared error rms.
+Why is this natural? Well, remember the claim of machine learning
+methods is that they're good at prediction. Under square loss like I mentioned earlier,
+Being good at prediction means having small mean squared error.
+The optimal predictor under squared error loss would just be kind of
+using new w x and x doctor or prediction y and y given W and x is new w x.
+All right, so machine learning claims to be good at prediction. That means it must be claimed to be good at RMSE.
+And also, in fact, if you tune your machine learning method for predictive accuracy, then you're simultaneously tuning it to be as good as possible.
+In terms of RMSE, so the reason I want to be using this assumption is I want to be assuming things
+like machine learning methods that they actually claim to be good at. As opposed to assuming something else.
+So this is about the functional form. The second question is why the fourth root n here?
+This is a more delicate question. If this were kind of stats PhD class, I would talk for
+a while about the exponent here and debates about what is optimal exponent here and trade offs.
+But for our purposes, the main things to note is first, this rate of convergence core through event.
+It's smaller than one over square root of that is kind of for big values of N one over four through N event is bigger than when it was squared.
+So this is a list Trenton's assumption. If you had a parametric model than traditional parametric methods of
+estimation could get you one over squared event rates of convergence and here.
+What we're assuming is that you have some convergent guarantees that are weaker than one over square root of n, that's the important thing.
+We're not assuming parametric convergence N. And now we need some number here I made a big deal about why this is kind of
+a weaker guarantee than assuming one over square root and break convergence.
+Now we need something here, one over 4/3. And I'm just using as something that's convenient,
+that will enable simple formal results. And that's also kind of obviously.
+Weaker than what you get in parametric problems. So there's some room for machine learning to be doing a good but
+not perfect job at prediction. All right, this is what we have.
+And then the question is how can we use this predictive blackbox to reach a goal that is estimate the average.
+Estimation
+And so the answer ends up being. We've talked about methods based on regression adjustment.
+Where you only estimate the new functions and then you try to form an average treatment effect estimator based on those and that didn't really work.
+We've talked about methods based on inward propensity weighting our we only estimate the propensity, score the function.
+And try to use that for average treatment effect estimation. And again, that wasn't accurate.
+What's going to work is that you need to estimate both models and combine them in a clever way.
+That trades off the errors of each model against each other. And how do you do this?
+Well, for now I'll just write down the answer. You want to use the following functional form for the estimator.
+How this estimator is called the augmented image propensity weighted estimator or AIPW.
+And the short story is that in considerable generality, this is a good estimator of the average treatment effect.
+Even when you mu hats and E hats were obtained from a machine learning method.
+So I guess in looking at this, your first reaction might be like
+that's called guaranteed, but, but maybe you feel like I've lost him here.
+This is a very complicated looking estimator.
+I feel like the font, I like what you're telling me but I've never
+used an estimator in any of my papers that took two lines up to write down.
+And maybe you don't feel like, changing that. And I understand the sentiment, but I hope I can convince you that the estimator kind
+of points you understand what it's doing. It's not quite as bad as the functional form.
+It's like adjusts, so what's going on instead of just writing it as a giant blob, let's write it in two parts.
+First, I'm going to kind of put it up into the orange part and second blue part, which is kind of the rest here.
+And now if we write these two parts separately, so we have the blue part and
+the orange part, these are the same from last slide.
+Then we can interpret them as bowls. The orange part, this is actually something from milk.
+This is what something we've seen before on average From i equals 1 up to n, of mu hat 1 of x minus mu hat 0 of xi.
+This was just the machine learning based regression adjustment
+we talked about at the beginning of this lecture, in part two.
+We talked about how, under flexible conditions, the mu hats you get out of machine learning are going to be consistent so
+this uppercase D is going to be consistent with the average treatment effect under considerable generality.
+But the machine learning methods don't converge fast enough and so D is not going to converge at a square root n rate. There's going to be bias and we can't get confidence intervals.
+So D is something we had seen before, then the question is what is this r term here?
+This is kind of a correction that we apply to D. And here if you stare at this and you compare it to the IPW estimator,
+we just saw earlier this should actually look quite familiar.
+What was IPW? IPW looked like this. So IPW was the average over N of i equals
+1 up to N of Wi over e hat times yi.
+And 1 minus Wi over 1 minus e hat times Yi. So if you just had the red stuff here,
+then this term R would look like what you got out of IPW.
+This was the thing we had before. What happens now is that this term R is applying IPW but
+it's not applying them to the original outcomes Yi. It's applying them to these residuals here,
+Yi minus mu hat 1 of Xi in the case of the treated units, and Yi minus mu hat 0xi in the case of the control units and
+this might seem like a strange thing to do. But here's the intuition. Imagine you were kind of listening along in part two of this lecture with
+the regression adjustment, and you kind of liked the regression adjustment and
+you felt like this was a pretty good estimator. But then I told you look, machine learning methods have errors,
+regression adjustment leaves these errors on the table. This means there's bias so we can't use the regression adjustment alone.
+You feel okay. Maybe this isn't perfect, maybe other regression adjustment
+left some signal there, but I'll just try to patch it up afterwards.
+I'll try to kind of salvage that signal and kind of apply a correction to the basic kind of regression estimator capital D.
+So here's what's going on, this kind of Yi minus mu hat 1.
+This is kind of a measure of how much signal kind of if this mu hat 1 of Xi were a perfect prediction of Yi.
+So this was kind of just mu 0 noise irreducible noise then this R term would be essentially 0.
+But if it's true that there actually is some signal left over from the first progression stage, then you should expect that there's some signal left here and
+some signal left in these visit tools that kind of is a measure of the bias of this pure kind of orange regression adjustment estimator.
+And now kind of, you might have this wild hope that you can just take these residuals and
+extract the information that was leftover by throwing these residuals into IPW.
+Kind of you start with a regression. You have two ways of estimating an average treatment effect the regression
+adjustment in IPW. So what you're going to do is predict run the regression adjustment and
+then use IPW to fix up the regression adjustment and kind of soak up any information that was left off.
+This might seem like a wildly optimistic idea, but turns out it works very nicely, so let's see this play out in an example.
+Simulation
+Here it's a simple simulation, not a parametric function.
+Notice these positive parts here. And we want to estimate the average treatment effect.
+The average treatment effect in this setting is going to be -0.05.
+The first thing you could try, just estimate these mu 0 mu 1 functions using a random forest.
+Take the average difference in predictions, this regression adjustment estimator, you can do it.
+It's going to be consistent. Is it going to be particularly good? Well here on average we get an answer of 0.09 when the true treatment
+effect is -0.05. Okay but not great. So what we're going to want to do is then patch this up and correct it.
+And so here what we're going to do in the second step is we're going to fit a propensity model.
+E hat, we're going to apply IPW to the residuals of the random forest.
+This is going to give us this correction term R and then we're going to add this correction term R to the original estimator.
+So here the correction term R is -0.1. Our estimator from before was 0.09 and when you add them together,
+then you get this point estimate of -0.01, which again isn't perfect,
+but it's a lot closer to the true answer than the original regression adjustment.
+To kind of get an idea of how good is this I'm here showing a box plot of kind of
+across 100 replications of the treatment effect estimates you get,
+so here, this is first the box plot of the regression adjustment estimators.
+And you see, it's really not that good. Kind of the true answer is here, negative on average,
+the treatment of effect is positive and not only that, but kind of. In every single realization in the simulation setting, the regression
+adjustment gives you a treatment effect that's bigger than the truth, so you don't even have any spread of this box plot around the truth.
+Then here, this is the correction. It's a remarkably stable correction here,
+it just kind of pushes this boxplot down and then AIPW what do you get? We'll get the poll.
+It's again not perfect, we're not nailing this answer.
+This is again kind of there is some finite sample phenomena here are suggesting
+we're not kind of in a perfect asymptotically unbiased type regime yet.
+But still on average, AIPW is much closer to the correct answer than the kind of regression adjustment on its own.
+And also you see that now at least, the true treatment effect starts
+to be within the spread of things you could get out of the AIPW and there are some simulation replications where AIPW falls below,
+has a negative rather than positive. So here the correction helped. All right, an aside I just want to make still.
+So I hope this helps a little bit in reassuring that this kind of daunting AIPW functional form.
+It has a simple explanation, it's run a regression adjustment then take the residuals and stick them into AIPW.
+Even so, you might feel like this is a lot to implement and again, something I want to reassure you is that kind of once you know that AIPW
+is the thing you want, is the thing to do when estimating average treatment effects Using machine learning then hopefully
+you can find a software-based solution that implements support. For example in the in the package grf that Susan and
+I maintain, you can run this function, causal forest, under the hood.
+What this is going to do is going to do a bunch of stuff that we're going to talk about more in upcoming weeks. But it's going to give you the mu hat an e hats based on random forests for
+the things you need. And then if you want to run AIPW, you can just call a function
+average_treatment_effect on the call before the object. And we're going to do all of this for you.
+Anyways, it's a question. In some cases, you may want to implement this on your own.
+But often, when you're running this in practice, you don't need to deal with kind of a massive functional form.
+All right, that's AIPW, that's what it looks like algorithmically, procedurally,
+but I've been kind of hyping this up for a while now saying that it's good. Let's actually talk about the sense in which AIPW does give you a good estimate
+of the average_treatment_effect. And the key result here is that AIPW actually
+satisfies the theorem that we tried to prove about IPW.
+That is just kind of plain English propensity weighting but didn't go through. And like I did there,
+I'm going to start by writing down this oracle version of AIPW.
+If you remember from a couple of slides ago, this thing I'm highlighting in orange, this is exactly the same as the AIPW estimator.
+Except every time when there's a mu or an e, I'm putting the true value of mu and e, not the estimated mu or
+e hat that you got out of the machine learning method.
+And the strategy here is going to be to show that under reasonable
+assumptions about the machine learning methods that the feasible AIPW estimator that uses these estimated mu hats and
+e hats, is going to be equivalent to first order. It's going to behave just like this oracle AIPW estimator that uses the true
+values of mu and e. In the case of IPW, we tried to prove this kind of result but it turned out that's kind of at least using our proof strategy.
+The discrepancy between the feasible tau hat and the oracle one was much larger than the kind of target error scale,
+whereas here the opposite is kind of true.
+And the pyram is essentially the following.
+This is kind of a very simple version of a result of which there are many alternatives out there in the large.
+I'll point you similar references at the end of this lecture.
+Let's start by assuming what I assumed earlier, that is, that
+all our estimates we get out of machine learning are not perfectly accurate.
+They're not converging at a run rate but they're pretty accurate, they converge at a fourth.
+Then, The feasible estimated tau hat and
+the oracle up there in orange, are equivalent at the squared and scale. Meaning if you take their difference and you blow it up by square root n,
+this converges in probability to zero, their first order equivalent.
+I'm not going to prove this result here. It's beyond the scope of this class.
+If you want to see a proof of please send me a note, I'm happy to have you share reference.
+In particular in the last slide, I'll have some references that prove this kind of result and
+the case's specific machine learning methods. Also, in that Stats 361 class I teach,
+there are lecture notes that I refer to in the syllabus. And in chapter three of those notes, there's a proof of this kind of result.
+But for now, I just want to kind of emphasize the form of the result.
+And contrasted to what we got with IPW.
+With IPW, we kind of tried to bound the discrepancy between the oracle and feasible estimators.
+And what we found is that if the propensity score converges at one over fourth root n, and root mean squared error.
+Then the discrepancy between the feasible and oracle estimators, well, you can route it to order 4th root n.
+There was no gain there, you were limited by the accuracy of the method you put.
+But here's something else happens. When we have a bunch of regression adjustments and
+we're only assuming that they converge at 4th root n. And yet, that error kind of effect of kind of plugging these,
+you had sent me halfwords four through n scale errors into this estimator.
+Results in kind of only alters this estimator to scale that's less than 1 over root n.
+So this somehow violates this garbage in garbage out principle where you think if you kind of plugged stuff into here with 4th root n scale errors.
+Then you must induce 4th root n scale error in the final product, but that's not true.
+Well, you can plug in 4th root n scale errors but essentially this estimator is a very carefully designed in a way that
+makes it that first order errors and you have an e hat cancel out. And that's why you can plug in components of 4th root n scale errors into here.
+And in the end, you change the final result by less than one over root n, and you get this kind of result here.
+What this means is that we can do what we actually wanted to do with IPW.
+That is we can just study this object, give a central limit theorem, right?
+That's going to converge at 1 over square root of n, right? And then we can use this kind of result to invoke or
+to argue that actually tau hat AIPW also satisfies any guarantees
+you proved about delta and kind of concretely, right?
+Again this tau tilda here if you know this mu e stuff and this is a big expression,
+but this is just an average up IID terms, average IID terms satisfy central
+limit theorems in considerable generality as discussed earlier.
+So, what you can check is that this oracle estimator is in a normal
+with 1 over root n deviations around the true average_treatment_effect, tau.
+You can check that its variance is going to depend on this quantity V*.
+And really the point here is that because tau had AIPW and
+tau tilda AIPW equivalent on the Rudin scale. Then once you've got this central limit theorem for the oracle estimator,
+you also get this central limit theorem for the feasible estimator, where we plugged in machine learning based nuisance practice.
+So this is the first result I've given you today where
+You don't need to use parametric models, you can just start from kind of machine
+learning reasonable assumptions on machine learning, combine predictions from a bunch of different machine learning models and you land on your feet.
+You get an estimate of the average treatment effect that has classical Gaussian Parametric rate behavior.
+So you get a central limit theorem. That's very good. It turns out actually that this v star we've got here,
+it's a very good variance parameter. And actually this is the best central limit theorem you could get for average
+treatment effect estimation using any method under non-parametric assumptions.
+So that's again beyond the scope of this class. But just kind of this isn't just any central limit theorem.
+It's a good one too. So this is nice and actually the proof
+Double Robustness
+gives you more than what I wrote down, it actually tells you that's kind of, okay,
+algorithmically you can write tau hat AIPW,
+as the average of these capital gamma hat i's.
+I'm going to call these things double robust scores. You're going to see them occur several times in this class.
+So you can think of tau had AIPW has been an average of W over scores.
+And these W over scores of course, are not AID, they're not independent from each other in general,
+because you plugged in these mu hats and e hats in there,
+and, This kind of induces dependence across terms.
+But the thing is that actually under the assumptions we made,
+that is under the assumption that e had a mu had W convert at poursuit rates, then these gamma hats are close enough to
+being independent that you can ignore this dependence. And you can build confidence intervals for tau, as though tau had IP,
+the AIPW were just an average of gamma hats and gamma hats we're independent.
+So you can just do the usual thing and spelling it out here, but this is really kind of if you stare at it,
+this is just the usual estimate of variance for our sample mean.
+And this is just kind of the usual construct asymptotically normal construction for confidence intervals for a sample mean.
+So you can kind of just really do kind of very standard things for
+building confidence intervals for tau, once you're working with this AIPW estimate.
+So that's really nice. That's essentially, it's hard to kind of ask for
+Crossfitting
+much more than that in terms of nt's. I just wanted to kind of close off this discussion by highlighting a few
+details that I neglected to mention in the statement of PM, but are still important.
+The first is I should put an asterisk on the claim that you can
+just kind of plug your hats and e hats into the AIPW estimator.
+And everything is fine as long as these are accurate. This is almost true. But to make this actually true,
+you need to use this algorithmic trick called cross-fitting.
+If you're familiar with cross validation, it's a very similar idea. The simplest type of cross-fitting is you divide your
+data set in two, your fifth models in both of the data. And then when making a prediction, for the i-th observation,
+if the i-th observation is in data of hat A use the model trained of hat B and
+vice versa if the i-th observation is in data hat to b, use the model trained on data hat i-th.
+So essentially, you never want to be making predictions, you had one on backside at the training example,
+using a model that actually got to see the i-th example while being trained. So that's something that matters.
+You really should use this most standard packages that kind of do AIPW based on machine learning will do it for you,
+if you want to implement by hand, you need to remember to use class-fitting.
+But it's a little bit of effort, but it's really algorithmically.
+It's no more work than cross validation. And this kind of the guarantee you get out of cross-fitting is that kind
+of idiosyncrasies of how machine learning methods use individual data points or
+don't affect your i-th keys. So this is the first detail.
+Overlap
+The second is, I did have one more assumption on the slide.
+So kind of for AIPW to give good estimates of the average treatment effect, you need unconfoundedness,
+you need the machine learning methods to be reasonably accurate. And the third thing you need is you need overlap, and overlap here
+means essentially the propensity scores can't be get too close to zero or one.
+And specifically a man assume that there's going to be positive constant ADA,
+such that kind of everyone has at least a probability ADA of being treated and
+most probability one minus ADA being treated. There are no people in the data set who conditionally an x are essentially
+deterministically sent to control treatment. There are many reasons, you'd want to have overlap.
+Conceptually, it might feel kind of funny to try to estimate treatment effects.
+In a data set where some people are deterministically assigned a treatment that can or control and there's kind of no genuine treatment variation.
+Now, if you kind of feel worried about that, you'd like to feel worried about that.
+Another kind of more algorithmic argument for why you don't want propensity score to close to 0 or
+1 is that in this kind of variance of AIPW, you're dividing by e(X) and 1- e(X).
+And if you're dividing by e(X), and e(X) is close to 0 that's going to blow up.
+So essentially even if given all the guarantees we have here if you let propensity scores get close to 0 or 1, your variance is going to be very bad.
+And your treatment effects won't be accurate. So, which we do about this?
+In applications I'd recommend you kind of think about overlap. It's generally not something that you'll need to worry about too much.
+For the kind of simple reason that kind of in any given application you can check if you have overlap or not.
+It's not unconfoundedeness in this, which is one of these identifying assumptions that you just need to kind of sit down for a long time and
+think about what you believe in it or not. But you can't validate from data overlap. Right, if you're running AIPW, you have estimates of the density score.
+So just every time your propensity scores make histogram. If the histogram is kind of nicely between 0 and
+1 far from the extremes in good shape. If it's spiking is 0 or 1 you may have a problem.
+And so just to show this in the case of an example,
+Example
+from paper from Susan and co authors.
+They were studying, setting where you want to study different auction mechanisms.
+And the question was what's the effect of using sealed auction versus an open ascending auction.
+And they have data from Idaho like California here. We say that an auction is created, if it's sealed, and
+the propensity score would be the probability conditionally on covariance,
+that the auction would be sealed. So then kind of here in this data set,
+how you can kind of do what I was suggesting that is, make histograms of the propensity scores in both Idaho and
+California and see how it looks. In Idaho, everything looks good.
+So this plot actually chose density plots, not histograms and it also stratified by treatment type.
+So I believe this one. There's a density plot for the treated units versus for the controls. But overall, you see you're in pretty good shape.
+Most of the kind of propensity scores are far away from zero and one.
+You're in pretty good shape. You might call that you have kind of quite a bit of
+propensity scores that are stacked on your zero here. Maybe you should be estimating an average treatment effect on the treated solutions
+to get around these problems. But anyways this is looking very good. On the other hand, same data set, but in California,
+all the controls essentially have a propensity score of zero. And all the treated units essentially just have a propensity score of one, which
+suggests that kind of most of the data set what has happened is based on covariates. If you were to control, it was that you're going to deterministically be a control.
+If you're treated, then you're going to deterministically be actually treated the unit. And if your propensity score plot looks like this, then you have
+something to be concerned about and you should do something about it.
+What can you do about it? There's a number of things. This is kind of a fairly pretty wide literature.
+I'm not going to go on it today, but you could kind of filter your data set into regions, where you do a better overlap.
+Your propensity scores are less extreme. You could try changing the question or you could kind of have a lot of
+propensity scores that are close to zero but you don't have a problem, you're one you could estimate an average treatment effect on the treated.
+This is kind of another alternative to the average treatment effect for which you can do everything we've done in this lecture but in separate notation, or
+slightly different functional form. So I'm not going to do that. Yeah, but essentially, you have a problem but
+once you know you have a problem, you can often solve it. And this is something I'm happy to talk with if you
+encounter this kind of issue in your project. I just wanted to kind of at Burley flag.
+This is going to be paying attention to because every couple months, someone kind of sends me a bug report being like I tried to run a IPW, and
+nothing was working and everything blew up. And then I asked them, can you give me a histogram of your propensity score?
+All their propensity scores are deterministically, zero and one. And then I can help tell them that they were dividing by zero.
+And that's why they were wrong. Anyways, that's overlap.
+Recap
+So in recap what have we done in this lecture, we wanted to estimate the average treatment effect.
+The average treatment effect is one of the kind of most standard targets in causal inference.
+We wanted to estimate an average treatment effect in an observational study. And this meant that we had to control in some sense for variables,
+x are predicting covariates, and we wanted to use machine learning to control for
+these x's to avoid making parametric assumptions. And at first glance right, there are many popular ideas for
+estimate average treatment effects. You could do a regression adjustment, you could do inverse propensity weighting.
+And you might think I know what to do. I'll take the regression adjustment formula, but
+just plug in machine learning, and everything's good, right? No, unfortunately not.
+Machine learning methods are pretty accurate but not as accurate as parametric models,
+not as likely as parametric models and well specified parametric designs.
+So then kind of that didn't quite work, you don't get confidence intervals. Then you could look at AIPW that you could again say, hey, I know what to do,
+I see an inverse propensity score. I'm going to estimate my propensity scores, using a machine learning method
+plug that in and that's going to work right It's kind of like. It's going to be consistent but we're not getting guarantees that are comparable
+depending on good Rudin rate parametric type guarantees that we need.
+So okay, is the situation hopeless? No.
+The simplest most naive things you might want to do don't work but you can. Help with machine learning to good use for causal inference.
+You just need to do so using the right strategy, and here one good strategy is AIPW.
+It's a kind of carefully designed estimators that start with a regression adjustment then use AIPW to correct the regression adjustment.
+And in doing so cancels out the errors of the regression adjustment and IPW two first order.
+You might think that I kind of just pull this estimator out of a hat and then it's strange, but maybe that's true.
+But I'll just reassure you that it's a big hat, and there are many other things you can pull out of that hat and there's a theory for how to do so.
+And kind of really AIPW is just kind of one first example of an estimator with this property.
+If you've heard terms like orthogonal moments or double robustness.
+These are kind of very general terms applied to IPW, but
+also apply to many other estimators.
+Linear Regression vs Machine Learning
+So that's the big picture. What's kind of the difference between linear regression and machine learning?
+Kind of one thing you could say is that linear regression when given a well specified linear model, it has very good behavior, parametric behavior.
+It's eristic is one over square root and, and everything is wonderful. But in a general setting, the linear model isn't right.
+Then linear regression is inconsistent, you get the wrong answer, and that's bad.
+Machine learning on the other hand is more flexible. In a linear specification, it's going to be okay.
+In a general setting, it's going to be okay. The reason you want to use machine learning is to kind of get decent
+estimates of the thing you want to predict under considerable generality. And that's good, using machine learning opens the door to a bunch of flexibility.
+But the cost of doing so is that now you need to remember that actually machine learning methods. Whenever you deploy them, they're going to have errors that are generally a little
+bit bigger than what you're used to when using parametric methods and parametric models. And you need to use kind of post processing strategies that
+are robust to moderate final sample errors. In the context of average treatment effect estimation,
+we saw that AIPW is one solution with this property and kind of throughout this class, we're going to be seeing more [INAUDIBLE].
+References
+All right, that's all I had for now, I'm going to leave you with some references.
+Just here kind of the first three are closer to what I was talking about today.
+They kind of outline this agenda, in much more breadth.
+This kind of first and third, you can think of more as giving you the agenda and generalizations of where you kind of go.
+What our problems where you can plug machine learning and get good parametric type guarantees and confidence intervals or
+the causal parameter you're interested in. And then kind of this paper flushes out what I presented today but
+in the context of deep nets, and actually proves the guarantees for
+deep nets that you'd need to use to apply these results. I'm also putting these two results here.
+Today I talked more about this kind of nonparametric sitting. There's that parallel, very similar kind of discussion of what happens when
+you want to use your high dimensional setting and you want to use methods like
+the lasso, or to estimate average treatment effects there instead of things
+like crease or forest or boosting like you would in a nonparametric setting.
+I'm not going to say more about that here. But if you're interested in the high dimensional setting,
+then these two papers are pleased to get started.

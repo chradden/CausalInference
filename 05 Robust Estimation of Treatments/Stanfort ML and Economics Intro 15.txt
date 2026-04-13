@@ -1,0 +1,261 @@
+Intro
+We're now ready to use Robinson's transformation to develop a forest that can be used to estimate heterogeneous treatment effects in
+observational studies. The principles we'll need in doing so are ones that kind of I've foreshadowed heavily enough at this point.
+Causal forests
+I think that calling them ideas is a bit much but I'll still go through over them once more.
+So the first idea in doing so is what does it mean to estimate heterogeneous treatment effects?
+Well, it essentially means first finding some regions of feature space where treatment effects are roughly constant.
+And then within each of those regions, estimating a treatment effect using kind of methods we've already learned how to use.
+And the second idea is, okay, you need to find regions of feature space,
+Over which to estimate constant treatment effects for the purpose of then getting kind of globally a heterogeneous shape for the treatment effect.
+Whether you're going to do so, you might as well use trees and forests.
+Guess they're pretty widely used to offer this kind of task in the broader machine learning literature.
+Neighborhood averaging
+As a roadmap for what we need to do, let's first start by thinking about
+a very simple estimator of heterogeneous treatment effects, see what goes wrong.
+And then see how kind of the concept we've covered so far can address these issues.
+And kind of as a very, very simple thing to do, suppose that instead of estimating a whole heterogeneous treatment effect function,
+for now, I just wanted to estimate the treatment effect at a specific point x.
+And the way I'm going to do this is, in order to estimate a treatment effect of x, I'm going to draw a circle around x.
+The idea is that this circle kind of contains a set of people who are representative, relevant for estimating the treatment effect at x.
+And then I'm going to apply the difference in mean estimator inside the circle. So here's the circle, the set of points,
+everyone who's kind of within a radius delta of x. And then imagine using tau hat of x which is just the average of the treated minus
+the average of the controls in that circle. It's going to be okay, it's going to be consistent, but it has some issues.
+The first, and this kind of, by now is something you should be worried about, is that this is a difference in means estimator.
+It tries to estimate treatment effects by taking the average, so kind of direct average of the treated minus the controls.
+Difference of mean estimators are generally okay in randomized trials but if you're in an observational study setting where propensity scores might vary.
+You should always worry about kind of is variation the propensity score associated
+with variation of the baseline effect, then can this be problematic? And so kind of what this problem number one highlights is that for
+this method to work, you actually need this neighborhood around here to be so small that essentially the data inside that neighborhood looks as though it
+came from a randomized trial. The second thing is that, and this is a theme kind of Susan
+emphasized last week, is that, okay, for this to work and
+for kind of the neighborhood S(x) to contain people who are relevant
+to estimating kind of the treatment effect at the point x.
+You need this kind of radius delta to be small enough that you don't kind of have any irrelevant people in the circle.
+But at the same time, you need this radius delta to be large enough that you actually have enough people in these sets that kind of this estimator stable.
+And when you're even in moderately high dimensions, this becomes an impossible problem.
+So these are two issues we're going to need to address. The second, and kind of just to give a very short outline,
+the first we're going to address by using Robinson's transformation. The second we're going to address using kind of forest geometry and
+the forest construction. But yeah, well at first, let's ignore the second representativeness problem for now.
+And just kind of focus on the problem that kind of, this is a difference in means estimator on the previous slide.
+And we're worried about how difference in means estimators deal with confounding. So now suppose just to kind of formalize the question,
+let's say someone told you that this neighborhood S(x) is actually pretty good. And then everyone inside this neighborhood has the same treatment effect.
+So kind of problem number two is not a thing, you have a lot of data inside that neighborhood. For the purpose of treatment effect estimation,
+everyone at that neighborhood is relevant to estimating tau of x, but you're worried about just compounding bias.
+Some people in this neighborhood being more likely to be treated than others and this causing problems.
+Well, by now we know exactly what to do. if you have a set of data with a constant treatment effect and
+kind of variable propensity scores but under unconfoundedness conditions,
+we know how to estimate the constant treatment effect, use Robinson's methods.
+So here we're just going to do that, we're going to kind of first filter to only consider data set, data in that neighborhood are on x.
+And then we're going to use Robinson's method to estimate the constant treatment effect, considering only data in that neighborhood.
+So, this is good, we're going to run that.
+The next question is how do we actually design this neighborhood over
+which to kind of estimate the constant treatment effect and can we do something
+better than just kind of drawing a circle around our point of interest?
+Trees and forests
+And here, again, the idea is going to be to use trees, the kind of simple nearest neighbor estimator.
+You draw a circle around a point and then you average all the data inside the circle.
+In two dimension, this can be a totally reasonable thing to do. But, like Susan emphasized last week, when you get into even
+moderately high dimensions, this is going to break down kind of, so the circle could contain any neighborhoods.
+It's going to have to have a humongous radius. And once it has a humongous radius, well,
+then the people inside that radius aren't going to be that similar to you anymore. What trees are going to do is they're going to kind of in a data adaptively
+chop the feature space into pieces using access align splits. And then to predict at the point x,
+you're going to consider data in this kind of rectangle, your neighborhood around x.
+And in two dimensions, this might look a lot like k nearest neighbors, but the advantage of trees is that if you have some features that matter a lot, and
+others that matter less. Then kind of the trees can have neighborhood, kind of have these
+rectangles that are very narrow along the directions that matter. So they can be very sensitive to variation there but
+just kind of ignore dimensions that don't matter and this lets them have a much more representative than neighborhoods for
+estimation of x without running out of data. So that's what a tree does relative to our nearest neighbor methods.
+Trees and random forests (Breiman, 2001)
+And then of course a random forest is just going to take a bunch of these predictions made by individual trees, and average the predictions made by all of them.
+So our challenge of course, is kind of there are two key ingredients
+to this basic random forest algorithm for kind of predicting y from x.
+It's splitting our prediction by averaging trees. So, our first question is how should we adapt splitting, to design trees that
+kind of are optimized for expressing heterogeneity in the treatment effect.
+And the second question is how should we adapt prediction? So that kind of once we have the geometry of the forest,
+many trees, we can get reasonable estimates of callbacks out. So that's what we need to do here, so
+let's start with splitting. Here, I want to go first over in detail
+Regression tree splitting: Review
+how regression trees split take two splits. So that then we can contrast this,
+adapt this to the treatment effect estimation case. So here just kind of remember, we're going to
+assume that we have data, (xi, yi). And then we want to estimate mu of x is equal
+to expectation of (yi given xi =x).
+So we're in the regressions setting here, and how is the regression tree going to pick splits for this task?
+Well what it's going to do is going to start by kind of considering a big square with all your data in it.
+And then it's going to start scanning kind of along the first axis then along the second axis then along the third axis.
+It's going to align all these axes imagine kind of splitting your full feature space into two halves, left and right.
+And building a separate model to the data to the left and right.
+Now what does it mean to fit a separate model to left and right it's kind of trivial, right? We're trying to predict the expectation of y given x, so if you split the data
+into two halves left and right, what's your model for the average on the left?
+Well let's just kind of actually the average of the outcomes in the left leaf, so you end with the average on the right.
+What is the average of your model, the average on the right it's just an average of the data in the right leaf.
+So what you end up with is you have this kind of left leaf In the left leaf,
+you look at what is the average of the data there, that's your y hat left.
+High you have your right leaf, what's your average of the data there?
+That's your y hat right, and then you're going to try to find the split among all
+axes on line splits, and that maximizes the quality of this model.
+So essentially, here everyone in the left leaf we're going to assume that our prediction of y given x is just kind of.
+Either if you on the left leave, it's going to be y hat L, if you're in the right leaf it's going to be y hat R.
+And regression forests are going to pick the split that optimizes the squared error loss criteria.
+Now, by kind of just decomposing the square here,
+and looking at what the optimum settles on. You can find that there's actually an equivalent way to express the split that's
+going to be preferred by the regression for splitting. It's going to be the split maximize the following quantity,
+your estimate on the left. So the average of the data on the left, minus the average of the data on the right, squared.
+So you want to find a split that there's a big difference in the average to the left versus the right.
+You're going to take this different squared, and then multiply it by the number of people to the left of the split and the number of people that right.
+So you essentially want to find a split ideally, then evenly cuts your feature space in half, but also where there's a big difference on average on both sides.
+So, this is kind of all there is to splitting, a grant is split bonds, finds the axis line split that maximizes this criterion.
+And then once the tree has picked one split will kind of on the left. It'll try again it'll build a second split it'll pick third split,
+is kind of recursive in both leaves independently. And always kind of as soon as you've made a split you ignore everything that
+happens so far. You just kind of focus on your remaining kind of rectangle you're sitting in
+now and then you again practice cut it in half again, following an exercise.
+So that's what regression trees do, we want to adapt it for treatment effect estimation.
+And it turns out that almost everything regression trees do, can be adapted verbatim.
+Recursive partitioning for causal effects
+Regression trees make axis aligned splits kind of in x space you
+can separate left from right, along the axis we can do that too that's fine.
+Regression trees proceed in a recursive manner, they start by kind of considering all the data in kind of this big blob.
+Then they cut that blob in half, and then they kind of from here on out they take the left half and the right half, and consider them separately.
+And kind of recursively support them, we can again do this recursive structure nothing's stopping us from doing so.
+The only thing we need to change is in choosing how do we actually pick that we prefer this split as opposed to this split or this split as opposed to this split.
+So how do we pick the splitting criteria? And this might seem tricky, but actually we're just going to follow
+exactly the kind of idea behind regression trees, just kind of modify the objective a little bit.
+So, regression trees algorithmically, what they end up optimizing is number
+on the left hand number on the right times difference in estimates squared.
+We're going to do exactly the same thing here, we're going to split on exactly the same objective.
+Except, instead of the kind of relevant estimate being an estimate of the expected value of y given x.
+And so the difference in estimate square just becomes the difference in averages to the left, and the right squared.
+Here we care about treatment effects, so what we're going to do is we're going to estimate the treatment effect to the left a treatment effect to the right.
+And then consider the difference between the estimated treatment effect on the left versus on the right squared.
+And that's going to be our supporting criteria, how do we estimate treatment effects on the left versus on the right?
+Well, as always fine right using Robbins's method, residual and residual regression.
+So we're going to run residual regression on the left ones,
+ones on the right, and then proceed. So that's for splitting, what about for prediction?
+Aggregating causal estimates For regression, natural to write a forest as an average of trees
+Here, it's a little bit trickier, usually, algorithmically when we think of regression forests.
+What we think of regression forests is doing is having a bunch of trees, each tree making a prediction for y given x, and then your average those trees.
+Now, for treatment effect estimation this gets a little bit delicate in our setting.
+Because let's say you have a bunch of trees, so you have small leaves in the end, now you want to estimate the treatment effect in the small leaf.
+So we're going to run residual and residual regression in the leaf, that's going to give us a treatment effect and the leaf.
+Now you could think of the forest as wanting to average all those predictions, and that's a thing you could do But now something to worry about is, let's
+say you trained 1,000 trees, and out of those trees, 5 had something bad happen.
+Let's say there's actually only very little variation in the treatment, so, the residual regression is unstable and kind of blows up.
+Well, it happened 5 times out of 1,000, you might not really worry about it. But still when you take an average if there are kind of any bad components on
+average, that'll kind of make the whole average be quite unstable. So, that's not, necessarily, a good idea.
+So, this seems like it could be a problem, but it actually turns out there's a very nice way to get around it.
+And the point is just to kind of swap the order of how you think about forests.
+So the way we usually think about forests is, right? They're an average of predictions made by each tree.
+And what's the prediction made by each tree? Well, it's just kind of the average of the outcome over everyone in the leaf,
+which you can write as follows, right? Sum overall observations of the outcome with an indicator where you are in
+the leaf relevant to predicting an x, divided by the size of the loop. That's a double sum, so, what we can do is, we can swap the double sum.
+And now you can also look at the prediction made by the forest as sum overall samples of Yi, your outcome,
+times this other thing, and we call it alpha i(x). And alpha i(x), essentially, measures the average weight,
+the ith training example gets when predicting an x. So, essentially, alpha i(x), you could think of it as a data-adaptive
+kernel weight capturing development of the ith training example for x.
+In terms of a picture, what's going on is this. So, kind of, each thing here is a tree, and
+The random forest kernel
+the first tree is going to average this data for predicting at x.
+So, kind of, for the purpose of this tree when predicting at x, all these observations get the same weight, one over eight,
+since there are eight people on that leaf, everyone else gets zero weight. The next tree is going to do the same thing, but
+with a different set of observations. Again, there are eight observations here.
+So, each of these is going to get away with one over eight, it's a coincidence. I guess all these rectangles have eight dots in them.
+But you get weight one over the number of dots in the rectangle.
+Then what the forest is going to do is, it's going to first average all these weighting functions.
+So, this thing here, these points here get very big weight, because they're kind of in many of them trees are used to predict that x,
+whereas others get smaller weight because they're smaller fraction of trees used to predict that x.
+And anyways, with the forest, you can think the forest is doing is just averaging all these kind of constant weighting functions for each tree,
+to then get kind of a smoother weighting function that captures the relevance of each training example, to predict at this point x.
+So, this is the forest neighborhood, and then a regression forest.
+Essentially, you can just think of a regression forest is not how people usually think about it, but it's an entirely equivalent perspective.
+You can think of the regression forest as making a prediction by considering an alpha i(x) weighted average of the outcomes Yi.
+So, that's what we're going to do. The nice thing with this perspective, it's now very clear what to do in
+terms of adapting a regression forest to the treatment estimation setting.
+How do we want to estimate treatment effects? We might have to state the same thing over and over again,
+it's by residual on residual regression. If a forest, essentially, gives you a set of weights alpha i(x) that
+capture the relevance of each training example i to kind of estimation of x,
+then what's the natural way to estimate the treatment effect of x?
+We'll just run residual on residual regression with weights alpha i(x), and we're done.
+This is going to give us a reasonable estimate of the treatment effect of x.
+We solved kind of two problems we were worried about with the kind of nearest neighbor matching difference in means estimator.
+We're getting a notion of who's a relevant neighbor for estimating a treatment effect, not by just drawing a circle around you,
+but by drawing a forest and extracting weights from that. And we're not given these weights,
+taking a difference in means estimator, which would be vulnerable to confounding. Instead we're going to run a residual on residual regression
+estimator using these weights. So, this is something that kind of, if you have a relevant neighborhood,
+then even if treatment propensities and baseline effects might vary in that neighborhood, that's okay.
+You're going to get the constant treatment effect if you found a small enough neighborhood for the treatment effect to effectively be constant in it.
+So, this is what we do. And this is, essentially, if you call into the causal
+forest function in GRF, then this is what happens.
+One thing I should emphasize here is that I'm looking at these m hat and
+e hat functions. Remember, m of x is the expectation of y given x, e of x is the propensity score.
+Portraying this causal forest, I'm assuming that you already have on-hand estimates, m hat of x and e hat of x.
+You already have trained kind of some model to predict y and w from x, and you pass them into the causal forests.
+Now, if you don't pass them in, then with the causal forest it's going to do, is it's first going to train a regression forest to predict y from x.
+So, it's first going to kind of create one regression forest to learn this. Then it's going to train a second regression forest to estimate
+the propensity score, it's going to learn w from x. And then, in the final step,
+it's going to run an actual causal forest on this object.
+But what I want to emphasize here is kind of like for AIP W, you had to first run some nonparametric regressions, then kind of combine them and
+average them in a certain way to get the average treatment effect estimate.
+And the same way as for kind of the basic residual regression to estimate a global treatment effect parameter,
+you had to kind of first estimate some nonparametric regressions, take residuals, and kind of postprocess them to get an estimate.
+The cost and treatment effect, well, here is the same situation, you need to first run some nonparametric regressions, get estimates of m and e.
+And now, you can almost think as the causal forest as being kind of a fancy alternative to an average treatment effect.
+It's something that you kind of do after these nonparametric regressions
+as a post-processing type of thing to get estimates of treatment heterogeneity.
+That's here, and just to draw a connection, in the causal forest function call, their arguments called w hat and y hat.
+We should read these as estimates of w and y given x. And these correspond to exactly what we call the e hat.
+Xi an emphatic side cross fitted in our own patient.
+Simulation Example: Not an RCT
+So, anyways, that was causal for us to do.
+I kind of motivated discussion a while back by saying that you should be able to
+estimate heterogeneous treatment effects outside of randomized trials.
+And this is a simulation we looked at a while back where the treatment effect is constant. So, kind of getting it right should be very easy,
+but the propensity score varies with X. And if you don't correct for it, then you might kind of get confused by
+associations between the propensity score and you have some X(,3) in here. So, between association shins of the propensity score and
+the baseline effect and that could lead to bias. And what happens here? So, we talked about three other methods earlier that
+Simulation example revisted: Not an RCT
+all kinds of hallucinated treatment heterogeneity in this case to an extent that we felt was concerning.
+Where if you run causal forest what happens? Well, you don't get like exactly one for everyone.
+You still kind of almost hallucinate a little bit of treatment, but you much closer to just finding the flatline.
+There's no hydrotreating heterogeneity here. There's nothing going on.
+You might ask, why is causal forest not perfect here? There's still kind of a little bit of zigzag here.
+Essentially the reason for this is that kind of call forth relies on getting this m hat and i hat function right.
+And we got those that have the regression ports, they weren't perfect.
+All the theory I've been talking about so far kind of tells you, well, if you get estimates and had an i hat that are pretty accurate,
+then you can essentially ignore any errors there and you'll be fine. But this doesn't mean that there'll be literally no effect.
+And here it seems like Arizona m hat and i hat that crept in had been created just a little bit of bias here, now that you can see on the plot.
+So, that was this example, you can also try running causal forest in a randomized trial.
+Simulation example revisted: RCT
+Here we talked earlier, the X-forest did pretty well. The causal forest here seems to be regularizing more
+aggressively than the X-forest, why? Honestly, part of the mystery in machine learning is you work with kind of very
+complicated software packages with different trade offs that interact in different ways.
+This and this world kind of run using kind of different software pipelines,
+that were tuned slightly differently a block like the causal forest was tuned for
+more aggressive regularization, so be it. Both of these essentially, if you look at mean squared error numbers,
+the X-forest and the causal forest are pretty good. Whereas these here, the S and T forest that kind of don't deal
+with regularization bias are much less accurate. So again, this is a randomized trial, so there's no confounding bias here,
+the only error you could have is regularization bias. And both the X-forest and the causal forest do a good job at avoiding that.
+So anyways, we've covered a lot of material this week.
+So, I'm going to stop at this point. So essentially, what we talked about this week was estimating treatment
+heterogeneity in observational studies. We talk about two things you need to worry about regularization bias and
+confounding bias. We talked about algorithmic solutions to avoiding regularization bias.
+The X-learner is a very nice way of doing this. And then we talked about confounding bias.
+We talked about Robinson's method as a way to avoid confounding bias in the case of constant treatment effect estimation.
+And then we talked of kind of a type of causal forest algorithm that builds on Robinson's estimator for
+the purpose of estimating heterogeneous treatment effects also.
+So next week, we're going to continue this conversation from here.
+We're going to see how kind of the principles we used in the causal forest algorithm to make it confounding-robust can also be used
+in the context of kind of general loss based machine learning.
+So, we're essentially going to introduce loss functions. We're training kind of arbitrary treatment effect estimators that
+kind of have the same type of confounding-robust behavior. We're going to talk more about assessing and
+evaluating methods for treatment effect estimation. And see kind of given some tau hat of x estimate in a real data setting,
+how can you have an idea of did you do a good job or not?
+So, we're going to talk about that. And then we're also going to talk about some further applications.
+But for this week, I'm going to leave it here. And just in terms of references, if you want to read more about
+References
+regularization bias in general, here are two recent papers. They're both very nice.
+I encourage you to read them. There in particular this first one is the one that I used
+some illustrations from in the first half of the lecture.
+And then in terms of causal forests in the observational study setting the general paper to look at is generalized random forests.
+And if you want a paper that's kind of more in line with the discussion here,
+that's kind of more focused on how to run this in practice as opposed to mathematical details, then this tutorial paper and
+observational studies might also be something good to look at.

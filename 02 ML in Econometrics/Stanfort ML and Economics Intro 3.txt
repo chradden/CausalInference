@@ -1,0 +1,621 @@
+Welcome back to the second part of this webinar, which introduces machine learning from an applied perspective.
+Targeting specifically researchers and practitioners of applied econometrics, who think about how to add machine learning to the econometric toolbox.
+And one to understand how novel tools based on machine learning can improve practical empirical analysis.
+In the previous module of this webinar, I argued that machine learning is particularly good at solving prediction problems.
+Where we want to find a good prediction function from some training data that extrapolates well to new data points.
+I also argued that the solution to such prediction problems has been essential to the progress that has been made on solving machine intelligence problems.
+In this module, I want to ask how machine learning does so well at predicting
+especially in very complex data and using very complex functional forms.
+I will then go on in the next part of this webinar to discuss some implications of the way that machine learning works.
+And I will particularly be interested in asking the question, how machine learning applies when we're actually interested in
+estimation including and causal estimation. For now, however, I will fully focus on solving a prediction problem.
+So here is our setup, I assume that we have a training data set with data points that constitute of an outcome y,
+and right hand side variable, a covariant x. And our goal will be to predict y from x.
+To make more precise what that means, let's assume there is also some loss function.
+That loss function expresses the cost I have to
+pay whenever I predict y hat when the truth is y and
+I deviate from the truth y. Our goal is then to predict the outcome y on a new data point drawn from
+the same distribution based on the covariant x and using some prediction
+function f hat in a way that this average loss is as small as possible.
+Now, the way that I have said that so far sounds very much like standard econometrics, there's an outcome y and some covariant x.
+The first difference between standard econometrics and machine learning is simply that these variables are usually called differently whether you talk to
+an econometrician or somebody who is trained in computer science. Specifically, what I would call an outcome variable y would be called a label in
+machine learning, and what I would call a covariate x is typically called a feature.
+So let me rephrase the goal of machine learning. The goal of machine learning is to take some training data set with label data.
+So we have labels and features for every instance in our training data set.
+And from that, we want to find a prediction function such that the average loss or the risk
+is small when we predict the label from the features on your data points.
+And I should clarify that here I am talking about supervised learning, supervised learning meaning that we actually have labels in our training
+data set. And we don't have to, for example, find structure and the x covariance without being guided by those labels.
+Two standard version of this prediction problem comes to mind. The first chord regression is when the outcome variable itself is continuous.
+A standard loss function that we often use either are for the convenience or because it has good properties for
+the specific task at hand is squared error loss. Where our goal is to minimize the average squared difference between our prediction
+and the true label on new instances drawn from the same distribution.
+In other words, the loss function here is simply y hat, which is our prediction minus y, which is the truth squared.
+So two examples that I will use throughout today's module, we could, for example be interested in predicting log house prices, y.
+Have a new home based on the characteristics x of that house in some survey data of homes with the same distribution.
+And so in that case, we would use whatever we know about our training homes
+in order to find a relationship between house prices and characteristics.
+So that we can then say something about houses whose price we don't know, or whose price we want to determine, but where we have those characteristics or
+features available. A second example I will use throughout the module today is that of predicting
+consumption based on household characteristics. And that turns out to be a very important task, for example, when you think of
+poverty targeting, and then the targeting of social programs to those people who are particularly poor, where consumption may be a good measure of their poverty.
+A second canonical case of prediction is when the outcome of interest itself is binary.
+And in that case, we call the prediction exercise classification.
+Let's think of the case where the prediction itself is binary. So basically the truth is 0,1 and I give you my best guess of other variables 0,1.
+In that case, there are two ways in which I could make an error and therefore two cases in which we may want to associate a price with the error we make.
+The first case would be the case that the truth is actually 0, but the prediction is 1.
+We would call that a false positive or a type I error. A second case happens when the truth is 1, but my prediction is 0,
+we would call that a false negative or a type II error.
+Now if I now wanted to design a loss function, I could, for example, put certain prices on type I, and on type II error.
+Possibly informed by the specific problem I care about. And then try to find a classification function that minimizes that error or
+that minimizes that price associated with those errors. In many cases, however, when we are in the case of binary classification,
+we actually predict the probability of the outcome being 1. And in that case, one popular way of quantifying the quality
+of the classification rule is to plot the receiver operating characteristic curve.
+That on the x axis has the false positive rate and on the y axis it has a true positive rate.
+So for every false positive rate, which is the proportion of false positives,
+at as a fraction of all negatives, meaning the fraction of false
+positives as a fraction of false positives and true negatives taken together.
+I then plot the true positive rate, which would similarly be the fraction of true positives, among all positives that I understand both.
+So in other words, the fraction of those that I call 1 among all that I actually 1.
+So I can now do that at different thresholds. So saying that I call everybody a 1 who's probability was predicted probability is
+very high, in a varied threshold I can then plot the false positive rate and the true positive rate against each other.
+And the further I am to the top left of that graph, the better my prediction is.
+Therefore, another way of quantifying the quality of binary predictions or classification is often to look at that curve and ask,
+how far to the top left is that curve? Which I can, for example, do by integrating the area under it,
+which gives me the area under the curve. So while I will not go into much detail here about doing classification,
+meaning about doing prediction with a binary outcome, I think it is helpful to have heard the terms receiver operating characteristic.
+And area under the curve or AUC in order to understand that these refer to
+different ways of quantifying the quality of an classification function.
+In other words, quantifying the quality of a prediction when the outcome of interest is 0 or 1.
+And now I'm to go back to the goal of prediction in the case of regression,
+meaning our outcome is actually continuous. So let's assume that we want to find a prediction function f hat,
+such that the average squared error or the mean squared error relative to the true outcome y is as small as possible.
+For example, we could try to achieve that by using linear functions. These linear functions very much like linear regression, which is what this is,
+and would simply put a coefficient on the different covariates x were assumed that those covariates have features themselves continuous variables.
+So, from the training data, for example, I could pick the coefficient beta in my linear regression, it provides the best in sample fit.
+And this is something we are very used to, this is simply linear regression. So what does linear regression do? It says, my goal is to minimize the out of sample mean squared error.
+What is the best thing I can do? Well, I simply look at the data I have. And I ask, which set of coefficients minimizes the error within the data I
+have, and that is the coefficient that I want you to choose. So, let's step back for a moment and let's ask ourselves, how good is this method,
+which we are very familiar with because it is simply linear regression, How good is this method at solving the prediction problem at hand?
+So, first of all, there is some good news which is we know that linearly squares or
+linear regression has a number of optimality properties and that apply to this case.
+For example we know by Gauss-Markov that if all the error terms here are homoscedastic, meaning, the error doesn't systematically
+vary with the covariates x then OLS is indeed the unbiased estimator of the coefficient beta that has the lowest variance.
+Now, I just said a whole bunch of things. I said that it is, first of all, I noted that it is unbiased,
+because I said it is the optimal unbiased estimator. And second, I said that among all unbiased estimators, it has low variance.
+But it is not immediately clear whether this is exactly what we want when we talk about order sample prediction.
+And indeed, we can now ask the question whether these properties translate into an optimal predictor out of sample as well.
+I now want to go through a somewhat formal argument to understand whether the linear
+regression estimator is not just good at estimating the parameter beta in the sense
+that we just discussed which means it has zero bias and it has low variance.
+But when this properties also translate into a good prediction solution.
+And, to do so, I look at a new data point, I assume that new data point is actually generated by a linear relationship between the covariance x and
+the outcome y and by some additional noise. So I assume that this new data point is given by y equals beta times x +
+some noise epsilon. When I now estimate my coefficient beta by some beta hat or
+less solution in my training data set then I make a certain mistake.
+The mistake corresponds to the difference between my prediction y hat and
+the truth y, or in other words, my prediction beta hat times x- the truth beta times x- epsilon.
+When I now square this up, and I'd take the average over it, averaging both over the draw of the training sample and
+over the error term epsilon, then we see that this error has multiple components.
+First of all, I always make some error because there is this additional term epsilon that I cannot get rid of.
+So there will be some irreducible variance that will appear in my loss calculation.
+Secondly, there is going to be a difference between
+the true coefficient beta and my estimate beta hat.
+So, we have the difference between the true coefficient beta hat and
+beta up here and we have the difference between the true coefficient beta and the estimate beta hat down here.
+But this part of my loss actually I can write as a combination of two parts.
+First, I can ask on average, if I redraw many training data samples,
+is my beta hat close to beta that is the bias part? Which is a difference between beta and the average of beta hat.
+And second, I can ask as a redraw my training sample, how much does my beta hat vary from draw to draw, which contributes variance?
+So in other words, the loss that I obtain has to be components. It has one component, which is irreducible noise.
+It has a second component, which is the bias, meaning on average, how much is my coefficient away from the true coefficient?
+And as a third part which is variance, which means as I calculate the coefficient
+again and again, how much does this coefficient vary from draw to draw?
+Now, this type of decomposition called bias variance decomposition is an important framing of the challenge of good prediction within econometrics and
+statistics. Because it shows that when my interest is good prediction,
+meaning, I want to be close to the truth on average, then an estimator that is unbiased is not necessarily an optimal estimator.
+Because while it has zero bias, so while this bias component here is zero,
+it may mean that the variance component is higher than it has to be.
+And I can sometimes do better by balancing those two against each other.
+In other words by resolving the bias variance trade off optimally. Now, for machine learning functional forms can
+look more complex than this linear regression and sometimes the loss functions are also different than the square a loss.
+So I personally prefer a framing that says, we have a trade off here between approximation on the one hand and overfit on the other.
+So, what does this mean? Approximation bias happens whenever my function is not able to approximate
+the function well even on average Even as we we sample the function many times,
+while it is able to approximate well, if it is very flexible and therefore can fit the function that I want to fit in great detail.
+On the other hand, such high approximation quality also means that there is
+high overfit, which means that from draw to draw, I always fit not only the signal,
+not only the true relationship between y and x, but also a lot of the noise, also a lot of what is epsilon here, leading to a high variance.
+So in general, I therefore like to call this trade off between approximation overfit which generalizes nicely to other machine learning methods that
+are not necessarily in the same space as this simple linear regression.
+To explore this approximation overfit more and to give an example that doesn't rely on the math that I just showed,
+let's think of a case where our goal is to fit this relationship here between
+variables, between covariance x and outcomes y, where my goal is
+to find a function then this test predicts well on new data points.
+So here I looked at those, in this case eight data points. And I used the simple linear regression between the outcome y and
+the covariance x in order to find the relationship. And now I could try to find out what it does by seeing how well this
+line fits when I draw new data points which are here in red. So I call the blue data points my training sample,
+I call the red data points my training sample and my test sample.
+And my goal is to use the blue data points, to use the training sample to
+be as close as possible to the test sample points with respect to my regression line.
+So in other words, I would love to be on a line that is as close as possible to those
+red points here so that I predict their y value well as a function of the x value.
+Now, let's think whether we can do better than what we see here. For example, what we could be doing is we could use a more complex function that
+is not just a simple linear relationship between y and x, but we could for example,
+instead have used a polynomial of degree two or parabola to fit the same. So this parabola, so this blue line that now is curved actually fits the points
+in the training data set better because it is more flexible is it able to capture
+the relationship of those blue points within the training data set better.
+However, at the same time, we see that the fit in the test on the test data points actually gets worse.
+So what happens here? We have a more complex function, this more complex
+function is able to approximate the relationship between
+the y variables and the x variables in more detail.
+However, at the same time it also overfitting more because some of the flexibility is used not just to fit the true relationship between y and
+x better, but also to fit some of the noise. And this one becomes even more extreme as we add more degrees to our polynomials.
+So for example, as I add two more degrees here and I look at a polynomial of degree four, I see that the blue line starts
+to fit the points in the training data set almost perfectly. However, it fits the points on the test data set in a worse and worse way.
+So what's going on here? Well, as we add more degrees of freedom to our functions,
+meaning as we make our functions more and more flexible, but here I expressed by adding additional polynomials to my regression.
+And as I add these degrees of freedom, my in sample fit which is blue here gets better and better.
+So the in sample fit goes down and down and down because the more degrees of freedom I add, the better candidates function
+approximate whatever the underlying relationship is and the better it will actually fit the data it has already seen.
+At the same time, for the fit on new data points, which is what I'm after here, recall that my whole goal
+is to find a function that does well in predicting out of sample. And for those new data points, the prediction quality will increase,
+meaning the loss will get lower and lower and lower. But at the same time, it will also start to fit more and
+more to the idiosyncrasies of what is going on. And therefore, the loss at some point the net loss will increase and
+the prediction quality will decrease because the negative effects of overfitting outweigh the positive effects of better approximation.
+So to summarize, as a model becomes more complex, t starts to fit the true
+function better and better, so it's approximation quality increases.
+But at the same time, it also starts to fit the noise better and better and the overfit also increases.
+And hence, when we do machine learning when we want to be able to predict well in very high dimensions, it is important that we don't just use
+flexible functional forms that are able to express that relationship well, but that we also limit the expressiveness by, in other words that we use
+regularization in order to control how much overfit we allow. And optimally in this example and that I just showed would be then find a point
+where those two trade-off in a way where the overall prediction quality is better.
+I now want to give a few concrete examples how such regularization can look like.
+The example I just showed we simply varied the polynomial degree in our linear regression.
+In practice, that may not be the wisest way of constructing more complex or less complex functions,
+especially not in a case where there are already a lot of x covariance available.
+So, instead what we will do here is we will explicitly include regularization, meaning we will explicitly limit the expressiveness of the function,
+still staying for now within the framework of linear regression.
+Specifically, rather than running the OLS solution, where we minimise the in sample fit, we minimise the in sample fit subject
+to some constraint that says that our function is not all too complex. And specifically, we will implement this by saying that we use some norm or
+some pseudonorm on our coefficients and we say that those coefficients are not allowed to be too large.
+So what are the typical norms that we consider here? The first one is actually not a real norm, but it is very intuitive it says,
+let's limit the number of coefficients that are allowed to be non-zero. So in other words, when I use this first criterion here,
+what I would do is I would say, let's find the regression fit that only uses a specific number of variables, say C of the available variables.
+And all other variables have to be zero, and based on those variables, I tried to find the best fit.
+So this would give me a sparse solution. However, it has the big downside that is computationally infeasible to run,
+because I would practically have to try out many different combinations of variables in order to find the optimal fit.
+Instead, one frequent way in which we regularize is by using a norm that says,
+let's put a limit On the absolute value of all the coefficients,
+in the sense that we take the absolute value of the coefficients in our linear regression and we sum over those absolute values and
+then don't allow this absolute sum of coefficients to be too high.
+A third, very well behaved way of regularizing would be to instead use the Euclidean norm or the sum of squares of those regression coefficients.
+And to say, let's find a solution where the sum of squares of those regression coefficients is not too high.
+In all of those cases would be practically achieved that we have a lever according to which we can control the complexity of our function.
+For example, by saying that only a given number of coefficients can be nonzero or
+that the total size of the coefficient isn't allowed to be above a certain threshold.
+I will now go through two of those examples specifically those corresponding to the one norm and those corresponding to the two norm.
+So meaning those corresponding to the sum of absolute coefficient sizes and
+the sum of squared coefficient. And throughout, I will as a technical assumption and for practicability assume
+that these coefficients are not penalized on the intercept.
+So we don't here want to kind of shrink the intercept. And that we have already normalized the x covariance so
+that the different directions actually comparable and makes sense to put a norm on those coefficients.
+The first example I want to consider is the example where we limit the size of the coefficient in terms of the one norm or
+the sum of individual absolute coefficient sizes.
+So, what would that mean? So let's take a very simple case where our coefficient is test two dimensional.
+So Peter has just two directions, going to the right and going to the top here.
+Let's also in this case, consider the unconstrained optimum.
+And now, rather than allowing this unconstrained optimum, let's say that we put a limit of one on the one size of this coefficient.
+What does it mean that the one or more of the coefficient is limited to one? It means that all of the coefficients that I'm allowed
+to use have to lie within this simple diamond around the origin.
+And therefore, rather than finding the unconstrained optimum,
+which is in the center of those concentric circles, I would instead find the point that is closest to that center according to this
+distance that is implied by prediction here and within the feasible set.
+Meaning within that smaller set of coefficients that is feasible in this case.
+Now, in practice, we would actually not solve this problem. We would in many cases, solve the Lagrange relaxation of that problem which replaces
+the constraint of the coefficient not being too high by a shadow cost that says,
+you basically have to pay a price whenever that coefficient increases, meaning that we put a price on the size of those coefficients themselves.
+And instead we solve the Lagrange That and says we want to minimize
+the loss that we have in sample plus a cost for the size of the coefficient.
+So this specific regression is called lasso regression. And I now want to go through a few of its properties.
+The first property that you can already see on this right graph here is that it tends to produce outcomes that are not just shrunk,
+meaning the coefficients are smaller than those four or less because we
+associated cost with larger coefficients, but they often are also stars,
+meaning, this regression method also selects a subset of variables
+that I use in the prediction and makes many of the variables exactly zero.
+And the reason for that is that the feasible set for this constraint
+that we have discussed before is actually while it is convex, it also has kings,
+meaning that in some cases it will produce solutions that have exact zeros.
+So one way of understanding what the lasso does is that the lasso is capitalist
+when the lasso could choose multiple coefficients that are nonzero and these coefficients contribute in a similar way to the prediction,
+it tends to just choose one of them so it tends to choose winners. So it tends to be capitalist.
+And as a consequence, it tends to produce solutions with many zeros. So how does this look like in practice?
+In practice, we can vary the cost lambda that is associated with more complex coefficients in our last regression.
+So, here is one graph in which I did exactly that. So I ran a lasso regression and I varied the coefficient lambda.
+So in this case the lambda is very high on the left to lambda is very low on the right.
+So the axis here is inverted from the usual that means that on the left
+is a very, very high cost of having a coefficient that is nonzero.
+And indeed we see if that cost is high enough, the optimum solution will actually set all coefficients to zero.
+Now each of those colored lines is one of the coefficients. So as we decrease our lambda, as we make it cheaper and cheaper to include
+coefficients we see that some of the coefficients start to be nonzero and also start to increase as we reduce the cost of larger coefficients.
+Interestingly, more and more of those coefficients will enter our support so
+more and more of those coefficients will be chosen, but it doesn't necessarily mean that all of those coefficients will increase.
+It can also be that they first increase and then decrease again as other coefficients are included.
+So this, again, is one way of doing regularization. It's one way of controlling the complexity of our linear regression solution
+by saying, let's use a constraint that works very similarly to saying I only
+want to fit linear regression on a limited set of variables, but instead of limiting the number of variables, which would be computationally very hard, and
+would have some undesirable properties, I instead of that want to find a solution
+where the size of the coefficient isn't too high, where in this specific case,
+I measure the size of those coefficients by the sum of the absolute values.
+Another popular and very similar regression method is ridge regression,
+where instead of the sum of absolute values, I choose the sum of
+squares of the Coefficients in my penalty parameter.
+So, now I have to pay a price whenever the sum of squares of the coefficient gets larger.
+So, how would that look like in our previous picture? So in our previous picture where we considered how the constraint set looks
+like that limits this parameter, this penalty or the size of the Of
+the coefficients to a specific number and that means that in this case,
+we would limit them to coefficients that all lie within a circle around the origin.
+So specifically, if for example, I limit my parameters
+to be in within a maximum of one with respect to the sum of squares.
+Then I would exact limit the parameters I can use to a concentric circle around the origin with the radius of one.
+And I would pick the solution that is closest to the OLS solution
+in a specific norm implied per prediction within that circle
+closest to the OLS solution according to the distance metric.
+Now, unlike the LASSO, the properties of ridge regression are quite different.
+While ridge regression still leads to lower size of coefficients, because it puts a price on higher coefficients, it is actually unlikely
+that ridge regression sets some coefficients exactly to zero.
+Instead, if there are multiple coefficients that can play a similar role, meaning they have a similar role with respect to the prediction they produce,
+which tends to be socialist. Meaning that in doubt, it will distribute the average power between natural
+coefficient and produce multiple coefficients that are nonzero, but not as high, rather than producing a few that are nonzero and high, and a lot that are zero.
+So in other words, this socialist estimator, does not produce spot solution, instead, it tends to produce solutions
+where all the coefficients are not too high, but none are too close to zero.
+One interpretation of this estimator is that it can be interpreted as a Bayesian posterior, where I'm assuming that I have priors on
+my coefficients that are normal and centered around zero. So, it expresses a belief that coefficients are more likely to be closer
+to zero than further away, which leads to exactly that kind of shrinkage.
+We have now seen two ways in which we could restrict the complexity of linear regression.
+The first way, the LASSO tended to be capitalist and set certain coefficients exactly to zero.
+The second or ridge tended to be socialist and distribute the coefficients in a way that they weren't too high coefficients,
+but it also did not put any exactly to zero. There's a third method called the elastic net, which makes us between those two by
+adding a penalty that makes us between the ridge penalty and the LASSO penalty. And in that case,
+I could both play with the degree to which I want to put a price on complexity.
+So, the parameter lambda, as well as a parameter that is usually called alpha,
+which tells me how I mix those two against each other. Now, these were two estimators that we often call machine learning estimators,
+but honestly they are quite close to linear regression. They also coming out of statistics the ridge estimators a very classical
+statistical estimator. However, I use this as an entry point into our discussion of machine learning.
+Because despite these estimators being quite close to linear regression, they
+have many of the general structure that machine learning estimator typically has.
+And specifically, many supervised learning algorithms, meaning many algorithms that are constructed to solve a prediction
+problem are characterized by a combination of features. First of all, by which function class, they optimize over, second, by the way
+in which they regularize, meaning the way that they control complexity.
+And third, by the way that they solve the optimization problem of
+finding an estimator that optimizes fit subject to the regularization constraint.
+The linear regression estimators that I showed are only some examples and I now
+want to show some other algorithms that fall under the same kind of structure.
+To motivate the next kind of estimators that I want to look at, I want to consider one important example of using prediction methods in
+public policy, and that is poverty targeting. In poverty targeting our goal is to find those
+households that are in particular need for support.
+And so we can effectively think of this as a prediction problem where the outcome of interest is consumption and the variables we have available.
+So the features we have available is whatever features we have, for example, administrative data that we can use to target.
+And so effectively we are now solving a prediction problem with household characteristics on the right hand side and
+consumption or in this case, we use law consumption on the left hand side.
+Let me now give you a very concrete example where we simply predict low consumption using just two variables.
+The two variables we consider here is the number of residents on the x axis and
+the number of rooms on the y axis. And here we see the predictions by color gradients plotted as colors.
+So specifically, we see here predictions based on the linear regression of low consumption on a constant rooms and residents.
+And we see that a linear regression, by the nature of how it is constructed has these very global gradients.
+That translates to a gradient running in this case, from the top left, where consumption is considered to be particularly high to the bottom right,
+where consumption is considered to be particularly low.
+And note, however, that not everywhere on this graph will there actually be households in our sample,
+so let's instead look just at those households in the sample. And just for those households in the sample,
+we see that there are actually very few households that have both a very high number of residents and a very high number of rooms.
+But there are some that have a low number of residents and a high number of rooms and there are some that have a low number of rooms and a high number of residents.
+So, let's see how this linear regression that tries to fit a global relationship between those two variables and
+low consumption compares to the actual values in our sample in terms of what actual consumption is.
+So, while on the left, I plot predicted consumption, on the right, what we're looking at is actual consumption.
+And we see that this roughly lines up in the sense that yes, in the top left consumption is indeed very high which are those
+people with a small number of residents in a large number of rooms.
+And on the right where the number of residents is very high, it looks like consumption is indeed very small.
+However, when I look at this, I would argue that the linear relationship on the left is not really very good at expressing the relationship.
+Of those two variables and how they affect the outcome, which here is their consumption.
+So, specifically, when I look at this, I would say that there could
+be some interaction where the question, how the number of rooms affects consumption very much depends on the number of residents.
+So specifically, there's a clear gradient on the left here. So for a low number of residents,
+the number of rooms seems to go up as consumption goes up, or I should be more precise, consumption goes up as the number of rooms goes up.
+However, that relationship is less clear on the right. It seems to be that basically most people who live in a household with a very high
+number of residents have low consumption or are likely to live in poverty.
+So in other words, there seems to be a relationship here that is a combination of some kind of binning.
+Where there maybe a critical threshold in terms of the number of residents,
+and some interaction whether relationship between the low consumption and
+number of rooms also depends on the number of residents not just in the simple additive way, but linear regression models.
+So, one way we could now go about that is we could step back and say,
+well, didn't look like this specific function worked very well.
+So why don't we try out a few other linear regressions where, for example, we by hand, create some of those features?
+We could, for example, by hand create some of those bins, and we could then include interactions in our linear regression.
+However, that sounds very tedious and it is unclear whether we would be able to do this iterative process well,
+when there would be many more than just those two variables. Instead, what I now propose to use is a method that
+automatically searches for those kinds of interactions, and specifically, I now want to introduce regression trees.
+A regression tree tries to fit a different functional form than the linear regression type estimators that we discussed so far.
+Specifically, the regression tree predicts the outcome by recursively splitting across different features,
+creating a decision tree, where each split corresponds to asking
+whether one feature is below or above a certain threshold. And then forming predictions in the final leaves by averaging over all
+the instances that fall within that leaf. So, let's look at one concrete example.
+In this case, let's assume we want to predict house prices. And in this case, this regression tree that we see in front of us,
+means that if the number of bathrooms is below 1.5, in other words, the number of bathrooms is 0 or 1,
+then the average house price is 9.4, which here is in log units. Or if the number of bathrooms that is two, meaning we are going to the right here,
+and then the average house price is around 10 in logs. So, that would give me one prediction function, but of course,
+and I want to be able to get to a more precise prediction, so I could add more layers to our prediction function.
+And now create a whole decision tree that maps the different features to the predictions in the leaves.
+So, in this case, this decision tree would not just take continuous variables into account, but
+also some discrete variables, so it would be able to split in the following way.
+If I have an instance, meaning in this case a house, where the number of bathrooms is below 1.5,
+meaning the number of bathrooms are 0 or 1, and the floor is of type 4,
+5, or 6, then the predicted house price would be 9.1 in logs.
+If however, for example, I had a house with seven bathrooms, which means I would go right on the top, then I would also go right on the bottom.
+Sorry, then I would go right on the bottom as well, that's correct, and so my predicted house price would be 11.
+And so, in principle, I could expand these regression trees more and more, and I could add more and more layers.
+So let's see how such a method would do in our poverty prediction example from before.
+On the left here I'm plotting our OLS fitted values, and we saw that by the nature of OLS, OLS tries to fit one global gradient.
+Meaning that the marginal contribution of the number of residents and
+of the number of rooms, is unaffected by the value of those variables.
+The regression tree goes in the opposite extreme. The regression tree recursively fits a tree that tries to explain
+the outcome as well as possible, by recursively splitting and
+thereby finding interactive effects. So for example, this tree here first splits by number of residents, and
+then within number of residents, if the number of residents is very low.
+It starts to split by the number of rooms, while if the number of residents is higher, may split again by the number of residents.
+And thereby, it is able to express a strong interaction effect between those
+two, specifically, that the gradient with respect to number of rooms looks quite
+different for low number of residents than it does for high number of residents.
+And indeed, it looks like that in this data, a high number of residents by itself is already indicative of low consumption.
+While only among households with lower number of residents, we see a clear gradient with respect to the number of rooms.
+I now want to discuss how to find an optimal tree.
+Specifically, there are two challenges with finding a great tree here. The first challenge is actually computational,
+it's not easy to find a tree that fits optimally. And that problem we typically solve by using a greedy optimization algorithm,
+which recursively finds a tree, which is something I mentioned repeatedly in passing.
+So that just says that rather than finding one optimal tree, we find a tree by always
+doing the best thing one step ahead, but not necessarily the best thing overall.
+So in other words, we fit the tree by first splitting across the variable that looks best in the first split.
+And then with each of the leaves, splitting again by the variable that looks best within that leaf.
+And then fitting again, at the third level within the variables that look best within the respective leaves, without taking into account that I
+will further split the leaves, but simply doing it one step ahead. So that's the first challenge.
+And the second challenge is that where do I stop, right?
+I could simply continue splitting more and more. I could always improve my fit by adding another split by, for example,
+in this case on the bottom left most leaf, splitting further than just
+by those two variables or three variables that are split at that point.
+So, in other words, why wouldn't we simply continue to split more and more and
+more, until there is only a single home left within each of the leaves?
+Well, the answer is pretty intuitive. If there was really only a single home left with in each leaf,
+we would be able to fit whatever data we've already seen perfectly.
+But at the same time, it's very unlikely that this would produce a good prediction out of sample.
+Because for a house that we have not yet seen, the leaf it will end up in there will only be one other house that may actually be quite different.
+And that may turn out to be a very bad prediction. So in other words, we again see that there is an approximation overfit tradeoff here.
+So in this case, for example, the number of levels that we allow our tree to have, so the number of levels of which it can
+split determines the approximation, but also the overfit.
+The more levels we have, the better the approximation is. The better this tree is potentially able to fit to any even very complex
+relationship. But at the same time, the more overfit we get so the more idiosyncratic this fit
+may be, which could then actually make our out of sample prediction worse.
+So as before, we have the following structure we have a function class. The function class here is the function class of regression trees.
+We have regularizer, which could, for example, be the number of levels of our tree.
+It could also be something like the minimum number of instances I want to have within each of my leaf before I stop splitting.
+And then finally, we need an algorithm that actually solves that problem for us. Which in this case,
+I briefly mentioned is a greedy algorithm meaning an approximation algorithm that gives us a good result even if that result is not necessarily an optimal one.
+So this means that if this tree was very much in the same, follows very much the same structure that ridge regression and lasso regression did.
+Although the function does is quite different and regularized are used. Of course, it's also specific to the function class.
+However, just like in the case of lasso regression or ridge regression, for the tree I have told you that we should regularize.
+Meaning, we should choose a complexity parameter in order to avoid that the complexity is too high.
+But I have not actually told you how to choose the regularization parameter. I have not actually told you how to choose that lambda that expresses
+the price of complexity for ridge and lasso. Or I have not told you how to choose the number of levels that our
+tree should have. So, before I tell you how this is done in machine learning,
+I want you to think about that for a moment. How would you go about choosing the right parameter?
+Well, here is a trick that we can use.
+Assume that we split our data into two parts.
+And as we did in the pictures before we fit our data on some data points, and then we use some other data points in order to see how well we do.
+Before I fitted our data on eight data points and I looked at eight other data points in order to see how well we do.
+Now we'll repeat this for all the different complexities we consider. So in the stylized example before we considered first a simple regression
+line that was linear. We then considered a parabola meaning a polynomial of degree two.
+And then we also considered a polynomial of degree four.
+And rather than taking as our guide to choosing how complex to be the in-sample fit, which is what happened within the blue points only.
+Which would only tell us that more complexity is good. We could now simply use the fit on those red points,
+and say how well do we do on data that we have not yet seen.
+Of course, that's a great thing to do if you have a lot of data. Meaning that we can still use a lot of data to fit our function and
+then a lot of data to see how well we do that will then allow us to choose our regularization parameter optimally.
+In practice, however, data is often scarce. So let's take the case where we actually don't have the luxury of having those
+eight points, and then an extra eight points. So we don't have the blue points and red points in addition, but
+let's assume we only have those blue points. So we only have those points that we have already used to fit our data on.
+So what could we have done differently in order to get information about which regularization parameter to choose.
+And the answer to this is that we can use a trick by repeating the hold-out exercise that we ran here.
+Which was that we held out some data that we hadn't looked at for our prediction exercise, and
+repeat the same in-sample within the points that we have already seen.
+So specifically, what we could have done is we could have done the following. Among our eight points that we use before to fit our regression line,
+we hold out two of them at a time. So the first time we do it, these two red points that you see in the top left
+quadrant here, those two, we do not include in fitting our regression line.
+And instead we use them to evaluate the fit out-of-sample.
+When we do it a second time we take hold-out two other of the points, third time three other of the points, the fourth time two other of the points.
+So in other words, we divide our set of points in this case into four groups.
+Every time we hold on one of the groups, we only use all the other groups, and then we evaluate how well we do.
+By seeing how well we do on average across this hold-out exercise.
+So this is called cross validation. And when we think about how to choose the regularization parameter,
+we could either do that by doing a hold-out sample. Meaning we create an out-of-sample in our sample by simply not
+using certain points to be fitted. But in order to avoid losing a lot of sample size,
+we could then extend the same to cross validation. Which means that we create repeated hold-outs within our sample.
+So this is how this would look like. We create folds before these folds were four folds.
+Every time we use only the data that is not in the current group for
+fitting our function. So this would be the red data in every case and we hold out the data that is in the currently active fold for validation.
+So here we would hold-out the first fold. We will then calculate our error meaning the loss that we incur when we predict
+from the red to the green points. And we would then evaluate our full fit by
+averaging that error over all those folds.
+Meaning we produce an error that on average gives us the answer how well our function does out-of-sample.
+The secret sauce of machine learning therefore, does include at least one additional ingredient.
+In addition to using very flexible functional forms, and limiting the expressiveness using regularization.
+One key element is also to use the data to learn how much to actually regularize,
+which is called tuning. And typically we do that by doing cross validation,
+which is the method that I just briefly introduced. So here therefore is the typical structure of a machine learning prediction exercise.
+That also translates to many applications that you will hear about in future webinars.
+So we typically divide the sample into two parts. One on which we fit our function and a second that we hold out for
+final validation. On the fitting sample, our goal is to obtain a prediction function f hat,
+which we do by first running cross validation in order to find which parameters we want to use, for the complexity of our function.
+So in other words, we use data driven tuning using cross validation to determine our regularization parameters.
+We then fit that function, and then we use that function, and we estimate its final properties, for example, its loss from the hold-out sample.
+So why is it important that we hold-out some additional data here? Well, despite our best efforts and using cross validation in our fitting sample,
+because we have now chosen all of our tuning parameters based on the data itself, the loss that we obtain in cross validation may still be optimistic.
+Because it was evaluated at the best possible choice of tuning parameters in terms of the measurement of our loss to cross validation.
+So when we do such work, it's always important that we keep some final data that we have not touched to verify how well we are actually doing.
+And here is where the firewall principle comes into play. As long as we make sure that we have not used the additional hold-out sample
+other than for final validation of the final function, we have not used it at all for choosing the function.
+As long as that is given, then very simple econometric guarantees,
+and make sure that our final loss estimate for example,
+is unbiased and can be estimated well with valid standard errors.
+While whatever we do on the fitting sample does not have to follow any specific protocol but can include trying out some different methods,
+since that would not affect our final estimate. And so that gives econometrics in my eyes two different roles on
+the two different sides of that firewall. First of all, for sure we want to be able to have a guarantee on how well our
+prediction function does in the end. And we achieve that by taking a hold-out sample and by using for
+example valid standard errors creating confidence interval for the performance for the performance of our function on the hold-out sample.
+At the same time in a fitting sample econometrics can be extremely helpful in understanding better what kind of function is likely to do well in a certain case.
+However, in the end, which function does better is a purely empirical question.
+It is a question of which function does well out of sample and we can show to have good out of sample properties, assuming that our only goal is
+indeed the prediction exercise of finding one that predicts well out of sample.
+So that liberates us somewhat in what we can do on that fitting sample. We can use different functional forms, we can see which one of those look best, and
+we can even combine multiple of those, which is something I will go back to in a moment.
+So far I argued that two of the machine learning methods that we encountered,
+specifically regularized linear regression and regression trees, have a common structure.
+In that they combine very flexible functional forms with a regularizer.
+So with a way of limiting expressiveness, as well as a way of using the data to decide how much flexibility to allow.
+Of course, there are a number of important researcher choices here. First we have to actually know which loss function we want to optimize for and
+that may depend on our specific application. Second, we have to make sure that we split and
+manage the data in a way that the final estimate actually represents an estimate of a loss that we care about in a way that few, for example,
+makes sure that we predict an outcome of interest in a way that is representative of the way that we, in the end, want to use our prediction function.
+Another important choice is how we represent the features in our data.
+Especially for linear regression results may look quite different depending on how we represent the information in our x variables.
+And finally, importantly, we have to decide in the first place, which function class and which regularizer to use.
+So far as I said, I focused on linear regressions, with regular risers given by limits on their coefficients.
+As well as trees, where as regularizes for example, I discussed the number of levels that the tree has or
+the number of instances that should be at least in each of the leaves.
+I now want to I now want to argue that this structure is more general and
+encompasses many other machine learning prediction methods as well.
+So specifically, we can characterize many of the methods that are available by a combination of function class and regularizer.
+In many cases there's also an additional level of which optimization I wasn't to use.
+Let me give you one extreme example.
+For neural networks, which we discussed in our first module, there are different ways of regularizing them.
+So first of all, note that a neural network was basically something like a logit of a logit of logit.
+So, it was a function that depended itself on functions of the input or
+a function of a function of a function of a function of the inputs.
+So these neural nets can become arbitrarily complex, the more layers we add. So this already suggests one first way of regularizing,
+which is limiting the number of those layers. The less layers, the less expressive manual network is.
+In the same way, the more connections that are between layers the more expressive
+manual network is, and therefore also the more prone to overfitting it may be.
+Now, that may be a pretty obvious way of regularizing but there are some ways that are less obvious.
+Here's one particularly smart way, so one smart way of regularizing is called early stopping.
+It says, rather than optimizing the neural network more and more and more, why don't we just stop the optimization algorithm at a certain level for example,
+after a certain number of stops. That will mean that the optimum I find is not actually an optimum within my sample,
+but instead stops short of trying to fit the in-sample fit optimally.
+Now, that may sound like giving up on optimization correctly, but it actually has the feature of regularization.
+It has a feature that avoids excessive overfit by not optimizing too much with the additional feature of not needing
+that many optimization steps and therefore running quicker.
+In addition to those different machine learning predictors, we can also combine
+Machine learning predictors from different function classes with each other. In that case, we could, for
+example, use a weighted average between those different predictions. Where we choose the weights themselves in the same way that we would choose some
+regularization parameter, for example, by cross validation. In order to find a combination that does particularly well in terms of prediction.
+Now, it may not be that surprising that on average, these ensembles do pretty well because they basically invest in a portfolio
+of different prediction algorithms. But maybe more surprising is that such ensembles basically outperform each
+individual predictor, including the very best ones. Routinely at prediction competitions, meaning that the combination
+of multiple prediction algorithms from different function classes seem to do consistently better than even the best individual predictor.
+Suggesting that there is some complementarity between the different function classes.
+The second way in which we can combine models is by combining models of the same class.
+Some of the most successful out of the box machine learning algorithms that work particularly well on the kind of social science data that we often deal with.
+Are actually ways in which we combine multiple trees into a more complex predictor.
+The first way we could do that is called bagging or bootstrap aggregating. And in the case of regression trees aggregating many
+of them together will be called a random forest. So rather than running a simple regression tree, where we just take a take
+a single tree, we instead repeatedly draw bootstrap samples from the data.
+We then construct trees from each of those bootstrap samples, and when we form predictions we simply average the predictions across those different trees.
+So while before we obtained predictions that were either from linear regression or
+a single tree. I now want to show you how it looks like when we form predictions from
+a random forest in the case of poverty prediction, or prediction of consumption.
+In this case from number of residents a number of rooms.
+So as you can see by combining many trees, the resulting picture is actually quite smooth. There is some weird areas here where it looks like with a high number of rooms and
+a high number of residents, suddenly the predicted low consumption goes up again, and is non monotonic.
+My best guess is that that's simply because there's not enough data in that area. But when I look at the big picture here, it is able to both capture
+the interactive effect of residents and rooms as well as the gradient
+of rooms on the left in a much more smooth fashion that individual tree was.
+So just to compare those three with each other, or less has very smooth coefficients, but a very global structure that does not really allow for
+interactions unless I explicitly model them. The tree allows for interactions but at the same time is a very crude way of
+splitting up things that is not very smooth. The forest here does considerably better by actually
+combining some of the smoothness of or less with the ability to also fit interactions just like the tree.
+A second way in which trees are often combined and improved is by boosting.
+Boosting means I first fit a simple tree, then I look at the errors I make, and to the error I make I fit a second simple tree,
+I construct a new error relative to population target. And then I predict the error with a third tree and so on, and
+that way combine many trees with each other. So rather than going into more formalism how this works,
+let me just show you a picture. So this would be the first few steps of a boosted tree algorithm,
+where we assume that the truth which these blue points are drawn from basically
+are taking one of five different values and locally constant.
+So what happens with a first tree, so this is simply using a simple tree stump meaning a tree that just lets once.
+The first tree is simply select two areas to the left and to the right of the third bucket here,
+meaning that the first three buckets on the left, the second two are on the right.
+And then it forms residuals, meaning mistakes it makes relative to the blue points and then it fits a new tree to those residuals.
+In this case, it looks like this new tree splits the four buckets on the left relative to the bucket on the right, and
+then those trees get added up to one combined prediction. We formed residuals again, we fit a tree to residuals, the new tree gets updated,
+and so on. So what I'm showing here, you here is the first three iterations, as well as iterations, 18, 19 and 20, so there's quite a lot going on in between.
+But we see that by iteration 18, the tree has actually already perfectly fitted what's going on here,
+and from then on, it just starts to round off the edges a little bit more. So in that case, we would likely learn that we'll be good to stop this boosting
+algorithm after not too many steps, which would be an important tuning parameter.
+Meaning we can regularize by simply saying don't do it too often stop after a given number of steps and also in each of your updates don't update too much.
+In addition to those machine learning algorithms that I have now mentioned, I also wanted to mention one whole paradigm that can help us construct good
+machine learning algorithms, which is doing Bayesian regularization. So when you think about what the Bayesian method would do,
+a Bayesian method is characterized by the idea that I combine the data that I see
+with a prior I have over how the relationship of variables could look like.
+So specifically in the case of rich regularization, for example, we could interpret rich as saying I have a prior that my coefficients are normally
+distributed and not too large. Now then for my posterior after looking at the data in order to form good predictions.
+So therefore Bayesian methods naturally provide some sense of regularization
+because they're shrink towards the prior, they don't let the data over run.
+They don't let the noise over run the signal, because they shrink the information that I see towards the prior,
+thereby balancing approximation and overfit against each other.
+So in general, these Bayesian methods are a powerful way of constructing regularize predictions. And some of the most successful one, including rich regression, but
+also Asian trees, are actually performing incredibly well.
+So let me just recap what the main ingredients of a successful machine learning algorithm that I showed you today are.
+First of all using flexible functional forms that are able to capture the relationship between Y variable and X variable well.
+Second, limit the expressiveness or in other words, use a regularize to make sure that there is not too much overfitting.
+And third, learn how much you should regularize from the data itself.
+As I mentioned, there are important research choices left that you have to consider when you use such a machine learning algorithm.
+When it comes to choosing function 1000 regularizer, we saw that you can actually also choose multiple ones and
+then do some more tuning in order to decide how much weight to put on each.
+I now want to end here with two comments. The first comment is on implementation.
+I don't have time to go into detail in this module on how you would implement these methods but I wanted to point out that all of the machine learning methods
+I mentioned today are readily available in all major programming languages.
+Where I would say that R, Python and Julia are the three most natural programming languages to work in when you consider using machine learning.
+R in particularly has become a language that has many of those language, those
+methods available while also being very amenable to doing applied econometrics.
+So in many ways it would be the language that right now I would recommend if you are interested in applying machine learning in kind of
+an applied econometrics context where maybe computation-. And how long it runs is not your main concern.
+And you want to combine some conventional statistic and statistic analysis like linear regression analysis with machine learning.
+Or you may want to use some modern methods like those developed by my colleague Susan Katy which are all available as our packages.
+A second comment I want to make here is a comment on where all these methods come from.
+A lot of what I talked about is actually not new, it has been known in statistics and has been used in statistics for a long time.
+For example, the idea that I can improve prediction by shrinkage goes back to at least James and Stein, who showed that for high dimension linear regression,
+here high dimensional means there is at least three covariates. We can do better by including some data driven shrinkage in order to improve our
+prediction quality. Random forests themselves predate many of the recent surge
+in machine learning were introduced by Breiman in 2001. Machine learning is by some seen as just a fancy word for non and
+semiparametric econometrics. And indeed many of the prediction methods that we use today are quite similar to
+some of the methods that have been discussed in statistics and econometrics.
+However, I would argue that something new has happen here. One is simply that we now have much more data available in an automated way that we
+can all download and work with. Including for example, satellite images that are now all digitally available and
+available in a way that our computers can actually work with them. We have the computational power, meaning we have both the hardware to compute,
+but we also have the software to perform that computation.
+We also have functional forms that work on some other data, for example, finding good functional forms, finding good neural nets that perform
+good image recognition is by itself a big achievement. And the focus on prediction that machine learning brings with it unlike
+some estimation tasks in econometrics focuses the goal.
+And the way that we achieve things more on an engineering competition that is simply about finding good predictors.
+Now we will discuss next module whether that's the right thing to go for or not. But at least if I want to focus on a prediction problem,
+then let's focus on prediction and allows us to basically turn finding good predictor into an engineering competition.
+And finally, I would say there are some new theoretical interesting insights that are coming out of researcher aren't machine learning that have increased
+our understanding of prediction very high dimensions. To name just a few, I think the double descent phenomenon which I'm not focusing
+on here which amends our understanding of the bias variance tradeoff is one example.
+As well as some better theoretical understanding of deep learning and tree based methods.
+Okay, so let me recap. Machine learning in the way that I presented it here often is a combination
+of using very flexible functional forms, regularization and tuning. But now that we have understood that, the question for
+me is what do these features of fitting a function actually imply about the properties of the fitted prediction function?
+And how can we therefore use the prediction function we get out of it and applied work? And the background is that we hardly ever face a pure prediction problem because
+often the question that we are interested in are more causal in nature, or we want to have some guarantees on the object we get out of it.
+So therefore, after first motivating what we're doing right now, by pointing out that machine learning is very good at prediction and
+that prediction solutions are behind many innovations in machine intelligence.
+And by today talking about how many of those machine learning methods work.
+I will in the final and next module talk about how we can use the output for machine learning and how that output relates to classical estimation output,
+for example, for linear regression. See you then.

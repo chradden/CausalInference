@@ -1,0 +1,271 @@
+Introduction
+Hi, everyone.
+Welcome back to machine learning and causal inference.
+The overarching pitch of this class is so far has been something like this.
+We need to understand causal effects in order to do good data
+driven decision making causal effects are out there,
+they're defined in terms of potential outcomes.
+They exist before you collect any data.
+And they certainly exist before you even think about applying any method to
+the data.
+So if we talk about machine learning and causal inference,
+we talk about causal effects as kind of these fundamental objects.
+That are in nature and machine learning as a set of tools that helps
+you better understand and estimate these causal effects.
+In particular, machine learning provides
+a set of tools that are helpful whenever you have large or
+particularly complicated data sets you want to use understanding causal effects.
+So, this is a story we've talked about quite a bit so far.
+And in doing so, really focused on the causal inference, signs of the story and
+try to build some bridges, from causal inference towards machine learning.
+One part of the story we focused a little less on is the machine learning
+side of things, and kind of what is machine learning really?
+One thing to note is that by now in social sciences,
+most people have had some exposure to machine learning, but
+mostly to a very narrow slice of machine learning involving prediction problems.
+A lot of people will think of machine learning essentially as the thing,
+you go to when you're looking at you when you have a large database of images,
+images of cats and dogs.
+And you want to use these images to train an algorithm that can distinguish cats and
+dogs in a way that can generalize to new unseen data.
+And if that's your task then machine learning is the place you go look
+looking for methods.
+But if you talk to engineers, they might tell you that this is actually
+a fairly narrow view of what machine learning is.
+There's a huge number of tasks out there that fit under the general umbrella of
+machine learning.
+And prediction task is just, it's a very nice and kind of very high impact
+area of machine learning, but it's still a pretty small slice of the pie.
+Trying to give a general definition of machine learning, like for
+any area is a delicate thing.
+But if you wanted to attempt to do so, some ingredients, you'd certainly need is
+that a machine learning problem involves a task, something you're trying to do.
+It involves a loss function, something that rewards you, or
+punishes you for performing the task well or poorly.
+And then it involves data that you can use to learn an algorithm.
+That can perform the task well according to the loss function.
+So, if you think about your image classification task,
+distinguishing cats from dogs, it clearly fits under this perspective,
+with task is recognizing cats and dogs.
+Your loss is one if you get the classification wrong and
+zero if you get it correctly.
+And then you just want to use these images to learn to classify accurately.
+It fits can obviously under this umbrella.
+But another completely different task that still fits into this umbrella could be
+flying a helicopter.
+Your task is to keep the helicopter up in the air.
+Your loss function is zero as long as you're in the air, it's one if you crash,
+and your task, well, it's to fly the helicopter while maintaining a low loss,
+that is while staying in the air.
+What's the data you want to use?
+We'll hear it could depend,
+you could have access to videos of professional pilots flying helicopters.
+Or you could give your algorithm access to a flight simulator where they can
+try different flight strategies and see what works and what doesn't.
+And again, this might look completely different from a prediction problem,
+but if you talk to engineers, this is certainly something that would fall
+under the umbrella of machine learning.
+And it's also certainly, a problem that involves a well defined task,
+a well defined loss function and using data to optimize that loss.
+So anyways, what I want to do in this week's lecture is to build on
+our earlier discussions of treatment effect estimation, and
+more formally connect them to this loss based view of machine learning.
+And essentially to show how you can turn our discussions
+about treatment debate estimation so
+far into loss functions that capture these treatment effects.
+So then, when you try to train a machine learning method against these loss
+functions, they give you treatment effect estimates as a byproduct.
+And you get what you want kind of in a follow general machine learning setting.
+Before talking about how to design loss functions,
+treatment practice donations, and all the nuances that will entail.
+I first want to kind of as a warm up and review,
+talk briefly about what this last basic view of machine learning looks like.
+In some simpler, familiar settings, so
+then can see how to extrapolate from there.
+Prediction
+So again, the simplest machine learning problem, of course, is prediction.
+So we have data X's and Y's.
+We want to predict Y from X and formally we want to design predictor.
+You want to learn a predictor mew hat that takes as input your X's and
+outputs predictions for Y.
+And given a predictor, what's your loss function?
+Well predictor takes as input an X outputs a prediction
+you have X and last there is L mu of X comma Y.
+It's the prediction error, Y minus mu of X to the 2nd.
+Where do we go from here?
+Well, for any given, predictor you had,
+your training loss is a sum over your n training,
+examples of, this square that are loss.
+In general to learn new hat, you're going to minimize the square year loss,
+with some amount of regularization.
+And then, what is the criteria you care about the end?
+You, hope that this new hat you learned on the training set, is going to,
+when deployed on the test set make predictions, mu have Xi for
+unseen examples, Yi will get log squared error loss.
+So really what I'm emphasizing here is that kind of,
+everything in prediction goes to the squared error loss function.
+Once you're given this loss function everything becomes more algorithmic
+procedural, your training set, you have a test set, you have a training page of
+regularization, but the loss function is there at the center of every task.
+Training
+So kind of more specifically if you want to train a predictor you're going to
+be given a training set.
+And on that training set, you're usually going to run an algorithm disk,
+this could be the last.
+So, it could be boosting, it could be deep neural networks.
+These methods are actually learning a predictor, and
+algorithmically look pretty different.
+But fundamentally all they're trying to do is minimize the training error loss,
+the square error loss function you have here using different functional forms and
+different types of regularization.
+In the hope that, minimize getting a low training loss in terms of square error
+on the training set well then generalize into a law test loss on a test set.
+So, this loss function is used in training.
+If you want to measure the accuracy of your model and kind of predict tested
+performance, you can use cross validation, which is essentially just
+involves considering this squared error loss out a bolt in your training set.
+Or if you wanted to combine different models, and then talk
+about stacking later in this lecture, and then you can use stacking as a tool for
+model averaging that's also going to be governed by squared error loss.
+So again, once you have the square loss function,
+everything else is just defined in terms.
+So to kind of understand the power of this idea,
+let's talk about a different setting where we also might want to do machine
+learning but it's not a prediction problem and here one.
+News Vendor Model
+Nice, problem that's less often talked about, but where everything
+works out quite nicely is the following problem in inventory management.
+It's called the newsvendor model because you can kind of think of the problem as
+motivated by the following story.
+You're running a newsstand and you need to choose how many newspapers
+queue you're going to purchase before the start of the day.
+If you purchase too pune a newspaper you're at risk of stocking out,
+which means you'll lose sales because of that.
+But if you purchase too many newspapers then you have a high
+risk of having newspapers leftover at the end of the day.
+And of course, no one wants yesterday's newspapers.
+So that's going to be pure waste.
+So, you'd want to pick order a quantity of newspaper Q,
+that's not too high and not too low.
+And then kind of for any specific quantity what's your profit going to be,
+well, you need to first purchase your Kuna newspapers you're going
+to purchase them at cost C.
+So you're going to pay CQ Then what's your revenue going to be well,
+the number of newspapers you sell is the minimum of demand and
+the number of newspapers you have in stock.
+So it can be the minimum of D and Q, where d stands in for demand, and
+then you're going to sell them at price P,
+your profit is just going to be the difference between these two terms.
+That is have a new ad costs, so far, so good.
+Now let's say you're kind of a fancy news vendor, and
+you recognize that different days are different.
+For example, maybe after a major sporting event,
+you might expect to sell more newspapers.
+And you want to take that into account.
+Policy
+So, now what you you're going to do is you're also going to measure
+some covariate X that help you predict days or
+kind of anticipate days when you should purchase more or less newspapers.
+And then what you're after is a policy,
+is a stocking policy pi of X.
+We're kind of on different days depending on the covariance X,
+your purchase a different number of newspapers, Q equals pi of X.
+So if you were to deploy this policy, what's your expected profit going to be?
+Well, it's just going to be the expected profit from above,
+except now I'm just going to specifically write Q as Pi of X.
+So the value of your policy Pi, say that the expected profit is just going to be P,
+the price at which you're selling newspapers times to minimum
+of Dn pi of X minus your average cost that is the expectation of seat as policy's.
+So, so far, I've just been talking about definitions
+that is given a policy, what is your expected profit from
+deploying that policy in this newsvendor model?
+But now, of course, the question is,
+how could you actually come up with a good policy?
+And in particular, how can you use data to figure out a good policy time.
+And I hope I've kind of suggested the solution strongly enough
+that at this point, it shouldn't be a surprise.
+Essentially, there's a task you need to choose how many newspapers to purchase.
+And there's a reward function V of X, that's your expected profit.
+Your loss function is going to be the negative profit and
+you'd want to kind of think of this as a machine learning task.
+Where you want to use covariates to choose how much to order, such as to
+maximize your profit or minimize the loss, the negative of the profit.
+And once you adopt this perspective, kind of what to do next is very clear.
+For example, if you think about regression trees as trees
+that kind of tried to minimize squared error loss.
+Well, what would be a tree based algorithm for optimal inventory management.
+You could perfectly, well,
+emerge in training a tree by recursive partitioning as we usually do,
+except now your loss function for training the tree isn't squared error loss.
+Your loss function for training a tree is negative
+profit and you kind of take it from there.
+If you want to read more about this, here are too recent papers that go into that.
+But anyways, the point here is that if we want
+Machine Learning
+to deploy machine learning inventory management,
+essentially you need to remember what the newsmen major problem is about.
+You need to remember what kind of stocking quantity demand cost price are.
+But once you've done so, then you can kind of codify all that subject matter
+knowledge into a loss function.
+And then when you actually start deploying this you're and
+of the part where you do machine learning looks exactly the same as a prediction.
+You're trying to kind of using an algorithm, minimize your training
+loss over regularize class of functions, say trees, or it could be deep nets also.
+And where do we go from here?
+Well your tree is going to o try to minimize in sample loss on
+the training set you could use this loss function error in here for
+cross validation to kind of cut your training set in folds.
+And always kind of Some of the folds,
+train a tree that kind of prescribed stock in quantities.
+And on the held out fold.
+You could try to see how well you did,
+when you want to kind of see at the very end how well you did.
+Well then you'd kind of want to deploy your method on a test set and
+assess test set loss or your stocking policy.
+But the point I'm making is it's kind of once we found
+a loss function that captures what's important about inventory management.
+Then the problem of deploying machine learning for
+inventory management it's kind of algorithmically verbatim to what we did
+before with the only difference is that you swapped in a different loss function.
+So, with that background today with this week's
+Lecture
+lecture is about is loss functions for policy learning.
+So there are going to be three parts today.
+The first part is going to be, loss functions for treatment.
+So specifically I'm going to continue last week's discussion about causal forests.
+Which essentially were kind of more of an ad hoc,
+forest based algorithm for estimating heterogeneous treatment effects
+in a way that was robust in observational studies.
+And the goal today is going to be to kind of extract
+the key parts of the algorithm that made causal force work, and
+then distill those into a loss function.
+That you can use with any machine learning method.
+So the main difference relative to what I showed you earlier with prediction or
+inventory management is that unlike in those cases,
+there isn't going to be quite as obvious a loss function.
+To use in this context so
+we're going to have to work a little bit harder to design a good loss function.
+So that's part 1.
+Part 2 is going to be on interpreting and validating estimates of
+the conditional average treatment effect essentially by now.
+We talked a lot about how to estimate cates accurately.
+I want to say a little bit more about what you might want to do once
+you actually estimated cates and want to see how well did you do?
+What have you learned?
+So that's part two.
+And then, in the last part today, I'm going to talk about policy learning and
+by policy learning.
+I mean,
+the problem of learning decision rules are that try to exploit causal effects.
+The problem of learning treatment policies is very closely related to the problem
+estimating heterogeneous treatment effects, but it's slightly different.
+When we're estimating heterogeneous treatment effects we're trying to give
+an American's,
+kind of forgiving person we might ask is the treatment effect on one, is it three.
+And we try to tune that under kind of squared error loss on the cate scale.
+On the other hand, if we're talking about worming treatments and policies,
+then our decision is going to be more like a classification decision.
+It's going to be a zero or a one, treat, don't treat.
+And this is going to lead to some subtle differences so
+I'm going to talk about that and talk about the problem of policy learning and
+then I'm going to talk about how to design loss functions but that task also.

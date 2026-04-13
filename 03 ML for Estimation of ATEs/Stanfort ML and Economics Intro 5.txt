@@ -1,0 +1,304 @@
+
+
+Introduction
+Hi, everyone, welcome to week 2 of machine learning and causal inference.
+Just to get everyone up to speed, last week, right?
+You had a crash course on machine learning, just a reminder of what are some
+of the widely used methods in machine learning, what people are doing out there.
+I imagine that for most of you, that is a review, it's mostly a review.
+Now, is when we get into really the core of this class, that is how you can use and
+deploy a machine learning based methods in causal analyses.
+This week, we're going to focus more of a classical topic in causal inference,
+estimating average treatment effects,
+I'll say more in just a few slides about what that means.
+And how we can rigorously deploy off-the-shelf type
+machine learning tools for this task.
+In the upcoming weeks, we're going to dig deeper and
+look at some more specialized tasks, including creating personalization.
+And look at how we can kind of develop special purpose
+machine learning methods for those tasks.
+Machine Learning
+So anyways, before saying anything else, just of course, the core tension
+of this class, and one that both Susan and I have already emphasized many times,
+but it doesn't hurt to say once more is right, what's machine learning about?
+Machine learning methods are about prediction, they're about giving
+a type of data, understanding what usually happens in a given situation.
+For example, you could download historical weather data, and
+then based on that data, try to understand.
+Given the conditions you expect there to be tomorrow,
+what's the chance that air pollution levels will be dangerously high?
+That's prediction, but that's not usually what we care about
+in many economic or social science applications,
+in many applications like this, we care about causal questions.
+We don't just care about understanding what would usually happen in a given type
+of situation, we want to understand counter factuals, we want to understand,
+say, what would happen.
+Not only do we think tomorrow might have high pollution levels, but
+can we change this by, say, reducing the number of cars on the road.
+We're most interested in interventions we might take to kind of
+improve the situation.
+So this is obviously a different kind of question, and
+as we'll see many times in the class.
+A naive application of machine learning methods that are designed for
+prediction to cause a task, can get one into quite a bit of trouble.
+But that's also see if done right, then actually, machine learning
+methods can be usefully adapted to causal tasks, many can be very helpful.
+Outline
+So anyways, having said that,
+this week our goal is to understand how machine
+learning methods can be rigorously deployed for
+the classical task of average treatment effect estimation.
+And with this, they are the main result,
+we're going to give it in the fourth part of this lecture.
+The main result is going to be a methodology based on doubly robust
+estimation that can kind of take as inputs, generic, black box type
+machine learning estimates, and as output gives you confidence intervals.
+What kind of eliminating normal sampling distribution,
+and all the guarantees you'd like.
+But okay, we need to work up to it, and so
+this will be done in kind of four videos.
+The first video in this one,
+I'll introduce the notion of average treatment effect.
+Talk about some basics about how we can think about average treatment effects in
+the context of randomized trials.
+Then, in part 2, I'm going to talk about kind of some simple
+ways you could think about using machine learning for
+average treatment effect estimation.
+Compare that to kind of classical regression based methods and
+see what's good, what's bad, what the limitations are.
+This spoiler give this is not really a spoiler alert,
+the naive method won't quite work.
+You'll leave something on the table,
+you won't get the confidence intervals of the type you'd want at night method.
+So we need to do something else, and here we're going to start working towards it.
+Part 3 may feel like an aside at the time,
+I'm going to introduce propensity score methods, and
+kind of an estimation toolkit are built around that, but
+by the time we get to part 4, you'll see that this was not an aside.
+The kind of state of the art way of incorporating
+machine learning methods into the average treatment effect estimation world.
+Kind of combines the naive approach with insights from propensity score based
+methods, that's going to take us to what's called the doubly robust methods.
+And out of all the methods, I'm going to talk about today,
+that's the one I recommend you to practice, and
+that's one I also use often in my own research.
+All right, so that's the outline, and now we're in part 1,
+so what's the average treatment effect?
+Definition
+Here's the definition.
+I should emphasize again, like we mentioned in the intro video,
+when it comes to defining core notions from causal inference,
+we're going to move quite fast in this class.
+So if you want more background on these notions,
+it may make sense to say read some kind of introductory econometrics resources,
+including some of the ones we've listed ourselves.
+Okay, for all of today,
+I'm going to work in terms of this classical statistical setup.
+We have n units, an independently sampled units.
+And for each unit, we observe a feature vector,
+that's kind of background information about who you are.
+Our response Y, that's the outcome, the thing we usually want to
+improve using a treatment, and then a binary treatment at 0 or 1.
+0 if you didn't get treated or if you got assigned control, and
+1 if you got treated.
+So this is standard COBOL setup, and then in order to
+talk about causality, what I'm going to do here is I'm
+going to posit the existence of these quantities Yi0,
+Yi1, these are called potential outcomes.
+And the way to interpret these quantities is that,
+Yi(0) measures the outcome you would have observed for
+the i-th unit had they received control, and Yi(1) is the outcome you
+would have observed for the i-th unit had they received treatment.
+Then of course, the outcome you actually observe of Yi is the potential
+outcome corresponding to the value Wi of the treatment that you actually received.
+Why are potential outcomes useful?
+It's because they enable you to kind of very directly define a causal effect.
+The causal effect of the treatment is the difference in potential outcomes.
+It's for the i-th unit, the effective treatment is just the difference between
+what would have happened to the i-th unit with the treatment verses without.
+So this is the treatment effect for the i-th unit.
+And a lot of causal inference is going to be trying to say
+something about these differences in potential outcomes.
+Now, today we're going to kind of focus on one specific question you can ask in
+terms of these potential outcomes.
+Average Treatment Effect
+And that is, what is the average treatment effect, or
+what is the average difference in potential outcomes if the causal
+effect of the treatment on the i-th unit was Yi(1)- Yi(0)?
+Then here the thing we're going to have,
+the average treatment effect is the average across the sampling
+distribution of these individual treatment effects.
+And the average treatment effect is, not surprisingly,
+it's often considered kind of a first very helpful summary
+measure of the effectiveness of a treatment in some population.
+So why is this problem not completely trivial?
+Well, taking averages is not that hard, we know how to do that.
+And here the difficulty, of course, is that you have a missing data problem.
+For each unit, the treatment effect for the individual treatment effect of
+the i-th unit Yi(1)- Yi(0) is defined as the outcome you would have gotten if
+you were treated minus the outcome you would have gotten if you weren't.
+That's the difference of two things.
+But of course, you only ever get to observe one of these two things.
+Either you're treated, in which case you observe the treatment potential outcome,
+or you're control, in which case you observe the control potential outcome, but
+you never get to observe both.
+So you have this fundamental missingness issue,
+that's what makes this problem not trivial.
+On other hand, to be interesting, it also needs to be possible.
+And it turns out that kind of given the right methods,
+estimating average treatment effects is practical.
+So where I want to work towards, like I said earlier this week,
+is getting to a point where we have kind of more complicated types of data.
+And we can kind of bring machine learning tools to the table to kind of
+enable flexible and
+robust estimation of average treatment effects in quite a bit of generality.
+But just as a warm up, let's talk about the simplest case in which
+you can estimate an average treatment effect and how that works out.
+And of course, the simplest case between causal inference is the randomized trial.
+We say that you're in a randomized trial if the treatment assignment is randomized.
+That is, there are some people who get treated,
+some people will get the control assignment.
+And it's really, who gets treated or control is chosen completely at random.
+There's kind of no association between the potential outcomes of a unit and
+the treatment.
+Qualitatively, you could think that it's a randomized trial if for
+every person, you flipped a coin.
+If the coin came out heads, you assign them to treatment.
+Otherwise, you assign them to control.
+And, okay, why do we like randomized trials?
+Well, here is kind of a very short derivation which shows that essentially,
+the average treatment effect, that is, the average difference
+between the kind of treated potential outcome and the control potential outcome.
+This thing here can be expressed as in this other way.
+That is, the expected value of the outcome for
+the treated units minus the expected value of the outcome for the controls.
+And of course, this thing here is easy to estimate.
+You could just kind of literally end a randomized trial,
+take the average of the Y's for the treatment units and this for the controls.
+So this kind of immediately suggests an estimator that you could use for
+the average treatment effect.
+And of course, the important difference here is that here,
+we define expectations in terms of potential outcomes.
+Potential outcomes are not always observed, so we have missing data problem.
+Down here we have a conditional expectation.
+But in terms of Yi's, that is, kind of actual observables,
+there's no problem in estimating the average of Y conditional on W=1.
+So this we can just read out from the data and there's no problem.
+And really, the key step in this derivation here was this first line,
+where we argued that the average of the treated potential
+outcome over the whole sample is the same as average
+of the treated potential outcome conditional on Wi=1.
+And this follows from this randomization statement.
+Because treatment is randomized, conditioning on treatment
+doesn't change the expectation, so this is safe.
+Then in the second line here,
+we went from the expectation of the treated potential outcome conditional on
+being treated to just the expectation of the outcome being treated.
+This is kind of more mechanistic, kind of we already agreed that when you're
+treated, the thing you observe is the treated potential outcome.
+So this is kind of a more tautological consequence of the definition we've
+set up.
+But, so what does this mean?
+It means that even though there's this fundamental missingness problem in causal
+inference, you have treated and control potential outcomes.
+Causal effects are defined in terms of differences of things you can
+only ever observe one of, then it's actually possible to estimate
+an average treatment effect using a randomized trial.
+That is, a dataset where our treatment
+was generated uniformly at random.
+Example
+All right, so just to kind of illustrate this in terms of kind of a simple example.
+Suppose again that we wanted to understand the effect of
+Driving restrictions on air quality.
+So, what I'm showing in this slide is essentially Oracle data,
+that kind of an omniscient statistician could hope to have.
+Everyday you have Yi(0), the pollution levels you
+would have gotten that day if there were no restrictions on traffic.
+Yi(1), another potential outcome,
+that is the pollution levels you would have gotten with the traffic reduction.
+And then this tau Y,
+that is the effect of the traffic reductions on pollution that day.
+Here I made a plot of the potential outcomes Yi(0) and Yi(1).
+You see that there's very strong correlation between Yi(0) and Yi(1).
+That is most days, pollution was what it was going to be.
+And kind of the traffic restrictions only had a kind of second order effect.
+But at the same time you also see that Yi(1) is typically smaller than Yi(0).
+The data kind of lives below the diagonal.
+And this means that the traffic reductions did help or
+the restrictions did help reduce pollution a little bit.
+And if you take the averages of all these, then what that says is the average
+treatment effect, that is the average daily effect of the traffic
+restrictions is here, -10 and it's connected to the road.
+If we had access to this full table getting this -10,
+Chris averaging this tau i's would be very easy.
+But of course, this isn't what real data looks like in real data.
+Real Data
+Even if you had the kind of best data you could hope for.
+You have a randomised trial.
+Then every day you flip a coin, and depending on how that coin comes out,
+you either observe Yi(0) the control potential outcome, or
+you observe Yi(1) treated potential outcome.
+You don't get to observe both.
+And so in particular, your problem is that you never observed tau i's.
+So you might be wondering how can I estimate the average of the tau i's,
+if I never get to observe a single tau i.
+But this is kind of the theory we just saw earlier,
+you get an unbiased estimate of tau i by taking
+the average of outcomes on days where you got treated.
+Minus the average of the outcome on days where you got a control,
+and then this gives you an average treatment effect estimate of minus 10.
+All right, this is how it works.
+Randomized trials are very nice.
+Not much need for kind of, you can do most things you want in randomized trials.
+At least in terms of estimating average treatment effects without
+using any very sophisticated methods.
+But okay, we're not always in randomized trials and
+then we need to work harder.
+And we're essentially a very kind of simple example,
+where this kind of discussion from the couple last slides wouldn't apply,
+is if the treated assignment is in random but
+it's actually associated with confounders.
+So let's just consider a very simple example.
+You want to understand the effect of some treatment that helps mitigate and
+prevent obesity on quality adjusted life years.
+But you didn't assign this treatment in a randomized trials rather you just have
+data from electronic medical records with decisions made by doctors, as they saw it.
+And here you might assume that look,
+doctors aren't going to assign the treatment kind of uniformly at random.
+They're going to prioritize this treatment to
+people who have higher weight coming in.
+And if this is what's going on,
+then just stating a difference in means can fail to
+give you a valid notion of an average treatment effect.
+So, let's consider an extreme example.
+Let's suppose the treatment does nothing.
+So for every unit, the treated and
+potential control potential outcomes are just the same.
+But here you see kind of people vary by weight,
+they vary by outcome, there's your negative association.
+And what is it the only effect that's going on here is
+essentially that doctors are more likely to assign treatment
+to people with higher weight than with lower weight.
+And what's going to happen here?
+Well, you're going to have some treated units that live
+in the higher weight region.
+Controls live here.
+In the lower back region, so the treatment does nothing.
+But if we start looking at a difference in means type estimator,
+we look at the average outcome for treated units versus controls.
+What are we going to get?
+Well, the average outcome for
+the control units here is higher than for the treated units.
+This is just a function of doctors choosing to treat different people all
+based on weight and there being negative association between outcomes and weight.
+And when you put these two things together,
+you see that actually the average outcome for
+treated units is going to be lower than the average outcome for the control units.
+So, if you just kind of naively study this is a randomized trial,
+you think that the treatment here was harmful.
+Whereas actually, it does nothing.
+You just had a selection bias issue and you kind of detecting that bias.
+So this is the end of the first part.
+In the second part, we're going to start talking about conceptual and
+statistical solutions for
+estimating average treatment effects when you're not in a randomized trial.

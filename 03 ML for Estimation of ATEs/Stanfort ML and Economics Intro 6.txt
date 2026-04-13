@@ -1,0 +1,385 @@
+
+Intro
+Okay, so we talked about the average treatment effect.
+We talked about randomized control trials.
+We talked about why estimating average treatment effects in randomized trials is
+very nice.
+But we also talked about how not every setting in which one to
+estimate an average treatment effect is a randomized trial.
+And so then our next question is, what can we do there?
+And so the setting we want to focus on now is one in which
+we observe some pre-treatment covariates X.
+And we're worried the treatment is not random in that it may be associated with
+some of these pre-treatment covariates X.
+If that's the situation, then we need to control for these X's, and
+how best to do so is essentially the direction we're going.
+In particular, we're going to want to see,
+how does machine learning fit into all this?
+Now, before going there, though, there's obviously a question,
+under which conditions is controlling for these X's enough?
+Under what conditions does kind of bringing these X's to the table help us,
+enable us to identify an average treatment effect where kind of,
+we're not in a randomized trial, and we of course need to be explicit about that?
+So here, the assumption I'm going to be working with throughout
+is assumption called unconfoundedness.
+Whereby treatment may not be randomized overall, but
+once you condition on X's, treatment is as good as random conditional on X.
+As I'll discuss over the next couple slides, once you have this assumption,
+controlling for X is enough to identify the average treatment effect.
+And then that'll set us up to focus on our main question,
+that is, so given that the average treatment
+effect is identified, how do we estimate it?
+All right, so to be a little more formal about this assumption,
+Covariates and unconfoundedness
+that is, that treatment is as good as random given measured covariates X.
+What do I mean?
+We're going to be in the same setup as before.
+We have X, Y, W's with the same interpretation as before,
+potential outcomes.
+The definition of the average treatment effect is the same.
+But instead of assuming that we have a randomized trial, as before,
+a randomized trial, right, would just be with an orange here.
+That is, that the treatment is random.
+It's independent of the potential outcomes.
+Here we're not going to assume that, and instead,
+we're only going to assume that kind of once you condition on X's for
+a fixed value of X, the treatment is as good as random.
+So the treatment might not be randomized overall, but
+once for every fixed value of X conditional and X,
+the data looks like it comes from randomized trial.
+This assumption is also known as selection on observable or unmeasured confounders.
+What this means is that if there are any variables that W is associated
+with in a way that makes you deviate from the randomized trial assumptions,
+then you need to be able to measure them and
+condition on them to bring you into this nice setup.
+One question you might have here is, this is kind of in terms of the nomenclature,
+we were worried about a confounding problem.
+And here this assumption is referred to as unconfoundednness.
+So what's up with that?
+The point here is that if W, the treatment assignment probabilities
+can vary with X's, then overall, you're confounded.
+Overall, you don't have that randomized trial type assumptions.
+But once you bring the X's to the table, once you condition on the X's, then at
+that point, conditionally on X, you have the treatment looks as good as random.
+So once you condition on X, you reached unconfoundedness.
+So that's the meaning.
+You were confounded before, now you brought an X, and
+now you've achieved unconfoundedeness.
+So this is the assumption.
+It's really an important assumption.
+I guess I felt the need to highlight it in three different colors.
+The assumption does not hold in all applications.
+For example, in instrumental variables problems,
+you're interested in settings where this doesn't hold.
+But in many settings of interest, it does hold.
+And the rest of this week's lectures are going to be on inference about
+the average treatment effect in something that's not a randomized trial,
+but under unconfoundedness.
+That is when this assumption holds.
+So okay, we have an assumption, good, we have a question.
+Now how do we proceed?
+How do we estimate the average treatment effect under unconfoundedness?
+There are many ways to go from here.
+And I'm going to talk about one approach now, another approach in part three.
+The double robust approaches can kind of combine both ideas to get
+something really good.
+But let's start from one idea, and it's the following.
+Regression adjustments under unconfoundedness
+In this general unconfoundedness setting,
+the average treatment effect does not match the average
+of Y conditional on W=1 minus the average of Y given W=0.
+That was the last picture we saw in the previous part.
+But what you can do is just try to do a similar derivation, but
+now kind of re-express, what is the average treatment effect?
+Well, we're just going to kind of, if you've
+taken this will make perfect sense.
+Otherwise, I hope you'll just by that derivation you get at the end is
+reasonable.
+We're going to kind of, by chain rule,
+add a conditioning on X here, then kind of once we condition on X,
+these three lines here are essentially the same proof as before.
+What they say is if conditional on X, the expected treated potential outcome
+is the same as the expected outcome conditional on X and receiving treatment.
+And, okay, I'll let you stare at the derivation more on the side if you want.
+The end result is that we find that the average treatment
+effect can be expressed as the expected difference
+between these conditional response functions,
+where here mu WX is expectation of Y given X=x, W=w.
+So mu WX is kind of the solution to the nonparametric regression problem
+where we try to predict Y from X and W.
+And what this calculation shows is that under unconfoundedness,
+under this kind of assumption here, then the average treatment
+effect is the expected difference in kind of your best prediction
+given X of what would happen to you under treatment versus control.
+If you were to kind of know these mu 1(x) and mu 0(x) functions [INAUDIBLE].
+So this is kind of a characterization of POW.
+How do we turn this into an estimation strategy?
+Head battle is kind of a notation heavily suggests one,
+mu w of x is a nonparametric regression problem, so you could try to solve it.
+Here, the truth tau is the expectation of mu1(x) and mu0(x).
+So what could we try?
+We could try estimating mu0(x) from data.
+So here kind of mu0(x) is the expectation of y among
+controls conditional on x equals x.
+So you could learn mu0(x) by learning to predict y from x among our controls or
+similarly learn mu1(x).
+And then estimate tau hat(x) by taking the difference over
+your whole data set of these two regression functions.
+And whatever shown so far is that if you were to do this using
+the true mu0(x) and true mu1(x), then this will be
+an unbiased estimate of the average treatment effect.
+And let's say it's quite clear that this estimator
+will be consistent the average treatment effect if
+the mu hat w(x's) are consistent with the mu of uX.
+So consistent is good, is okay, but this is actually good.
+Does this, let you get confidence intervals and
+so forth, and here it's complicated.
+In order to kind of talk about how good this strategy is,
+we of course, have in order to kind of talk about in general.
+How good is this estimated average treatment effect by taking the average
+difference in predictions from them, you want to make some mu0(x) functions.
+We will talk about kind of specifically in steps 1 and 2.
+How did you get these mu0(x) estimates?
+And here there are many different strategies.
+One of them the classical one would be to use linear regression or
+kind of more formally ordinary least-squares or less.
+So what is the OLS approach do?
+It first starts, this is not algorithmic, but it's very important.
+It start by positing a linear model.
+Remember, muw(x) is measures what
+is the expected value of y among treatments times W.
+Given covalent values x, you're doing linear regression.
+Linear regression fits linear functions.
+So you're going to kind of find the right functional shape if the linear model is
+actually correct, well specified.
+So we're going to start by assuming the muw(x) is correctly specified linearly.
+And then once we've done this, then it's kind of clear what we can do,
+we can just kind of fit.
+So mu0(x) is x times beta 0 and so forth.
+We can estimate beta hat zero by just regressing y and x among the controls.
+We can fit beta one by regressing y and
+x among the treated, so this is just very standard.
+And then once we kind of get, we can extract predictions from linear regression
+as usual, and then what's our estimate of the average treatment effect?
+Well, it's just going to be the average difference in predictions from
+linear regression, as you'd expect, and I guess you can do the algebra.
+This is equivalent to just taking the two regression parameters beta hat one and
+beta hat zero, taking the difference and
+inner product things out starts with x bar.
+That is the average of the x's, because of typo here this should be divided by.
+All right, so this is linear regression, is it good?
+Is it bad? What are the pros and cons?
+The classical approach: Pros and cons
+He's pretty clear.
+Linear regression essentially hinges on well specification of the linear model
+in this setting.
+What's the pro?
+When the linear model is well specified, this is great.
+This is simple, it's familiar, it's easy to run.
+It has great guarantees,
+it converges at parametric rate that gives you everything you could ever want.
+What's the con?
+Well, what if the linear specification doesn't hold,
+what if you don't have linearity here?
+Then linear regression just won't give you the right answer.
+So, it's one of these things if kind of the parametric assumptions
+you posit are valid, this is very good, otherwise, it's not.
+So this is linear regression, what else can you do?
+I think it's pretty clear where I'm going with this is in this class,
+we want to use machine learning.
+We want to avoid kind of assuming that functions are linear,
+unless we have strong scientific reason to do so.
+And so, okay, an idea here is let's pull the same strategy,
+except instead of assuming that the function is muw(x),
+have linear specifications that you can fit them by linear regression.
+Let's just assume that they're genetic,
+fit them by a machine learning and see what we get from there.
+One thing I should emphasize here is kind of last week we talked
+about machine learning as kind of black boxes.
+There many machine learning black boxes, deep nets, boosted trees or
+random forest, the last so on and so forth, that helps you predict y from x.
+And here superficially we're not trying to do prediction.
+Superficially, what we're trying to get is we're trying to get at these conditional
+response functions.
+muw(x) is expectation of y conditional on x and
+w, but now it's just, should note the of under squared error loss.
+What is the optimal prediction of y given x and w?
+Well, it's just going to be, if you only know, x and
+w then your best prediction of y is the expected value of y given x and w.
+So actually an oracle would predict y hat I is muw(i).
+So kind of a good predictive method should be predicting using something that's very
+close to these functions.
+So what we're going to assume is that when we train our machine learning method, and
+it gets predictions.
+Then these predictions are going to be cost this because kind of,
+the better the predictive method,
+the closer it's going to be to using these functions for prediction.
+Regression adjustments. The machine learning approach
+So where this leaves us is the idea is to pick our
+favorite machine learning to predict y from x and w.
+In general, I'm going to run this,
+one could predict y from x separately on the treated or
+either controls, or one could try to kind of fit a drunk model to both.
+Talk more about that a couple of weeks from now.
+Then one could use these predictions as estimates for the function we care about,
+mu0(x) and mu1(x).
+And then we're going to estimate tau hat as just the average of mu hat (1)(x) if
+you mu hat (0)(xi) So just very concretely what's going on here, you had mu(1)(x).
+This the way you kind of get it out of the machine learning method is you ask,
+hey, here's a person with covariance xi, and they're treated.
+What's your prediction for the outcome?
+Machine learning method is going to tell you this.
+Then the same person xi, now I'm going to tell you that they're not treated.
+Can you predict what's outcome y going to b?
+The machine learning method, well, this is going to be the prediction they get out.
+And so then tau hat is average different predictions.
+And really, the hope here is that machine learning methods
+should enable accurate predictions without having to model
+the shape of the mu(0)(x) and mu(1)(x) functions.
+So it almost seems like, first, if machine learning methods
+were just perfect, then it would almost be like a free lunch.
+You don't assume linearity, but you fit the mu(1)(x) and
+mu(0)(x) function anyways, and then you're good to go.
+So, let's see how this plays out.
+So here is the simplest way to see how it all plays out is just to try it.
+Regression adjustments and unconfoundedness
+So, I'm going to try to use the regression adjustment form throughout.
+So all the estimators I'm going to consider are going to have this
+kind of form.
+And then I'm going to just try two different strategies for
+learning them your hats.
+We're going to get them out of linear regression or
+we could get them out of some machine learning method.
+This week, I'm going to use random forests as kind of a standard method for
+generic machine learning.
+If for no other reason is that there a machine learning method,
+and they're very easy to run, and there's very few tuning parameters in them.
+So kind of, they're very nice to use kind of reproducible examples, for that reason.
+So it's not that they don't have tuning parameters, but you can run them with
+default tuning parameters and that's good enough for an example.
+So, all right, these are the two basic settings and
+then I'm going to talk about them in two different simulation studies.
+One were these kind of response functions, like expectation of y given x among
+the treated and control separately, one where they're linear.
+So linear regression as well specified, linear regression is justified and
+one where they're not linear.
+So linear regression has an incorrect specification.
+And how does this work?
+So here I just in the slides, kind of very briefly,
+this is how you'd actually get tau hat out of linear regression.
+I'm not going to go through this in detail, but just in case you wanted to run
+this and wanted to copy paste in code, here's on the slide.
+Similarly here is using the random forest similar thing
+here kind of very explicitly, we're getting these
+kind of mu.hat.0 or mu.hat.1's out of here.
+And our estimate of the average treatment effect
+is going to be the average difference in predictions, all right?
+And what settings are we going to look at?
+A simulation comparison
+Well, just like I mentioned, we're going to look at a linear setting.
+This is m by linear I mean that Y responds to X in a linear way,
+that linear function may be different among three language all groups.
+Notice this is normal noise with mean 0 and variance 4,
+then the non-linear setting looks similar.
+Except here now the relationship between Y and X is non-linear,
+there's a step function in here,
+there is a quadratic linear regression won't capture that correctly.
+So what's going to happen?
+Evaluating OLS
+Well, linear regression,
+it's, Probably they should be familiar what's going to happen.
+I'm changing the sample size here.
+So here n is the sample size at the low end we have 100 units to estimate
+the average treatment effect, at the upper end we have 1600.
+What happens here?
+First, what I'm showing here is a box plot and this box plot shows the realization
+of the average treatment effect you get across multiple simulations.
+So the first thing to notice is it kind of regardless of the sample size,
+The backbone is always centered.
+Treatment and
+the average treatment effect estimate you get by linear regression is unbiased.
+This is good as you'd hoped,
+this is kind of what else happens when you get more data?
+Well, you're always unbiased so that's not something you're solving.
+But the other thing that happens is kind of the box plot scenario,
+you're getting more accurate, so kind of with 100 samples,
+you're right on average, you're very wrong in most replications.
+Whereas with 1600 samples, you're right on average, and
+also you're pretty close to the truth most of the time.
+So this is what you like to see.
+What happens in the non-linear setting, where linear regression is misspecified?
+Well, some things look like before, linear regression is going to
+have the same average answer kind of regardless of the sample size.
+It's going to give you that answer more and
+more accurately as you collect more data.
+But what's your problem?
+Your problem is that, that average answer of linear
+regression isn't equal to the true answer.
+So here kind of the true average treatment effect was 0.
+So here the dashed line, you would have wanted to get 0,
+here you got 0 on average, whereas here you did not get 0 on average.
+And, yeah, so this shows that linear regression kind of as you collect more and
+more data, if the linear specification isn't right, it's hopeless, right?
+You just won't get the right answer.
+So what about random forests?
+Here's actually very interesting, it's a completely different picture.
+Evaluating Random Forests
+Now, first thing is remember, here's 0 is the correct answer.
+As you collect more data, you get closer to the correct answer in both settings.
+So both in the linear setting and in the non-linear setting,
+you're converging to the right answer and
+here's the problem issue one needs to deal with.
+We don't have this sitting like linear regression,
+where kind of when you're well specified, not only you're getting more accurate, but
+kind of even finite samples, you're unbiased.
+Here, you're always converging to the right answer, but
+infinite samples, you may be very biased.
+Here in the linear setting, we see that kind of for all sample sizes and
+looking at the point estimates for the average treatment effect
+here are kind of strongly kind of systematic biased upwards.
+We have a, they're not symmetric around 0 at all,
+here the non-linear setting it's interesting from our sample sizes.
+The treatment effects are kind of better centered at the right answer.
+But suppose small samples you also work on a very biased.
+So this is going to be a problem as as we're
+going to see in kind of subsequent parts.
+Really the reason this is the problem if all you cared about is getting the right
+answer in very large samples, this wouldn't be a problem.
+Like, I said, random forests are going to get you here consistency.
+What consistency means is that in the limit of infinite data,
+you're going to get the right answer.
+But often when you're running this you care about more than consistency,
+you want to get a good rate of convergence.
+You want to use your data effectively and you want to get confidence intervals.
+That's kind of even in moderate samples cover the truth and
+the problem with with nominal probability.
+And the issue is kind of when you have these kinds of very biased estimators,
+it's essentially they're not going to have good rates of convergence.
+And it's essentially hopeless to give confidence intervals at least
+using standard constructions.
+So that's an issue.
+Linear regression vs Random Forests
+What's the trade off between linear regression and random forests?
+Linear regression fits on everything being linear, if this assumption is valid,
+you get the biasness.
+I haven't shown constructions with confidence intervals yet, but
+kind of the fact that linear regression is unbiased is closely related to the fact
+that confidence intervals all work here.
+So, all right, if the linearity assumption is valid
+everything works perfectly with linear regression.
+If it fails everything goes out the window, there's nothing to do.
+And this gets us into kind of a setting that might be quite familiar from
+econometric classes, right?
+You like think very hard about fitting a parametric model and
+once you've picked the right parametric model then estimation is easy.
+But machine learning, it really puts you in a different world.
+Linear regression kind of depending on whether you wrote the right model down,
+you're either essentially doing the right thing or the wrong.
+But with random forests, you're kind of never quite wrong, but
+you never crop quite right either.
+You're never quite wrong in that you're always going to get the right answer with
+infinite data.
+But you're generally going to get there in a way that's kind of rather slow.
+And in order to get accurate estimates of the average treatment detected,
+use the data effectively or
+to build confidence intervals you're going to have to do something about this.

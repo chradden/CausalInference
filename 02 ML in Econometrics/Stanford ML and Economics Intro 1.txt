@@ -1,0 +1,284 @@
+Intro
+So thinking about machine learning and economics, or machine learning and econometrics, or machine learning and social science,
+we can start by saying, what are we talking about here with machine learning? There's two big types of machine learning, there's actually lots of types of
+machine learning beyond this reinforcement learning and different parts of AI. But two really big types for distinguishing for what the comments I'm
+going to make today are between supervised and unsupervised machine learning. So unsupervised machine learning is when you have a bunch of videos, or you have
+a bunch of pictures, or a bunch of documents, and there's no labels on them. Nobody has said that's a cat, that's a dog, to start with,
+your input is just a bunch of objects. And what you're trying to do is put those into groups that are similar in some way.
+So they might be images, and then when you put them into groups, you look at group number 5476, and
+when you open up all the images in that group, you see that they're all cats.
+So then you'd say, my machine learning algorithm discovered cats. What it actually did is it put a bunch of images together that it thought were
+similar, and then later on you looked at it and you said, that looks like cats. But you didn't tell the algorithm that cats existed, or that there was any
+specific reason to be looking for cats, that's just something that was discovered.
+There's a little difference across disciplines with how these methods are used, or what their purpose is, they're generally a first step
+towards something else, that something else can differ. It could be that you're going to use it as an explanatory variable in a regression.
+Or it could be you're going to use it to describe features of products, there's many different things you might do with it afterwards.
+But when it's done in this kind of isolated way, I feel like if you want to learn how to do this, you can just google it,
+find some great videos, find something on Coursera. And if you're a social scientist, you can just apply the methods, and I don't
+have anything new to say to you about how to do them, they're going to be similar.
+I would say that political scientists used text quite a bit, and so some methods will get more popular in some discipline than others, but
+fundamentally, there's not a difference in the goals. The place where things get, I think, a little bit more interesting, or
+where things that seem alike are actually turn out to be different, is in supervised machine learning.
+Which is the thing that sort of looks like running regressions, which is something that we do a lot of in the social sciences, and
+we teach a lot of in econometrics class. So in supervised learning, you start with a setting where there's
+independent observations in a stable environment, so each observation is exchangeable with another observation.
+And in the simplest case, there's no correlation between them. So, a regression problem that we all teach in first year econometrics,
+we're trying to build a model of the conditional mean, the expectation of y as a function of x.
+And supervised machine learning is also about predicting y as a function of x,
+so those basically look like the same thing. And classification, where in this case y would be discrete, so
+y is maybe a label, is it a cat, a dog, or a horse. That's trying to understand which label is most appropriate given x is,
+that looks like a multinomial logistic regression. Which is also something that we teach, and study, and use a lot in social sciences.
+So it looks like supervised machine learning is the same thing as what we do in social sciences.
+And to make them seem even more similar, when you take a machine learning course, probably the first prediction model you learn is regression,.
+And probably the first classification model you learn is logistic regression.
+So this all sounds like we're solving exactly the same problem. But then what's kind of funny about it, is that we do these things differently, and
+so I want to kind of talk to you a little bit about why we approach that same problem in different ways.
+And actually why it's meaningful to ask different questions from those same methods.
+Classification
+So just to start with though, let's kind of take a look at an example of classification of one of the most common
+problems that's been studied in machine learning. And one of the biggest successes from the last 15 years,
+is our improvement in the ability to solve classification problems. So, typical classification problem is, you have a bunch of pictures,
+say pictures of animals. These pictures you downloaded from the web, and
+what you're trying to do is to classify them. So in the classification problem, you're starting with a training data set,
+where you have images and you have labels. So in your training data set, the data set you're using to estimate your model,
+you have labels, the Y's, like cat, dog, of course, and you have the pictures.
+In order to build this classification model, there's some processing you have to do. So, first of all,
+you have to translate the image into observable characteristics of the image. And just a simple way to think about that,
+is on your computer screen you're staring at right now. You can make an image of me talking to you or my slides, using red, green, blue, and
+the brightness of each of those colors, and that together will create an image.
+So that's one way you can translate an image just into bits and bytes.
+They're the pixels, each of the pixels, and then for red, green, blue, how bright they are, and now I've got a digital description of the image.
+Then I want to put that into a model and classify, given X, is this a cat?
+Now, already there's a little bit of a gap, because in some machine learning applications,
+you're not actually trying to build a model that gives a probability of a cat.
+You're just want to say, is it a cat? So, when these algorithms work in production, they're not necessarily
+spitting out a probability, they might be, they might not be. They might just be spitting out cat dog, cat dog, and it might actually take
+additional computation for it to spit out a probability. Well, if we were studying this problem in economics,
+we would be building a logistic regression and trying to use that to come up with a probability.
+And actually, the way that we use the regression in economics, would typically be that we would be interested in the coefficients,
+we would be interested in the function itself. And we would be trying to understand, if I change something, if I change an X,
+how would that change the probability? So we would be really trying to understand the model rather than just spit out,
+is it a cat or is it a dog? Now, so some of the big advances for images, neural nets turned out to work really well, and
+who knew that that would be the case, but they are a very rich functional form. And so, what the advances in machine learning have been all about,
+is figuring out how to solve this hard problem, where you have all these bits that are representing pixels.
+And I'm going to to somehow get a meaningful prediction out of that. And the neural nets can be thought of as a very flexible functional forum to do that.
+Example
+So, here's an example of why machine learning is great, this is a marketing brochure from McKinsey.
+And so, in this marketing brochure, the problem was to predict which customers would churn, and that means to abandon a service.
+And we have on the x axis and y axis of this, we have two drivers of churn,
+and you can imagine that might be, How often you've logged into the website or
+some other behavior, it could be a characteristic of a person. So these are the X variables that could be used to predict churn.
+And so the McKinsey is in this picture contrasting a churn model based on a simple, old fashioned logistic regression.
+So in the logistic regression, they have got a binary outcome turned or no churn, and they have these characteristics of the consumers.
+And they're using those characteristics to predict churn. And this nice smooth green line is the ISO probability line for so
+everybody along all the drivers A, drivers B pairs along that line have the same probability of churn.
+And so MyKinsey pointing out that in these hand tunes simple, functional forms that people would write down by hand, you would have a very
+simple relationship between drivers A and drivers B in terms of predicting churn.
+Now all these fancy hills and valleys are what come out of the machine learning model. So I'm going to assume that McKinsey ran the software correctly.
+And so that McKinsey's model did a better job classifying churn than the simple logistic regression model.
+So that's good. And let's assume that's true. And then we can also assume that it's true that this kind of complicated relationship
+between a and b in terms of prediction was actually better at predicting outcomes in a test set.
+Let's imagine that's true. But how would you do as a social scientist or even as a business person trying to use this output to make decisions.
+So if you took this literally if you held drivers A at 80, an increased drivers B.
+What this model seems to be telling you if you interpret it that way is that if you help drivers A fixed and you increase drivers B that the probability of churn
+would go up and then down and up and then down and up and then down. So you have all these hills and valleys in the probability.
+So if you went out and tried to think about making decisions based on that,
+you might get some counterintuitive results and it might not be the best guide about which customers to recruit.
+And it might also not be that convincing on an mechanisms. So you think why is that?
+Well, part of the thing is the goal of a predictive model is just to predict. It was estimated and
+trained the shape of the functional form was all about just getting the Y.
+Right, getting the best prediction of whether you're going to chun or not.
+And that's different from a causal analysis where I might want to say, what what if B is something I can affect?
+Like, what if I could get people to login to the website more? Well, would I want to try to get people to log in the website more,
+do I think that would actually cause them to turn less? That's a very different question.
+And you would estimate the model very differently to answer that question. And so one of the insights in the recorded lectures will go into much
+more detail about is, when you could or couldn't interpret a model in terms of causality, in terms of what you might want to manipulate,
+or even in terms of who you might want to target for something.
+And so there's different objectives for different kinds of questions and actually your estimation techniques should differ depending on the question you're asking.
+To think about this another way, we could use this model to try to predict who should we call, who should get a phone call?
+Now the McKinsey model is going to be very good at figuring out who's likely to quit.
+But maybe some of those people are quitting your service because they graduated and they're moving away.
+Maybe they're graduating from Stanford and they're going to move to a different country or they're going to move to a different city.
+So calling people who are going to move away is not going to be very beneficial for a company.
+So that's thinking at a higher level. If you were trying to use a prediction model, predicting who's going to quit
+isn't the same as finding the people for whom you should interview. Those are different questions and you would use different models to answer them.
+So that's really going to be one set of themes that we're going to want you to learn from this class.
+If you go to econometrics class, they're going to assumed you're trying to understand what happens if I hold everything fixed and I change one variable
+because that's one of the ways when we think about regression. Well if you go to machine learning class,
+they're going to assumed that you want to predict or you want to classify. And so the objectives are actually different.
+Machine Learning
+Machine learning is great it can fit these complex shapes so my friend who was at Microsoft made this goodness of fit for Clippy the paperclip who was Microsoft's
+first AI, Clippy didn't work very well sadly was not a very good AI. But we can use AI to fit Clippy shape.
+And finally, 15 or 20 years later, we actually have help assistants that actually do help us unlike a poor little Clippy, who was made fun of.
+Prediction
+So, just to put a little more structure on the comments I made earlier and again,
+this will be elaborated on further in the additional recorded lectures this week.
+But when we think about prediction the goal of prediction Is going to be to estimate a single number.
+What is my, if it's Y, what is my best prediction of Y? And I'm going to do that to try to minimize the mean squared error in a new
+data set we're only X is observed. So the standard problem of machine learning is that I have a data set with
+Y's and X's, I build a model. If you give me new X's, I can predict what the Y will be.
+So if you think about it from a professor's perspective, I could hire a research assistant, give them some X's and Y's and
+tell them to go back and build a model. And then in my office, I'm going to hide some data and I know the X's and the Y's.
+When the research assistant comes back, I'll see I'll give them the X's, and I'll test them on how well they can pick the Y's.
+And all I need to know I don't need to know how the research assistant did it. I don't care if they built a neural net or a random forest or something else.
+I just care that I'm going to just give you a pop quiz. I'm going to feed in the Xs and you're going to tell me the Ys and
+I'm going to score you just based on those Ys nothing else. Okay, and so the machine learning problem is actually then a sort of a simple
+problem, because I don't care what you did or why it works. I just cared that it works and if my,
+the actual way I want to use the model is again to give it more X's and have it predict more Y, all I care is that it works.
+So it's kind of machine learning you can think of as like a robotic research assistant. I used to go tell my research assistant to run 100 regression.
+Now I've got a robotic research assistant and they're going to run a billion regression and they're going to come back with the best one, and
+I'll be able to tell right away if they did a good job. Okay, so that's that's what machine learning is good at.
+Now there's some details like, it turns out that minimizing mean squared error is going to actually entail a bias variance trade off and
+it's always going to accept some bias. So that's a different objective than trying to get an unbiased estimate of
+the conditional mean function. The idea of how these machine learning algorithms work is you consider a family
+of models, and you use the data to select among the models and the common approach is cross validation.
+So it's like to prepare for your big test. You pretend that you're studying for a test. You hide some of the data from yourself and see how well you do.
+And so then you give yourself a bunch of pop quizzes, simulating the scenario that you will later face in my office.
+And you find the thing that does best in your little pop quizzes that you're giving to yourself where you hide some data from yourself.
+You figure out the thing that works best. Once you've got that all sorted out, then you come to my office and
+I give you the final test and see how well you did. But if you practiced well and simulated the testing environment, you will probably
+have found something that will also work well in the test set that I hid from you. And machine learning basically works well because you can accurately evaluate
+performance without a lot of additional assumptions. All you have to see is how well it fits, because its only goal is to fit.
+You don't have to argue about additional assumptions. Yeah, you can argue about whether the environment you're going to apply it in is
+actually stable, maybe it's going to change over time. There's a few things to argue about. And of course, you can argue a lot about whether the algorithms are fair,
+biased or have some societal implication. But did they work?
+Not much to argue about. So, I'm going to do a little bit of provocative discussion here and
+Machine Learning vs Economics
+I should say, I consider myself a machine learning person. So, I can make fun of both economists and
+machine learning because I publish in both journals and go to both conferences. So I can make fun of both sides.
+I'm going to say, what do we say versus what do we do coming from the machine learning perspective? Machine learning basically says machine learning is everything.
+And actually we probably invented it, I think, right? Nobody ever did anything before machine learning was the thing. So, I've been told many times by machine learning folks that if economists
+had had anything to say about how I use data, somebody would have told me, it would have showed up on my machine learning class.
+And I've been asked even, do economists use data? I thought they did theory.
+So, there's a little bit of a lack of appreciation for the fact that
+many disciplines, political science and economics and biostatistics and
+so on, had been grappling with statistical problems for decades and even centuries.
+And have had some ideas along the way that are helpful for solving certain kinds of problems.
+Machine learning often, though, will use the language of answering questions or
+solving problems, even when they are not answering questions or solving problems.
+So it's very common, and I see this a lot with startups. A startup will come to me and say, I have software for prioritizing customers.
+Like the turn example I gave, I have software that will help you prioritize which people should get a sales call to prevent them from turning.
+And I'd say great, let's see your prioritization software, and what they'll show me as a model for predicting churn.
+But again, as we previously discussed, being able to predict who's going to quit is not the same as determining who should your sales people call.
+The people who are most predictably going to quit might be people who are moving away and are not at all affected by a sales call.
+So they'll say I've got this great AI Algorithm that will prioritize your consumers for you.
+But in fact this great AI algorithm is actually just prediction and
+it's predicting the wrong thing. It's not predicting the thing you would want for prioritization.
+Now it could be helpful for prioritization, because certainly, predicting people who are not going to quit means those people
+probably shouldn't get a sales call. But among the people who might quit, you need something else to figure out
+who should you actually call, for whom would a call be effective? That's a causal question.
+And so, people in social sciences are very used to thinking about well gee, do you even have data that could possibly answer that question?
+We spend tons of time thinking about, is your question even answerable? And that's not the type of thinking that you're taught in a basic machine
+learning class. You just assume every question is answerable, and you just need good algorithms.
+Add a few layers to your neural net and I'm sure the problem is now solvable. That's kind of the mentality that you get from especially
+introductory of basic machinery. So, basically what we say is we can do everything and we've solved most problems.
+We have a great hammer and everything is a nail. And that's sort of true, as a general purpose technology,
+prediction is incredibly applicable. And you can have the same algorithms that can be used across lots of domains.
+So it's actually really important for economics actually, big picture economics, it's a general purpose technology.
+And it can be used really widely and we can make algorithms open source and they can affect a lot of the world. So I'm a big believer in that, and I give entire lectures on that.
+But it's not true that just off the shelf, that every question is best answered using just those tools.
+And that's where there's a big divergence between social sciences and machine learning.
+So, generally what machine learning people actually do is they use predictive models, they ignore other questions, whether it's causality, equilibrium, feedback effects.
+And then they have little conferences or subfields that sit around and wonder or worry about interpretability, reliably, robustness,
+fairness, but they have little ways to ask algorithms to optimize for it. And a lot of times a lot of the literature on fairness is viewed as like
+an ex-post thing. I'm going to verify that my algorithms are fair or I'm going to put constraints on
+them, rather than actually completely changing the way you think about them, which would be, I think, more of a social science approach.
+Bias in Economics
+So traditional econometrics, economists often focus on the case with a lot more observations and covariates.
+Every one of you who made it through your first year econometrics or courses had to probably memorize the proof for your final exam, that OLS is blue.
+I still have the little sticky notes sticking out of my econometrics textbook for the page with the proof for OLS is blue.
+So what does that mean, for those of you who haven't had to take that final exam? That means that ordinary least squares is the best linear,
+unbiased estimator of the coefficients of a linear prediction model, okay?
+So, ordinary least squares is trying to be unbiased. Now, when I studied that proof and dutifully passed my exams and got an A,
+without ever really contemplating deeply why I wanted things to be unbiased.
+The way it was presented it was just, of course, that's what you want. And why would you want anything else? Why would you want something biased?
+Whereas in machine learning when you're trying to do prediction in a test set with a model that may be very rich relative to the size of your data set,
+you explicitly allow for bias. Because there's a bias variance trade off in predictions, and
+the lectures this week will go into that in substantially more detail. But to start to even see where that breaks apart, if you have more parameters and
+you have observations, it's obvious that OLS is not going to be good at anything,
+it's going to be overfit. Economists instead worry about estimating causal effects and
+what's called identification. Identification means if I had an infinite amount of data,
+could I answer my question? And just to think of an example where you might not be able to,
+consider the problem of hotels. So a causal question about hotels might be,
+if I raise the price of my hotels, how many customers will I lose?
+That's a business question. And it's something that we study a lot in economics and in marketing,
+what happens if I change the price? Now, I might go out and collect data.
+I could collect data, I could have somebody, I could scrape prices from hotels.com, or something like that I could figure out what prices were.
+And I could hire a research assistant to stand outside a hotel and count the people coming in and out, once a week or something like that, right?
+So, then I could put together a data set that had quantities and prices in it, okay?
+And then, I could try to build some kind of a model. I could run a regression.
+Quantities on the left side, prices on the right side. Now, what would the coefficient be on prices in that regression?
+Well, if you ever have gone to a conference or stayed in a hotel, had a school vacation, you would probably realize that actually,
+when the prices are high for the hotel, it's probably full.
+So, you'll get a positive coefficient that regression, high prices, high quantities.
+And indeed if your goal was prediction, suppose my goal was for some reason I wanted to guess how many people were in the hotel
+on a particular day, high prices is a great signal that that hotel is full. From a predictive perspective, high prices predict high quantities.
+That's a fact. True in the data, absolutely true. And by the way, this is true for a lot of data sets.
+This is why economists started worrying about this, because in many data sets, prices and quantities are actually positively correlated.
+So, where's the breakdown here? Well, the causal question is, what if I hold everything fixed and
+I change the price? But you never had in your data a chance for somebody ran an experiment on prices.
+If you did, you may not know about it and your data. And so, in your data, the variation is coming from holidays and
+conferences, and too many weddings that weekend other things that increase both demand and supply, and
+that induces this correlation and the data between prices and quantities.
+But that doesn't mean if you intervene and raise price that you will sell more hotel rooms.
+So economists think about that all the time. And if they ended up finding a way to figure out how to estimate this
+relationship, it's probably true that their predictive model would have very low explanatory power,
+because the biggest thing for predicting quantities is knowing the price. High prices high quantities, if you're trying to predict,
+that's going to explain most things. But if you're looking for natural experiments in price, where price changed for a reason that didn't have to do with a holiday,
+you're probably not going to have very many of those price changes, and you're not going to have a very good ability to predict quantities.
+But you will learn more about what happens when you change price. And that's what economists and social scientists really focus on,
+counter factual prediction separating correlation from causality. We also obsess on standard errors,
+because it's actually really hard to learn causal effects. And it's very common that something you find is actually not that well pinned
+down, and your coefficients could be due to sampling variation. So, causal effects, we spend a lot of time worrying about sampling variation.
+It's also the case that it's very hard to tell if you got the right answer. Because it depends, and so you really want theory to be playing a role, and
+you want to think about the statistical properties of your estimators.
+So, those are things economists worry about. And we also are very aware that identification problems can't be evaluated
+just using a holdout set. So, if prices and quantities are positively correlated in my whole data set.
+If I take a random sample, prices and quantities will also be positively correlated in my test set.
+I'm not going to figure out from a test set that I misunderstood why If prices and quantities were positively correlated, the test set isn't going to do that.
+And some of my research and I'll talk about this at the end, we we construct very specially constructed test sets,
+that can actually help you understand whether you got the answer right. But it's not just a random sample of the data that's going to fix your
+problem for you. So of course, I can also make fun of econometrics, what we say versus what we do.
+Economics vs Machine Learning
+What we say is that we do causal inference and counterfactuals. We think about the data generating process.
+And we say the God of economics gave us the model. And we pretend that we just estimated one model.
+We say the God of economics told me that log of wages depends on the log of something else, and something else squared, and something else cubed.
+And we then report cause limits and appropriate standard errors, plus a few additional specifications for robustness.
+Now, what we actually do is we go and tell our research assistants to run 100 different specifications, just to make sure it doesn't change our results.
+And then we kind of pick five representative ones, and we show them, and we produce them as if we hadn't done that at all.
+Now, it's not that we're all bad people. I mean, maybe we are, but is that necessarily true that we're all bad people for doing it that way?
+Instead, we're working with what we have if you like, and we didn't really have a good way to try to do this robustness systematically.
+And of course, you don't want to publish your result which goes away if you add in a cubic term. So, you want to be sure that you're accurately representing the way the world
+works, because people are going to use your results for policy. So, one of the things that machine learning can do is,
+it can take us out of that conundrum. It can give us a way to do robustness systematically,
+fully describe honestly what we did, and still be able to report results about the parameters we care about.
+And that's going to be one of the things we'll teach about in this course how we do that. How we get rid of that very uncomfortable, unpleasant, and
+unreliable part of research, where we just run a bunch of specifications, and hope we've been comprehensive enough, and hope we haven't been so comprehensive
+that we've screwed up, and gotten data fishing for our favorite result.
+Key Lessons for Economics
+So, some key lessons for econometrics. Many problems can be decomposed into predictive and causal parts.
+And one of the things we're going to show is that once you do that decomposition, then you can use off-the-shelf machine learning for some of the predictive parts.
+We also want to learn from machine learning, how to do data driven model selection. But we want to do it a little differently,
+we want to be tailored to our econometric goals, tailored to parameter estimation. And there's some insights, things like cross fitting that
+come up once we tailor our estimation for our goal. And we also might use different optimization criteria,
+different objective functions, depending on our goal. So, we're going to modify things in a way that optimizes for a specific objective
+like parameter estimation and retains the ability to do inference.
+Machine learning approaches for robustness. Another thing we can learn, validation.
+Machine learning always has a test set. I've worked on some of my historical research about auctions had that kind
+of setting where I had two different auction models, and I estimated using one auction game and predicted another auction game,
+but that's been relatively rare in economics. And so, one of the things that I've been working on in my own work is how to come
+up with clever ways to what types of data sets to look at, and ways to define test sets that help us assess better weather,
+we've done a good job with counterfactuals. And I'm someone that's in supermarket data where we have lots of price changes.
+We've also can learn other computational approaches, even for structural models. Things like Stochastic gradient descent are really powerful computational
+techniques, they can unlock a lot of performance in instructional models, and I'll talk more about at the end of the course.
+So, prediction in five years. A lot of these techniques will be standard in social sciences, and honestly they
+Prediction in 5 Years
+already are becoming a standard, they're becoming a requirement, not an option.
+Regularization and data driven model selection will be standard prediction problems, the part where you really do just care about a prediction,
+it will be better appreciated and better delineated from causal models. Measurement using machine learning techniques might be an important subfield.
+Textual analysis will get bigger and again, it's already very big in some parts of Economics and Political Science.
+We'll be better and more careful about explicitly distinguishing causal parts and predictive parts of models.
+And then, we'll delegate the parts that are more predictive to machine learning and data driven fit.
+We're going to have reduced emphasis on sampling variation, and more on model robustness.
+And we may consider models with lots of latent variables or factor models more commonly for panel data or different types of data structures,
+that are not just single shot independent observations, okay?

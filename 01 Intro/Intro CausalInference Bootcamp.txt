@@ -1,0 +1,693 @@
+Introduction
+[MUSIC] In this sequence of modules, we're going to look at questions like: are property
+rights important for economic development? Does getting health insurance make you healthier,
+and are humans causing global warming?
+What is causality
+But to answer questions like these, we need to know what does it mean for humans to cause
+global warming? What is causality exactly?
+So to get at this, let's think about some really simple examples from your everyday
+life. It's the morning, your alarm is going off, blaring just in your ear, and you hit
+snooze and the alarm stops blaring. If you hadn't have hit snooze, it would have kept
+going, so by hitting the snooze button, you caused the alarm to stop.
+Once you finally get up, you head into the kitchen, time to eat some breakfast. So you
+pour a bowl of cereal and you get out some milk, and then you pour the milk into the
+cereal. Well, if you hadn't have poured the milk, milk wouldn't have come out the carton, so
+by pouring out milk, you caused the milk to come out.
+Examples of causality
+Now these are pretty simple examples of causality, pretty easy to determine, because you do something
+and immediately you see the outcome. In other cases, it's not so easy. So think about your
+decision of what to eat for breakfast, say you eat sugar-free cereal with skim milk,
+instead of maybe a stack of pancakes with syrup all over the place.
+Well, that decision to eat healthy may affect how healthy you are in your old age, but that's
+a long time from now. So you can't wait around to see how healthy you are, you have to make
+this decision every single day, so how do you know what to do? Even worse, there are
+other decisions you may make that may also affect how healthy you are in your old age,
+like maybe you exercise everyday. Well, is that good for your old age health? Who knows.
+That's a question of causality.
+Now, many other people besides you in your daily life face these questions. So suppose
+it's the weekend, and you're watching your favorite football team play. Now the game
+is almost over, and unfortunately the team is down by seven points. But they do have
+the ball. But it's fourth down. So what should they do? Should they go for it or not? And
+if they go for it, should they run it, or should they pass it? Well, suppose they go
+for it, and to your immense happiness, the running back makes it down to the end of the
+field, gets the touchdown, ties the game.
+So what caused the touchdown? Was it the decision to go for it, or was it the decision to run
+it instead of passing it? Or was it something else all together? Well, if you want to win
+football games, it would be really nice to know what the answer is. So that's the question
+of causality.
+Now businesses, institutions and government face these same questions in their decisions.
+Such as: if a firm wants to raise prices, what's going to happen? If Congress passes
+a new law, what's going to happen? These are questions of causality.
+So basically causality is the claim that if I do something, if I intervene and change
+something, some specific outcome is going to happen. If I hit the alarm snooze button
+then the alarm will stop blaring, that's a causal claim. So causality is about when we
+manipulate policy, what's going to happen to outcomes? So in these modules we're going
+to look at a lot of examples of causal questions in public policy and how we answer them quantitatively.
+
+So the goal of these modules is to do a quantitative analysis of causality.
+So to do that, we're going to have to measure any variables that we want to understand.
+Now a variable is just some characteristic of the Unit of Analysis.
+And what I mean by unit of analysis is things like countries, city blocks, people, villages,
+firms.
+So these are the units of analysis, the things that we're going to analyze, the things that
+are in our data sets.
+So we have data on different people, data on different countries, data on different
+villages.
+So the collection of all these units is called the Population.
+The population of firms, the population of villages, this is the set of all the people
+in the United States, for example, or all the villages in Nigeria, etc.
+There are two main variables that we have to measure, the first is the Outcome Variable.
+This describes the characteristic that we want to affect, the characteristic that we
+want to change.
+For example, how healthy you are in your old age.
+The second variable we want to measure is the Policy Variable, or the Treatment Variable.
+This describes the characteristic of a unit of analysis that we are going to use to change
+the outcome variable.
+So if our outcome variable is health, then our treatment variable might be whether you
+have health insurance or not.
+And these are both characteristics of a unit of analysis, for example, a person.
+A person has a value of how healthy they are, and a value of whether they have the treatment
+or not, whether they have health insurance.
+So there are lots of examples from public policy besides healthcare.
+For example, if our outcome variable is a measure of economic development, our policy
+variable is a measure of how strong property rights are.
+Or our outcome variable could be the amount of crime on a city block, and the treatment
+variable would be how many police are stationed to that city block.
+So more concretely, when we actually do the analysis, we're going to have to pick exactly
+how we're going to measure these guys.
+So the amount of crime is an abstract concept.
+We're going to have to pick exactly how we're going to measure crime.
+So for example, we could say the number of car thefts on a city block.
+That's something you can just count and look up in your data.
+Then to measure treatment, how many police are stationed there, you could, for example,
+see did a city block get extra police or not relative to the average level in the city?
+For property rights, suppose you want to measure the effective property rights on economic
+development.
+Well there the outcome variable is economic development.
+It's a pretty abstract concept, so in order to do a quantitative analysis, we're going
+to have to figure out how do we measure that?
+So one way is to just to use GDP, gross domestic product.
+That's a number, you can look it up, how it's defined.
+Then the treatment variable, this is the thing that we want to affect economic development,
+that we have to measure too.
+So here it's property rights.
+So how do we measure probably rights?
+Well, we could define a number that tells us the risk of expropriation by a foreign
+government.
+So what this means is if you are a company and you invest in some country, how likely
+is it that that country's government is going to just take away what you own there?
+Take away your oil rigs, your manufacture plants, etc.
+If it is not likely at all, then there are strong property rights.
+If it's very likely that they're going to take what you own, then there is weak property
+rights, okay, and people figure out how to measure these things quantitatively.
+Now it's not always easy to measure what we want, and a huge part of research is often
+figuring out exactly how to do this, exactly how do you measure difficult things?
+So for example, think about how do we measure hope?
+Why would we want to do that?
+Well, suppose we were interested in knowing whether poor children who have hope have better
+outcomes than children without hope, for example.
+Do children with hope get more education?
+So how do you measure hope?
+Pretty vague concept, right?
+But there's a paper from 2013, what they did is they asked children to draw a picture of
+yourself in the rain.
+And then they used characteristics of the drawings, like whether the child has a mouth
+or not, whether it's holding an umbrella or not, etc., to define a quantitative measure
+of hope.
+So I've a few of those pictures here.
+So here's one picture: this kid is standing here, he is smiling, he's got a block face,
+he's got an umbrella here, and he's got his hand up.
+Look how happy he is, this guy is so happy, right?
+Now here is another picture: this person is standing in the rainstorm, soaked, doesn't
+have an umbrella, is frowning, doesn't look very happy.
+Well, based on their quantitative measure of hope, this person is at the 93rd percentile
+of hope.
+That means they have a lot of hope, they're very high up there.
+The second picture, this person is near the bottom, they are in the 15th percentile of
+hope.
+They basically have nothing.
+So there are very, very creative and innovative ways that people have made to measure difficult
+concepts like hope.
+Now for these modules we're going to assume that this stuff has already been done, that
+someone has already figured out how to measure what we want to look at, and the only question
+is how do we determine from data on the policy variable, how much hope there is and from
+the outcome variable, how much education a poor child gets, how do we determine from
+data on that what the causal effects are?
+Whether having hope actually does increase the amount of education you may have.
+[MUSIC].
+
+Okay, now that we've measured our variables, our outcome variable, and our policy
+variable, we move to the first step of data analysis: describing the data.
+So for outcome variable, for example GDP, we want to know things like what's the average
+GDP across all countries?
+What's the largest?
+And what's the smallest?
+And we also want to know these for the policy variable.
+How much property rights there are?
+So what's the average amount of property rights across countries?
+What's the largest?
+And what's the smallest?
+That's always the first step in a data analysis.
+Now, we ultimately want to learn about causality, and remember causality refers to how an intervention
+to change the policy variable affects the outcome variable.
+So we must observe variation in the policy variable in the data if we want to learn about
+causality, because causality is about what happens when we change something, when we
+change the policy variable.
+And by variation I mean that the value of the policy variable is not the same for all
+units.
+So suppose that all countries in our data had the same level of property rights.
+Well, that would mean that there's zero variation in property rights in the data, everyone has
+the same thing, and that would make it difficult to learn about causality because there's not
+any change in the policy variable.
+If instead we had some countries that have high property rights and some countries that
+have low property rights, then there would be variation in the data, and we'd have some
+hope about learning about causality.
+Now statistically, variation is measured by using two numbers, the variance and the standard
+deviation.
+And these numbers are usually always reported in published papers and elsewhere where you
+see these kinds of data analysis.
+And the way to interpret them is that larger numbers mean there is more variation, so a
+larger standard deviation means that there's more variation in the data in that variable.
+Now why exactly do we need variation specifically?
+Well, learning about causality is going to ultimately boil down to comparing units with
+different values of the policy variable.
+So comparing countries that have strong property rights with countries that have weak property
+rights.
+So we can't make this comparison if there's no variation in the policy variable.
+Now let's look at an example.
+So, in 2012, an Australian nurse, Bronnie Ware, wrote a book called The Top Five Regrets
+of the Dying from her experience as a nurse, and here they are: Number 1: I wish I had
+the courage to live a life true to myself, not the life others expected of me.
+Number 2: I wish I hadn't worked so hard.
+Number 3: I wish I’d had the courage to express my feelings.
+Number 4: I wish I had stayed in touch with my friends.
+And finally number 5: I wish that I'd let myself be happier.
+So what lessons can we take from this list about how we should live life if we want to
+avoid death bed regrets?
+So for example, based on number two, should we work less?
+Spend more time at the beach, for example?
+Well, from her data it's actually not clear what we should do, because we need to make
+comparisons.
+What we need to do is compare the regrets of people who worked a lot with the regrets
+of people who didn't work a lot, and see if there's a big difference.
+But as we'll see in later modules, even that comparison is not good enough for learning
+about causality, but it's a good start.
+If all we observed was the first group - the regrets of people who had worked a lot - then
+there wouldn't be any variation in the policy variable, and we couldn’t made these comparisons.
+So to learn about causality, we need variation in the data, and variation in the treatment
+and the policy variable.
+[MUSIC].
+
+Okay, now that we've measured our variables, our outcome variable, and our policy
+variable, we move to the first step of data analysis: describing the data.
+So for outcome variable, for example GDP, we want to know things like what's the average
+GDP across all countries?
+What's the largest?
+And what's the smallest?
+And we also want to know these for the policy variable.
+How much property rights there are?
+So what's the average amount of property rights across countries?
+What's the largest?
+And what's the smallest?
+That's always the first step in a data analysis.
+Now, we ultimately want to learn about causality, and remember causality refers to how an intervention
+to change the policy variable affects the outcome variable.
+So we must observe variation in the policy variable in the data if we want to learn about
+causality, because causality is about what happens when we change something, when we
+change the policy variable.
+And by variation I mean that the value of the policy variable is not the same for all
+units.
+So suppose that all countries in our data had the same level of property rights.
+Well, that would mean that there's zero variation in property rights in the data, everyone has
+the same thing, and that would make it difficult to learn about causality because there's not
+any change in the policy variable.
+If instead we had some countries that have high property rights and some countries that
+have low property rights, then there would be variation in the data, and we'd have some
+hope about learning about causality.
+Now statistically, variation is measured by using two numbers, the variance and the standard
+deviation.
+And these numbers are usually always reported in published papers and elsewhere where you
+see these kinds of data analysis.
+And the way to interpret them is that larger numbers mean there is more variation, so a
+larger standard deviation means that there's more variation in the data in that variable.
+Now why exactly do we need variation specifically?
+Well, learning about causality is going to ultimately boil down to comparing units with
+different values of the policy variable.
+So comparing countries that have strong property rights with countries that have weak property
+rights.
+So we can't make this comparison if there's no variation in the policy variable.
+Now let's look at an example.
+So, in 2012, an Australian nurse, Bronnie Ware, wrote a book called The Top Five Regrets
+of the Dying from her experience as a nurse, and here they are: Number 1: I wish I had
+the courage to live a life true to myself, not the life others expected of me.
+Number 2: I wish I hadn't worked so hard.
+Number 3: I wish I’d had the courage to express my feelings.
+Number 4: I wish I had stayed in touch with my friends.
+And finally number 5: I wish that I'd let myself be happier.
+So what lessons can we take from this list about how we should live life if we want to
+avoid death bed regrets?
+So for example, based on number two, should we work less?
+Spend more time at the beach, for example?
+Well, from her data it's actually not clear what we should do, because we need to make
+comparisons.
+What we need to do is compare the regrets of people who worked a lot with the regrets
+of people who didn't work a lot, and see if there's a big difference.
+But as we'll see in later modules, even that comparison is not good enough for learning
+about causality, but it's a good start.
+If all we observed was the first group - the regrets of people who had worked a lot - then
+there wouldn't be any variation in the policy variable, and we couldn’t made these comparisons.
+So to learn about causality, we need variation in the data, and variation in the treatment
+and the policy variable.
+[MUSIC].
+
+
+So causal effects may differ from person to person because people are different.
+What that means is there's a distribution of causal effects in the population.
+So some people may have a positive effect, some people may have a negative effect.
+Now the best case scenario for learning about causality is that we learn the unit level
+causal effects for every single person.
+So for example, you go to the doctor you have some problem.
+He's got a medication he can give you.
+If he knows your unit level effect, he will give you the medication if it's positive,
+he won't give it to you if it's negative.
+We can make individual treatment decisions perfectly based on everybody's unit level
+causal effect.
+Now if we knew the distribution of causal effects, meaning we know every causal effect
+for everybody, we could learn a bunch of interesting numbers, like the percentage of people who
+have positive treatment effect.
+That would say how many people benefit from having Medicaid, for example, or how many
+people benefit from a particular drug.
+Now as I mentioned before, the problem is we fundamentally cannot learn unit level causal
+effects because we don't see the same person both having treatment and not having treatment.
+So typically, trying to learn the unit level causal effect for everybody is just out of
+the question, so we just can't do it.
+Now, even learning about the distribution of causal effects - which says maybe we don't
+know exactly who has the positive effect, who has the negative effect, but we know that
+most people have a positive effect, for example - that's also often too much to ask for, and
+very difficult to get.
+It can be done, but it typically requires many assumptions and is difficult to do.
+So what people often settle for is something called the Average Treatment Effect.
+The average treatment effect is simply you take up everybody in the population, all your
+people, and you look at their unit level causal effects.
+That's a number, you write it down on a list, you do that for everybody and then you just
+take the average of all of those numbers.
+That's the average effect.
+Now, that's sometimes a good summary of the overall effect of treatment, but sometimes
+looking at just averages isn't necessarily a good thing.
+So for example, here I've got this comic for an app called TornadoGuard, what does this
+app do?
+Well, it plays a loud alert sound when there is a tornado warning in your area.
+Well the average star rating four stars out of five - looks pretty good.
+Let's look at the distribution of star ratings.
+Well, the first guy says, “Five stars.
+Good user interface, many alert choices.”
+That's nice.
+Second person says, “Five stars.
+Runs great, doesn't crash.”
+Pretty good.
+Third person says, “Five stars.
+I like how you can set it to multiple locations.”
+Okay.
+Fourth person, “One star.
+App did not warn me about tornado.”
+So in some cases you don't necessarily want to be satisfied with the average.
+You want to know things about the distribution or the extremes, the maximum causal effect,
+the minimum causal effect.
+But those are more difficult to get than the average.
+So that's why we are going to start from there.
+So let’s think about average treatment effects.
+So, say we treat everybody.
+We give everybody Medicaid.
+Then we're going to observe everybody's outcome under the treatment.
+So we observe everybody's cholesterol when they have Medicaid.
+Now, the average of everybody's outcome in that case is called the Average Outcome Under
+The Policy.
+Now suppose we do the opposite, okay.
+Here we are just doing a hypothetical to get a better understanding of what this definition
+is.
+So I suppose that we didn't treat anybody.
+We don't give anybody Medicaid, then we observe their outcomes.
+We observe cholesterol for everybody, and we just take the average cholesterol.
+Well that average is called the Average Outcome Without The Policy, and the average treatment
+effect is just the difference between the Average Outcome Under The Policy and the Average
+Outcome Without The Policy.
+That's it.
+That's all it is, and that actually is equivalent to the definition I gave earlier that you
+take the individual unit causal effects, and you just write them down for every person
+and then you take the average of that.
+That also will give you the average treatment effect.
+So, let's suppose that larger values are better of the outcome.
+So for example, GDP: let's suppose that we want more GDP.Then a typical interpretation
+of the average treatment effect is that a positive average treatment effect means that
+the policy is good.
+It means that on average, the treatment effects increase the outcomes.
+Because remember, the average treatment effect is the difference between the average with
+the policy, and the average without the policy.
+So if that difference is positive, it means the outcomes are larger on average with the
+policy than they are without the policy.
+So if bigger outcomes are better, then a positive average treatment effect means the public
+policy is good.
+And conversely, a negative average treatment effect means the treatment is bad.
+And a zero or very close to zero average treatment effect means the policy has no effect.
+That's the typical interpretation for the average treatment effect.
+But remember what I mentioned earlier, it's an average so everyone has a different treatment
+effect.
+Some people are positive, some people are negative, possibly maybe everyone is positive,
+that would be nice.
+So these distributional features, we should also keep in mind, as I said, that's difficult
+to get, so that's why people often focus on the average treatment effect.
+
+
+So far we've been talking about causality pretty informally, but if we're going to get
+any quantitative measures of causal effects, we need to know what exactly do we mean by
+causal effect?
+So what is the causal effect of say, Medicaid on cholesterol, of having Medicaid on cholesterol?
+Well, to answer that, think about one specific unit of analysis, namely, you.
+Now what you're going to do is write down every single thing that could possibly affect
+your cholesterol, including whether you have Medicaid or not.
+Now we're going to define the causal effect of having Medicaid on your cholesterol as
+the difference in your outcome, namely your cholesterol level, when you have Medicaid
+minus when you don't have Medicaid, holding all those other variables constant, holding
+all those other things that could possibly affect cholesterol the same.
+That's the causal effect of having Medicaid on your cholesterol.
+Now there's a few important points about this definition.
+The first is it's a unit causal effect.
+It's the causal effect for just you.
+It's not the causal effect for everyone, not the causal effect for anybody else, just you.
+The second important point is that the causal effect is a difference - holding all other
+variables equal.
+So what that means is that if we change the values of the other variables, and then look
+at the same difference, we might get a different causal effect.
+And that's called an Interaction.
+So for example, the causal effect of having Medicaid may be zero if you have good eating
+habits, or it may be positive if you have bad eating habits.
+So if you have good eating habits, maybe you're just generally healthy, so it doesn't matter
+whether you have health insurance through Medicaid or not.
+But if you have bad eating habits, then maybe you are pretty unhealthy and it actually matters
+whether you have health insurance, through Medicaid or not.
+So that's called an Interaction Effect: the values of the other variables that we hold
+fixed may affect the causal effect for you.
+Now both of these points - the fact that it's a causal effect for just you, and the fact
+that the other variables, the values of them, may interact with your treatment and cause
+you to have a different causal effect depending on whether you have good eating habits or
+bad eating habits - those both say that there's heterogeneity in causal effects.
+So two people who are not identical might have different causal effects.
+And moreover, the causal effect for the same person might be different if the other variables
+change.
+So basically all I'm saying is that people are different, and so their response to treatment
+may be different.
+Giving the same treatment to different people may cause different things to happen.
+Now more abstractly, we envision there being two potential outcomes.
+The outcome when you have Medicaid, and the outcome when you don't have Medicaid.
+Now, in reality, we will never ever, ever, ever observe both outcomes, and that's just
+because you can't simultaneously be on Medicaid and off Medicaid.
+So this is sometimes called the Fundamental Problem of Causal Inference, and the reason
+it's a problem is because if we did observe both outcomes — your outcome when you have
+Medicaid and your outcome when you didn't have Medicaid — then learning causal effects
+would be easy.
+You just take the difference and that's your causal effect.
+But unfortunately, we don't observe both, and that's a big problem.
+And figuring out how to solve that is what we'll do in the rest of these modules.
+
+Remember that each person has a unit level treatment effect or unit level causal
+effect, and that's the difference between their potential outcome if they have the treatment
+minus their potential outcome if they didn't have the treatment, and the average treatment
+effect is just the average of all of these unit level causal effects.
+Take each person, look at their unit causal effect, and you take the average.
+Now, we can also define the Conditional Average Treatment Effect as the average for just some
+of those people.
+For example, the conditional average treatment effect for men, where you just look at the
+average unit causal effects for men, or the conditional average treatment effect for women,
+where you just look at the average for women.
+So over here, I have an example in this population there are four people: person one, two, three
+and four.
+There are two men and two women.
+And here I've got their potential outcomes.
+So in this column is their outcome if they got treated.
+This guy would have a 40, this guy a 20, this woman a 10 and this person a 30.
+Over here is their potential outcome if they don't get treated.
+30, 20, 15, 30.
+So this first person, if he is treated, he gets 40.
+If he isn't treated, he gets 30.
+So his unit causal effect is 10, 40 minus 30.
+The second person gets 20 with treatment and 20 without treatment - it actually doesn't
+matter whether they are treated or not, they have the same outcome.
+So their unit causal effect is 0, 20 minus 20.
+The third person is 10 with treatment, 15 without, so their unit causal effect is -5:
+10 minus 15.
+And finally our last person has 30 with treatment, and 30 without.
+So she also has a unit causal effect of 0.
+Now remember, later on, we are going to deal with the problem that in data we never see
+both of these numbers for the same person, because each person can only either get treated
+or not get treated.
+So one of these numbers will always be hidden for us, depending on whether these people
+are treated or not.
+That's called the fundamental problem of causal inference that I discussed earlier.
+And that's going to make it very difficult because we're not going to be able to see
+the unit causal effects from the data, and we're going to try to figure out how can we
+learn about these things when we have data that only shows us one of the numbers from
+these columns.
+But before we get to that, we just want to understand the kinds of numbers we can learn
+if we observed both of these columns.
+So one of those numbers is the average treatment effect, which is just the average of all these
+unit causal effects.
+So in this example, the average treatment effect is equal to the sum of these: 10 plus
+0 plus -5 plus 0, divided by four, because there are four people in the population that
+we're averaging over.
+So it's going to equal 10 minus 5 over 4.
+5/4, that's our average treatment effect.
+Now let's look at the conditional average treatment effect for men.
+This is the same thing as the average treatment effect, but only looking at the men and the
+population.
+So we throw out the women’s data.
+So that's going to be 10 plus 0, divided by two because we have two people that we're
+averaging over, and that's going to be 10/2, or 5.
+So finally let's look at the conditional average treatment effect for women, and that's going
+to be just like with the men, we're going to look at the average only just the women
+and throw out the men’s data.
+So that's going to be -5, plus 0, divided by two, because there are two people.
+So that's going to be -5/2.
+So we see the average treatment effect is 5/4 - positive - so usually we conclude treatment
+must be good.
+We look at men, we see it's even bigger, so the treatment is very good for men, but we
+would say for women the conditional average treatment effect is negative, so we would
+say actually the treatment is bad for women.
+So what we see here, and also from unit causal effects, is treatment effect heterogeneity.
+In this example, the treatment affects different people differently.
+This person benefits, this person is hurt, and for both of these people it doesn't matter
+whether they are treated or not.
+Now when we go to the data, and later on in these models, we're going to see how we learn
+these numbers from real data.
+Here I computed it, but that's because I assumed I knew both columns, and we're not going to
+know both columns.
+So how do we learn these numbers?
+And there are batch of other kinds of averages you can take, and we will talk about later
+on.
+For example, there's something called LATE, a local treatment effect.
+We will talk about this later — no pun intended.
+So those are Average Treatment Effects and Conditional Average Treatment Effects.
+[MUSIC].
+
+Causal effects are changes in outcomes due to changes in treatments, holding all
+the variables constant.
+So when you compare people who are treated with people who are untreated and all other
+variables are not constant, we say there is a Confounder.
+So a confounder is just anything that's not constant across the treatment group and the
+control group, across the people who are treated and people who are untreated.
+So what that means is that generally any correlation that you see between having the treatment
+and having a good outcome, for example, could be because of these confounders.
+So what you should always ask is: Are there any variables which are not constant across
+your two groups of people, your treated people and your untreated people?
+And if the answer is yes, then confounders might be a problem.
+Now, you should also remember that if a particular proposed confounding variable could not possibly
+affect your outcome, then it doesn't matter whether it changes across treated people or
+untreated people, because it doesn't matter.
+It can’t affect outcomes.
+So variables can’t affect the outcomes can’t be confounders.
+Everything else, however, could possibly be a confounder.
+[MUSIC].
+
+After we observe the data, each unit will either have received treatment or not,
+and that means that one of the potential outcomes will become an actual outcome — something
+that we see in the data.
+The other potential outcome will become a counterfactual outcome.
+It's the outcome that would have occurred if something different had happened.
+So if a unit got treated, then we observe the potential outcome for being treated.
+That becomes the actual outcome, and we see what - say a person with Medicaid - gets when
+they get Medicaid, what their cholesterol is.
+We do not see what their cholesterol would have been if they had not gotten Medicaid,
+so that becomes a counterfactual outcome.
+So what that means is that the question of causality just boils down to comparing actual
+outcomes with counterfactual outcomes.
+Or what would have happened if things had been different.
+If you hadn't gotten treatment, what would have happened?
+Those kinds of comparisons will tell us about causal effects.
+Now, since counterfactuals aren't actually observed because they are what didn't happen
+or what would have happened, what causal inference methods would do is they'll use various assumptions
+to let us observe the unobservable: the counterfactual outcome.
+And by doing this, we can make the appropriate comparisons.
+So we're going to focus on quantitative methods in this sequence, but you can also use these
+ideas to do qualitative causal inference, in say history or anthropology, and in those
+fields what you do is you use your knowledge of the historical and cultural contexts to
+construct a qualitative description of the counterfactual outcome, of what would have
+happened.
+So for example here I have a picture of Lincoln giving the Gettysburg Address.
+Now this guy here is Winston Churchill.
+Now the Gettysburg Address - or the Battle of Gettysburg where Robert E. Lee lost, is
+widely considered the turning point of the Civil War.
+So Churchill asked, what would have happened if Lee had actually won at Gettysburg?
+And he wrote an essay on this.
+So it turns out, he is one of the first guys to do causal inference by thinking about the
+counterfactual outcome of what would have happened if the Union had lost at Gettysburg.
+Now in fact this idea is an entire basis for a genre of literature called counterfactual
+history, or alternate history, where people write books and novels about what would have
+happened if the US had lost the Cold War etc, etc.
+And it turns out this is actually not too different from research.
+The authors of these novels have to construct a counterfactual outcome, what would have
+happened.
+That's the same thing we have to do when we're learning about causal effects.
+If somebody got Medicaid, we have to figure out what would have happened to them if they
+hadn't gotten Medicaid.
+And the main difference between the novelist and the researchers is that researchers have
+to really argue strongly that their particular counterfactual outcome is the most likely
+to have occurred.
+Whereas novelists they don't really have to argue that that's what would have happened,
+they just have to think of something that would be interesting and fun to read.
+But there is a shared feature between both the novelist and the researchers, and that's
+that both stories cannot be refuted.
+We cannot refute any given counterfactual outcome, and that's because we just simply
+never observed what actually would have happened.
+We have no idea, absolutely no idea what would have happened if Robert E. Lee had won.
+So your story, however implausible you may think it is - aliens land and take over the
+earth - it might have happened.
+There's no data that can prove beyond a shadow of a doubt that that would not have happened.
+So you can argue that it's probably not what would have happened, but you can never 100%
+prove that it isn’t, and that's what makes things difficult.
+[MUSIC].
+
+So, now let's turn to a more practical question: how do you actually read an empirical
+research paper?
+Well, the first secret trick is that you don't read it from beginning to end.
+You do not read a paper like you'd read a book, or a newspaper, or anything else, and
+for that reason, authors don't write papers like they're meant to be read from the beginning
+to end, because they know that the readers aren't going to do that.
+So what should you do?
+Well first you want to skim the paper to find out four main things.
+First: what is the point of the paper to begin with?
+What's their main question?
+What causal effect are they trying to get at?
+Second: what's their main result or their conclusion?
+What's their main finding?
+Did they answer the causal question they were trying to get?
+Third: what's their data source?
+Where's their data coming from?
+What data are they using?
+And fourth: what method or identification strategy did they use to draw their conclusion?
+So this first step, where you just skim the paper to find out these four main things,
+can usually be done in about five minutes or so, especially if the paper is well written
+and if you are very familiar with the particular question in the context, like say the effect
+of preschool.
+Now, if you're not familiar with the context or the methods, or the paper is not so well
+written, it could take a little bit longer, and sometimes debates about the pros and cons
+of papers can last for years.
+And indeed trying to debate these things and figure out exactly what's going on is part
+of the point of ongoing research.
+So you are just trying to get a basic idea what the topic is, what the findings are in
+your first skim, you don't have to understand everything.
+The next thing we want to do is know what the structure is or the typical outline of
+a paper.
+So it's going to start with the introduction, then it'll maybe talk about the mathematical
+model or just a theoretical discussion of the substantive problem they are trying to
+tackle.
+Next they will talk about the data sources, what data they are using, and where it comes
+from.
+Then they will talk about the institutional details and give you some discussion of the
+particular context of the data and the policy or the treatment.
+Then they will give you some summary statistics of their data; you know, some means, some
+standard deviations, some mins and maxes, just to give you an idea of what the data
+looks like.
+Then they will talk about the empirical strategy: what are they going to use to learn about
+their main effect?
+Which of the identification strategies we've talked on this modules will they use?
+Then their main result: what's the main finding, the main take-away from the data analysis?
+After that they will give you some other results, stuff that's not as important or interesting
+as the main result, but still worth writing up and talking about.
+Then they will talk about some robustness checks, trying to explore different alternative
+explanations for their main finding, where here really trying to convince you that they
+actually found a causal fact of the intriguing variable on the outcome variable.
+Finally, they will end with a conclusion, where they’ll just wrap things up and reiterate
+what their main finding is, talk about other broader implications, etc.
+So that's the basic outline of the paper.
+Not all of the sections are always going to be present and they are not always going to
+be in that order.
+So personally when I pick up a paper, I usually start with the empirical strategy and their
+main results, and then I'll work backwards to these other sections.
+So put differently, I'm going to start by figuring out what their outcome variable is,
+what variable are we trying to learn the causal effect on.
+Second, what is the treatment variable?
+So we want to know the effect of a treatment variable on an outcome variable.
+So what are those in a particular paper?
+Then I'm going to look for a table or graph that summarizes the main causal fact that
+they find.
+Usually, there will be just one table or graph that does that.
+For example, just like all the ones we've looked at in these modules.
+So once you find a that main table or graph, you can read off what their main finding is,
+assuming that everything they did was correct.
+So the next - now that I've got the main finding, and I know what they're talking about, I want
+know how do they get this, how did they come to this conclusion, how did they get that
+number?
+That is, what was the identification strategy?
+So which of the methods we've talked about in these modules are they using?
+So here's where you want to look for keywords like natural experiments or instrumental variables
+to tip you off on what method they're using.
+Now here you can often stop reading and go do something else if you're not interested
+in the further details, because you've got the main point in the paper.
+You know their outcome variable, you know their treatment variable, you know what causal
+effect they found, and that's pretty much the main point of all research in empirical
+social science.
+So you can often read a table by just looking at the figures and the graphs, you don't even
+have to read the body text.
+If you can just find that main table or graph, you're basically done.
+Now, suppose you actually are interested in more details about finding or institutional
+context - then you want to read on.
+The next thing I'll look at is the data sources.
+Where do they get their data from?
+What exactly are they using?
+How do they define their variables?
+And then what's the relevant institutional context that I should know about - you know,
+the settings about how things actually worked in practice?
+This step's going to involve looking at the other tables, like the summary statistics,
+and trying to build a context for the main causal effect.
+So for example, if the main effect is something about the effect of a policy on students'
+GPA, you want to know what's the meaningfully large increase in GPA, so that is, how much
+variation is there in GPA in the data?
+The summary statistics table will tell you that.
+So should I be looking for a 0.2 unit increase in GPA?
+Is that a large increase or is it a 1 unit increase in GPA?
+I don't know.
+That's what we have to find out by reading these other sections.
+After you've done that, I will look at the robustness checks.
+These are different analyses that are trying to look alternative explanations for the finding.
+They are going to claim “I found the causal effect of a policy and an outcome,” and
+you might say, “Well, couldn't it be this?
+Couldn't be that?”
+Maybe there actually isn't a causal effect?
+Those are things you going to try to explore in this section, where their main point is
+going to be to convince you that their actual main finding is correct.
+So last, last but not least, we're going to look at the introduction, the conclusion and
+the theory section.
+So in the introduction and the conclusion, they are going to try to put their finding
+in a broader context of the literature and what we know in general about the effect of
+various policies in these settings.
+And in the theory section they are want to try to give you a way of thinking about the
+situation, thinking about how people are behaving and making choices, and how policy may actually
+work in practice.
+So the one reason you leave these to last is that often if you know a lot about the
+situation, they're just going to be repeating things that you already know, so that's one
+reason why people often just skip it.
+So this section you want to read, especially if you don't know a lot about the previous
+literature and about the context for this finding.
+But if you're familiar with the topic you can just skip them, go straight to the main
+findings.
+So that's an overview of how you should actually read empirical papers.
+

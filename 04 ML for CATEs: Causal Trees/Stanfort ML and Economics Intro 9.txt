@@ -1,0 +1,470 @@
+Introduction
+In this lecture, I'm going to be talking about new methods developed in the last ten years or so to use machine learning to estimate treatment effect heterogeneity.
+That is how treatment effects vary with observable characteristics of individuals.
+Benefits of Machine Learning
+Machine learning has a lot of potential for improving our ability to do policy analysis with data.
+One of the main benefits of machine learning is it allows us to build more granular statistical models and it provides algorithms to do so
+in a systematic way, in a reproducible way. Improve causal inference about the effects of policies, or programs or
+interventions can be be enabled by machine learning because we are able to make more granular predictions about counterfactuals.
+What would have happened to individuals in the absence of a treatment? We also can more efficiently use observables in order to do things like
+control for confounders, that is, variables that might affect both treatment assignment and outcomes and
+thus might otherwise, if ignored, lead to bias in estimates of causal effects.
+Machine learning has the potential to do a better job with that,
+because it has algorithms that have been refined and improved to basically use the data and use it flexibly.
+So that we don't have to rely as much on pre-specified functional form assumptions.
+That in turn can help us have really a more reproducible
+approach to addressing some of the challenges in causal inference.
+And the lack of reproducibility and the sensitivity of methods to functional forum has been really one of the things that has held
+back the credibility of causal estimation in policy problems.
+A second thing is that we can actually understand better what works for whom and why?
+Using machine learning to understand the sources of heterogeneity and treatment effects can provide insight and it also can allow us to better
+target treatments to the people for whom it works the best. That's, for example, estimating personalized or
+targeted treatment assignment policies, and by personalized here, I mean targeted to individuals observable characteristics.
+We do need to consider, though, modifications to machine learning tools in order to make them most useful.
+And in particular, we have many well established machine learning methods that perform very well in practice and prediction tasks, but
+they don't necessarily have well established statistical properties.
+And recall for the problem of prediction, you don't really need a lot of statistical properties, because you can just
+access in a test set how well a model does with predicting outcomes. And if your only goal is to do a good job predicting outcomes,
+we can just see the ground truth in a test set and assess how well we're doing. Well, unlike that case, and for causal inference,
+people don't walk around with treatment effects stamped on their foreheads. We don't know what the ground truth treatment effect is.
+We don't know what would have happened to you if you hadn't taken the drug if you were in a treatment group.
+And we don't know what would have happened if you had taken the drug if you were in the control group. So we don't actually have the ground truth for each individual.
+And thus, we have to do a little more work to figure out how we're going to assess the performance of causal inference methods for machine learning.
+We also need valid confidence intervals for a lot of applications, everything ranging from even A/B testing in tech firms that you're still interested in
+making sure that the results that you find aren't just due to sampling variation.
+If you're thinking about doing clinical trials for drugs or vaccines, we want to make sure that you haven't just gone fishing to find certain subgroups for
+whom a drug works and then try to get that past FDA approval. So we need to make sure that our methods are going to give us reliable results.
+And what I'll talk about in this lecture, and we'll talk about in subsequent lectures as well, is how we can get the best of both worlds.
+How we can use machine learning to have data-driven discovery of things like treatment effect heterogeneity while maintaining reproducibility and
+allowing for valid statistical inference.
+So to elaborate a little bit on the themes that come up when combining machine learning and causal inference.
+One of the big themes is that we can use machine learning algorithms to do data-driven model selection with very flexible functional forms.
+And even though we've been trying to do that for a couple of decades in the social sciences using things like kernels and so on.
+A lot of times those methods just didn't have great real world performance, especially when there were lots of covariates.
+While modern machine learning algorithms do a really good job of handling lots of covariates and flexibly making use of the data and
+adapting to the data to find the right kind of functional form.
+And the techniques of cross validation can be really helpful with that.
+Another big theme is regularization. We want to balance our desire to have a rich and
+flexible functional form with something that's going to, again, hold up well in a test set, something that's not going to be overfit.
+And so that can include penalization for regularized regression, model averaging, and sub sampling.
+And so we'll talk about each of those techniques in context of different applications of machine learning as we go through these lectures.
+We recall that one of the machine learning themes is to evaluate success by goodness
+of fit in a held-out test set with the same distribution in a stable environment.
+And so what we're going to be trying to do when we bring these machine learning themes into causal inference is to decompose the problem.
+So that we can find the components of the problem where this type of machine learning optimization can be applied without sacrificing our primary objective,
+which is to get accurate estimates of causal effects. And in some cases, unbiased or consistent estimates of causal effects,
+or causal effects where we can produce confidence intervals for those effects.
+These are all similar goals of semi parametric estimation in the econometric literature, but the machine learning methods just have better practical performance.
+We don't fully understand why, we're missing some theory here.
+But what we've been doing over the past decade or so in the community that's combining machine learning and
+causal inference is building in some of the theory. And helping enlighten exactly how to apply machine learning methods and
+what modifications can be used so that they perform as well as possible in environments where previously we might have used semi-parametric estimation.
+So one really easy way to think about a contribution of machine learning to
+econometrics is that we go back to the semi-parametric econometrics literature.
+And instead of using kernels or other types of methods that had previously been studied, we substitute in flexible machine learning methods.
+And we'll find that that's actually quite successful as long as we make some appropriate modifications and make sure that we're optimizing for
+the right, Criteria. So we've actually seen quite a few successes so far. And we have multiple literatures that have really blossomed in this area.
+We've seen contributions to estimating average treatment effects,
+and other lectures in the series have covered that. We've seen contributions to instrumental variables, for example,
+trying to use machine learning to select among many possible instruments. In other lectures, we'll talk about panel data models,
+say matrix factorization as an alternative in the differences and so on. But in this lecture, we're going to talk about heterogeneous treatment effects.
+And that will lay the foundation for later applications in estimating optimal policies or even doing adaptive experiments
+to try to estimate optimal treatment assignment policies. So if we're trying to think about heterogeneous treatment effects there
+are a number of applications where it can be really useful to estimate not just an average treatment effect, but
+to understand how treatment effects vary with individual characteristics. One of the examples that really motivated me to study this problem to start with
+were A/B tests in large technology firms. So, in a big technology firm, engineers spend time developing
+new algorithms or new ideas and then they want to test them.
+Now it's often the case that a certain algorithm improvement might work better in some situations than others.
+Or a certain design of a web page might work better for some scenarios than others.
+But just like the FDA and scientists before them, the gatekeepers of A/B testing platforms and
+tech firms understand that if engineers are allowed to analyze the data after the fact, they'll always be able to find some
+group of scenarios where they're new in invention works. And this kind of post-talk analysis of just phishing in the data until
+you find some group of people or some situations where your field mates works,
+that's well understood to be prone to false discovery, P value hacking.
+And so as a result of that, there's actually some fairly strict limits even in these large technology firms about how people can use the results of A/B tests.
+On the other hand, of course, it's incredibly useful to learn where does an algorithm work well, and where does it not work well?
+That can give you insight for developing new algorithms. That can help you decide, well, maybe it works well for
+some groups and not others and so we should just apply this new innovation in the scenarios where it works.
+And of course, you would like to do that all else equal. So I was motivated to try to come up with methods that could be built into A/B
+testing platforms to automatically search the data and uncover heterogeneous treatment effects, but
+do it in a way that was reliable and not so prone to false discovery problems. A similar motivation comes up in something like a drug trial, we might want to
+to understand for whom does the drug work and who does it not work? And we might want to understand where side effects are problems.
+So, again, we'd like to do that in a data driven way. We don't want to just be restricted to pre-specified hypotheses.
+Other types of applications include observational studies of, we released a new product, we want to understand what the impact of that was.
+We want to understand the impact of advertisements that were run. In all these cases, our goals are to systematically identify subpopulations and
+estimate treatment effects and also do valid inference to make sure that our findings are not just due to sampling variation.
+And again, when we're thinking about targeted policies, we have to remember that sampling variation can be a pretty big problem.
+If I'm trying to understand how well a drug works for someone just like you, well, you're complicated, you're different, you're unique.
+And so we never have enough data to really understand fully how a treatment is going to work for a particular individual,
+especially if we observe a lot of characteristics for that individual. So, sampling uncertainty is going to be important once we get
+down to this kind of individual level, very targeted treatment effect estimation.
+We also want to understand mechanisms. We understand why if we know that we have problems for a certain groups say young
+women are having more side effects of a certain drug, that can help us develop hypotheses about why they're having those side effects.
+And that might help us reformulate the drug. And that would help us develop new and improved treatments.
+An important application of heterogeneous treatment effects is once you understand for whom a treatment works better or worse,
+we can figure out who gets the treatment. Now, a treatment might be better than control for everyone.
+So just because you have treatment and effect heterogeneity doesn't necessarily mean that a personalized or targeted treatment assignment
+policy does better than a uniform treatment assignment policy. That depends.
+So treatment effect heterogeneity is a lot easier to find than heterogeneity in which treatment is optimal for different groups.
+But sometimes treatments are costly. So even if when the treatment is beneficial for everyone, it can still be
+useful to figure out who should be prioritized most highly for a treatment.
+In this lecture, I'm not going to go through the methods for optimal treatment assignment policies that will come in a subsequent lecture.
+But I want to highlight the problem of heterogeneous treatment effects is an input to understanding optimal treatment assignment policies.
+That's one application of heterogeneous treatment effects. But you can still be interested in understanding treatment effect
+heterogeneity. For example in order to motivate future innovation, even if you're not going to use it to target treatment assignment policies.
+So without further ado, let's dive into the heterogeneous treatment effects section.
+Literature
+So let me start by saying that there's actually a pretty wide literature and it's growing really fast.
+So I've just listed here small sample of the papers that have been written
+in the last ten years that are analyzing treatment effect heterogeneity.
+And one thing I want to emphasize is that there's not just one question here. There's not just one question and one best method for that single question.
+Instead, there are many questions revolve around treatment effect heterogeneity,
+and each question will have its own set of methods. So, today I'll talk about one type of method which is identifying subgroups and
+each subgroup has different treatment effect. Different average treatment effects.
+And that's useful in some circumstances and not in others. We might also want to do something like test heterogeneity across all covariates
+and figure out how to deal with multiple testing problems. We might be interested in treatment effect heterogeneity in order to understand
+questions about robustness to model specification. If treatment effects vary a lot across with characteristics,
+the model specification can make a bigger difference. We can try to understand flexible conditional average treatment effect
+estimation, which is another thing I'll talk about in today's lecture. Another type of problem is identifying the individuals that have the highest
+estimated treatment effects. I'll also show you some examples of that today.
+So rather than think about this as being a competition where one question is important, a different group thinks a different question is important,
+I would instead encourage you to think about in your context which question or
+set of questions are relevant and why and then find the best method to deal with those questions.
+Machine Learning Methods
+So as previously described, machine learning methods perform perform well in practice.
+But in general have well-established statistical properties, because that hasn't usually been the goal.
+You can just evaluate performance using a test set. But since the ground truth for causal parameters are not directly observed,
+there's a greater role for statistical inference in the context of heterogeneous treatment effect estimation in general causal effect estimation.
+Some themes that have emerged in terms of how to do this include.
+First, we might decompose the problem into a prediction component or a causal component and causal component.
+And then outsource, the part that's a prediction problem to machine learning methods.
+So that has some advantages. Because if you do this decomposition, you can plug in any machine learning method you want.
+And since machine learning methods get better all the time and competition changes and innovations occur, we can have a single causal inference
+method with the most modern and recent machine learning plug in method.
+And of course, different machine learning methods are going to work better in different environments. So we can tailor those and use the very latest and greatest for
+the specific type of data that I have. An alternative approach is to build novel methods that are inspired by ML, but that
+are actually tailored and fundamentally changed for the causal inference setting.
+And so personally, I've done both of these things and I think they both have their place. It's a lot of work to keep updating and machine learning methods
+that are tailored to causal inference to make use of the latest, and greatest computational techniques, and so on.
+So it can be really advantageous to be able to use off the shelf methods.
+But at the same time, if you have a specific objective, you might as well try to really solve the problem you're solving and that can have advantages as well.
+Another theme is sample splitting or cross-fitting. So one way that we avoid overfitting in machine learning is just
+doing cross-validation to balance to get to balance bias and variance, but that's not enough.
+It turns out to get valid statistical properties. And so one of the things that the machine learning and
+econometrics literature has has really focused on and found to work well. Both in theory and in practice are things like sample sitting and
+cross-fitting which basically boils down to, not using the same data to select a model or to choose the model specification and
+to come up with the parameter estimates of interest. So for example, that might mean if say using propensity score
+weighting in order to estimate average treatment effects,
+I don't use the same data to estimate the propensity score model and
+when I wait a particular observation. So the propensity score I used to wait and
+observation is estimated using a data set that doesn't include that observation.
+So those types of techniques can be helpful for the validity of parameter
+estimates when we're trying to actually estimate a treatment effect.
+We've also found that just generally bBuilding on the insights of semi-parametric theory is really important. There's a lot of theory that was already done to say, how can I estimate parameters
+of interest like causal effects in a world where I don't know functional forms? And so we can use that theory to come up with well performing an efficient
+in terms of minimum variance estimators when we bring in machine learning.
+And so one of those insights is the use of orthogonal moments.
+And so orthogonal moments will develop it along the way in different applications,
+but they're basically going to built-in a tolerance for slow convergence in nuisance parameters.
+And so machine learning methods, they're very flexible. And so they're going to converge to the truth more slowly
+than something like an average. And so these techniques are going to help us make use of slowly converging machine
+learning methods while still getting estimates of something like an average treatment effect or
+a conditional average treatment effect that might converge at a faster rate. So to get started on the formal analysis,
+Potential Outcomes Framework
+consider consider the potential outcomes framework. Just to remind this, we're going to represent each member of i.id
+set of subjects with a tupleX i which is the features are the covariance.
+Those are the characteristics of individuals. A response or an outcome, Yi and a treatment assignment, Wi.
+And following the potential outcome frameworks will posit the existence of quantities, Yi is 0 and Yi is 1.
+And actually, those sometimes are represented with subscripts or
+sometimes not. What we're going to interpret those as, as those of the response we would have
+measured given that i subject received a treatment or no treatment. So for each person, they have an outcome that would have occurred if they were
+treated and an outcome that would have occurred if they were a control unit. So our goal here is to estimate the conditional average treatment effect.
+Goal
+So that's the expected value in a treatment effect, conditional on a particular realisation of the covariance.
+And reminder that even in a randomized experiment, we only get to see the outcome for
+an individual in one of the two treatment scenarios. If we don't make any additional assumptions, it's not possible to estimate
+Assumptions
+treatment effects level or treatment effects conditional on X either one. Without any additional assumptions, we can estimate that, because we don't see any
+individuals in both the treated state and the control state at the same time. So we have to have some way to use data from some individuals that are treated in
+different individuals that are controls to estimate these treatment effects.
+So one of the common assumptions used in literature is on confounded gnus, which is also called ignore ability or selection on observables.
+And what that basically means is that conditional on observable characteristics, the treatment assignment is good as random.
+And when this assumption holds, a variety of methods can be used to estimate treatment effects.
+The historical literature has focused on things like matching or propensity score estimation and those are usually consistent,
+at least as long as there's overlap. That is for each value of X, we have some probability each treatment state occurring.
+Regression Trees
+So the first method of consider for analyzing heterogeneous treatment effects is going to build on a method called regression trees or regression and
+classification trees, or cart. Before I dive into applying regression or classification trees to causal effects,
+let me just do a quick reminder about how simple prediction trees or classification trees work and then we'll generalize those and
+apply them to the problem of estimated causal effects. So here's an example of applying a classification tree using data from
+who lived and who died when the Titanic went down. So this kind of a tree we can look and see, first of all,
+what class was the passenger in. And if they were in a class greater than 2.5, which means they
+were the low class, they have the cheap tickets on the Titanic,
+we see in this left branch here that a lot of them died. 370 out of 501 low class passengers died when the Titanic went down.
+And because class is such an important predictor of who lives and
+who dies, the tree here splits on that first. Then we look at in the right branch and we can say, well, if you were in first or
+second class, the next important predictor for understanding who lived and who died is age.
+So if your age was not greater than 16, that is you were a kid,
+34 out of 36 kids in the upper classes lived.
+Now if you're an adult in the upper classes, then it matters again whether you're in first class or second class.
+And it looks like among people who were in first class, more of them lived, while adults in second class, more of them die.
+So this is a simple way to break up the data into subgroups according to class and age.
+And just by dividing the data into those subgroups, we can get a reasonably accurate prediction of who lived and who died.
+Now I haven't told you yet how this tree was created, just how you interpret it and how you understand the results.
+But one reason that regression and classification trees have been incredibly popular since they were introduced, and this is a machine learning model that's
+been around for decades, is that they're very easy to explain to people. Once you see the tree, you have to first understand how you got the tree.
+But once you see the tree, the predictions are simply going to be based on the proportions in the leaves.
+So it's very simple to understand why people in, say the upper classes that were kids are classified as likely to live.
+That's because in the training data in the data set, we have 34 out of 36 of those people that met those characteristics lived.
+So there's not a big black box in understanding how your estimates are obtained given this tree.
+On the other hand, getting the trees a little more complicated, but it's actually not that complicated to understand how you get the tree either.
+At the top of the tree, what the algorithm does is it looks over all the covariates in the data set and all the different ways you can split on each covariate.
+And it finds the way to split where you're essentially in for
+classification, you're maximizing the classification power of the division.
+You're trying to find groups that are homogeneous. Now there's a couple of different measures of what it means for
+the groups to be homogeneous. I won't go into that now, but you're essentially trying to find the way
+to split that maximizes the discriminatory power of the split. If this was a regression problem where we were just trying to
+predict the value of something, we would basically try to maximize
+the difference between the two in terms of sum of squares. Another way to understand trees is to realize that any particular
+Partitioning the Covariate Space
+regression tree or classification tree that you build can also be represented as just a partition of the covariant space.
+So over on the left here, I've depicted a tree where the tree is based on two covariates, X1 and X2, why on the right side,
+I've depicted that same tree as a partition of the covariant space.
+So basically what a tree is doing is it's figuring out how
+to divide up this box this X1 and X2 box into rectangles,
+where I'm trying to find the rectangles that were within a rectangle we have homogenous outcomes.
+Now one way that we traditionally did this in econometrics, something I used to do is I might have taken this box of X1 and X2 and
+divided it into, say 100 squares by by plots. Actually, Raj Chetty has a nice little state of package for doing that,
+but it's not something that I would often do in my own empirical work. What we're doing here is instead of driving this into 100 squares,
+which might take up a lot of squares, and we might not have much data in each square, might be unnecessarily fine.
+Here we figured out that we can actually fairly accurately represent the nature of this data generating process with a smaller number of rectangles and
+we've used the data to figure out how to do that. So what we figured out is we, first, we split in the X2 dimension.
+And then we look on the left side and say I for the low values of X2, we want to split at a high value of X1.
+That actually for the high values of X2, we split at a lower value of X1 and
+we slice it differently depending on whether X2 is lower high. So that gives us flexibility, but allows us to more efficiently describe the data.
+Now that we've reminded ourselves what regression trees and classification trees look like, we can now consider how
+to apply these ideas to estimate heterogeneous treatment effects. And in particular, our goal's going to be to divide the population into subgroups
+in order to minimize the mean squared error of treatment effects.
+So how will we use the causal tree, what kind of problem is it intended to solve?
+It's designed to allow us to do things like report heterogeneity in treatment effects without a pre-analysis plan, but
+with valid competence intervals afterwards. Now something that's going to be special about causal trees is that it's going to
+try to come up with a data driven way to estimate treatment effect heterogeneity.
+But it's still going to come up with a small number of estimated
+parameters, small relative to the size of the data. So we can think of this as a form of moving the goalposts.
+We're going to use the data to define the problem, the estimate, because we're going to use the data to figure out what the subgroups are.
+And then second, estimate treatment effects for these data defined subgroups.
+We're going to solve the overfitting problem with sample splitting.
+That is we're going to choose subgroups or determine what the subgroups are in half the sample and
+estimate the treatment effects on the other half of the sample. Now this might seem inefficient because we're only using half
+of the data to actually produce our treatment effect estimates. But doing the sample splitting is going to give us a lot of advantages because it
+turns out if we don't do that sample splitting, we'll often end up with inconsistent estimates of treatment effects.
+Now there's ways to compensate for that directly, but it turns out that it's actually prettier hard to beat the performance of sample splitting.
+Because once you start trying to correct for the fact that you've used the same data To determine your subgroups and
+estimate your facts, you have to be pretty conservative. So in practice using simple splitting it's going to have these big advantages,
+it's going to be very transparent because you are going to use half the data to decide the subgroups and then cleanly,
+uses a second part of the data that hasn't been touched yet to estimate the effects.
+So it's going to be very easy to explain to people why they should trust your estimates.
+And this transparency can be helpful, and it also is going to give you a lot of robustness.
+We're not going to require a lot of fancy theory to understand why this approach works.
+So once I've solved one problem by adopting this approach of sample splitting, the remaining challenge is to figure out exactly how should I define the subgroups?
+And the nature of the challenge, why is this not a straightforward application of regression or classification force that already exist?
+Well, if we're trying to optimize my subgroups for treatment effect heterogeneity, what we are interested in is not
+mean squared error of outcomes but mean squared error of treatment effects.
+However, as we've discussed the fundamental problem of causal inference is that we don't observe Individual treatment effect.
+So, we don't know exactly how to apply this existing off the shelf methods because the objective is infeasible.
+So, what we'll need to do is find the way to address that and it will propose a couple of different alternatives, but
+the one that we find to be preferred is to actually estimate that objective function.
+Another challenge with this method and this can be a fairly big challenge, is that when you do sample splitting,
+there's a problem that your estimates are going to be somewhat unstable. I can split the data and find one partition, one tree.
+But if I sampled the data again, I might get a different tree. And it's not that either of them are wrong.
+They're each good descriptions of treatment effect heterogeneity, but they're not the same. So that makes it harder to replicate results and
+might impede the reliability of your results. And that problem doesn't have an easy solution.
+So in the face of this problem of trying to understand how I should
+Using Regression and Classification Trees
+adapt regression and classification trees to the problem of
+estimating conditional average treatment effects.
+In the Athey and Imbens PNAS paper, we have a couple of different approaches and
+we talk in that paper about what the advantages and disadvantages of those approaches might be.
+So the first thing you might do in trying to use regression and classification trees to to analyze treatment effect heterogeneity is
+just build a single model, model outcomes, y as a function of x and w. So just treat your treatment indicator w as if it was another feature or covariate.
+Just throw it into the regression tree. And we call that the single tree method.
+And what is the problem with that? Well, your tree might not even split on the treatment effect.
+And so if you have one part of the tree that's splits on x to define subgroups by x, but doesn't define subgroups that are different by w.
+That's going to mean that your implied estimate of your
+treatment effect in that area will be for those x's will be zero.
+So that's not going to be very helpful for coming up with treatment effect heterogeneity,
+because we're we're going to get the same answer no matter what w is.
+A second approach, we call the two tree method. And that was later dubbed the tea learner by there's a paper by
+a group Kendall at all from Berkeley that later kind of generally,
+apply this same kind of taxonomy. General machine learning methods so they called the single tree method
+the S learner and the to tree method that the the T learner. And so in in the case of building two separate models for
+the two different the treated and control that can work better because it'll ensure that you actually do pay
+attention to your treatment variable when you're building the prediction model.
+But it can have a fairly subtle disadvantage. To see what that disadvantage is.
+Imagine that we are considering a particular value of x, a male who's 60 years old.
+Well, if we just build two separate models, one for treatment group and one for control group.
+We say use something like trees. It could be that the treated tree splits on gender, but
+not age while the control trees splits on age and not gender. If we then wanted to understand what is this model tell us about the treatment
+effect for a 60 year old male. That well the prediction for the male in the treatment group would
+be the average outcome for treated individuals who are male.
+The prediction for this individual from the control tree would be based on his age.
+So, what we'd end up doing to estimate his treatment effect is compare the average
+treated outcome for males, to the average control outcome for old people.
+And of course, that doesn't make any sense. Why would we want to compare treated males to control old people.
+That's not comparing apples to apples. And so that could end up with biased estimates of treatment effects spurious
+estimates of treatment effects, you might find treatment effect heterogeneity where there isn't any. Where if we actually compare treated males to control males there's no difference.
+But comparing treated males to old control units makes it look like there's treatment effect heterogeneity when there's not.
+Now this might might seem like this is really specific to trees. But one reason that it's really useful to think about this in the context of
+trees is you can immediately see what the problem is and see what's going on. More complicated machine learning methods would have the same problem, but
+they might be less transparent to see what's going on. So this is not a very good method for estimating treatment effect heterogeneity.
+It's only going to work if you have really accurate estimates of treatment effects,
+of outcomes in the treatment and control group. If you don't have enough data to fully estimate what the outcome function looks
+like, you're going to do a bad job. So a third method that we propose in this paper is the transformed outcome method.
+And this is a, takes a little bit to explain, and I'm not going to go into the details of that here in this lecture.
+But what we do is we figured out a way you can transform the outcome. And then if you transform the outcome, you're then able to build a single
+prediction model with this transformed outcome. And this was later generalized to actually use the AIPW score the augmented inverse
+propensity weighted score as an outcome in a regression or in a prediction model.
+So, in our paper we show the extent to which that actually works.
+And we show that it works okay, but it also can have some disadvantages in terms of efficiency.
+What we do instead in this paper is we estimate the mean squared error criteria and that's the thing that performs the best in our paper.
+Although there could be settings where the transformed outcome type of approach could work better as well.
+So, this kind of helps us also see one of the themes that I alluded to,
+in my introduction, that sometimes you can approach
+a causal inference problem by modifying the problem.
+And then applying off the shelf prediction methods, and sometimes you're going to want to actually modify the method.
+And so now I'll show you how we modify the method. Although we won't go into the full details of this transformed outcome
+Transformed Outcome
+approach in these lectures, I can just briefly give an overview just to give an example of how you can apply
+off-the-shelf machine learning methods to the problem of estimating CATE.
+And so the idea is that there's a way to transform the outcome so
+that the expected value of the transformed outcome is actually the treatment effect.
+So, to see this I can define this transformed outcome Yi star if p is the assignment probability, the probability of being treated,
+I can just give a simple transformation if the treated observation, I'm just going to divide the outcome by p.
+If your control observation, I'm first going to take the negative of your outcome and then divide it by 1- p.
+And that's going to be my estimate of an individual unit treatment effect. Now, this is a little crazy if you think about it, because your outcome,
+maybe your outcome could be constrained to be between zero and one, say or it's between zero and 100.
+And that's my score on the exam for example, and I could see whether, my question could be whether treated units get higher scores on the exam.
+So, I can look at you and I can say, hey, if I did a 50,50 treated control split,
+if I find a certain person that was treated space, they got a 75 on the exam.
+Well, their transformed outcome is going to be 75 divided by 1/2 which is 150.
+So, my estimate of their treatment effect will be 150. Which is crazy, because nobody could have a treatment effect
+of 150 because this scores are between zero and 100. Now, I take somebody else in the control group,
+say their score was 72, but my estimate of that person treatment
+effect would be -72 divided by 1/2, which is -144.
+Also a very noisy, extreme unrealistic estimate of somebody treatment of that.
+But the idea is that on average if I add up this transformed outcome and averaged across everyone.
+Well, there's about 1/2 the people will be treated. And so I'll multiply by 1/2 these wildly big treatment effect estimates.
+The other half will be control. So, I'll multiply by 1/2 and minus one,
+their outcomes to get this estimate for them and I take the difference.
+And that's going to be on average the difference between the sample average treated outcome and the sample average control outcome.
+Remember the control guys we've transformed and multiplied by -1. So, if I just average up all these transformed outcomes,
+I'm going to get an estimate of the treatment effect. So this is a simple insight that says that this is a wildly noisy estimate of
+treatment effects. But if an individual even though that individual was only observed as either
+treated or control, I can still look at their outcome and come up with an unbiased estimate of their treatment effect.
+It's not going to be very useful for that individual. But if I average up people similar to that person,
+I will get an unbiased estimate of their average treatment effect. Once I see that, well I can say all right, if I take any group and
+average these transformed outcomes I get the treatment effect. Then I can just use this transformed outcome as the left hand side is
+the dependent variable for any prediction method, and the resulting predictions will be estimates of conditional average treatment effects.
+So this seems first like it might be specific to randomized experiments, but actually if it's a setting with unconfoundedness, an observational study,
+I can just replace that P with the estimated propensity score. And in fact, I can go further and
+I could also use the AIPW method which would basically adjust this further for
+outcomes, we could estimate an outcome model. And a propensity model and come up with the AIPW score and
+use that as a left hand side variable. So that's one way to use off the shelf models,
+prediction models to estimate conditional average treatment effects. But there are other ways and that's what I'm going to focus on for
+the rest of this lecture. So in order to explain further this causal tree method, I need to introduce some notation.
+Notation
+So first of all, we're going to have different sets, and not just a training and test set.
+But we're also going to have a set we'll call the estimation sample. So that what we'll call this training set is actually
+going to be the set that's used to construct the tree. The estimation set will be the set that we use to construct parameter estimates.
+And then we'll also consider the hypothetical test sample. It's not going to be used directly in the estimation, but
+we want to talk about that. Our goal ultimately is going to be to do a good job with mean squared error of,
+our treatment effect estimates in a test set. So in order to describe how this works,
+we're going to use the notation capital pi to denote a partition. And we'll let tau hat of x be parameterized first by
+the estimation sample that's used to form the estimates of treatment effects, and pie the partition.
+And so what tau hat of x s and pi be the sample average treatment effect, and
+sample Sest given in the leaf that Mr. Xi is assigned to.
+So again, you take a unit and you take their covariance.
+If I understand their covariates, I can figure out which leaf they're in according to this partition pi.
+So it's like when we had the example of the partition with the rectangles for each Xi, it falls into a rectangle.
+So L is the leaf that Mr. I falls into as determined by his co-variant.
+Once I have the rectangle that this unit lives in, my estimate of the treatment effect is just the sample
+average treatment effect for that unit in the leaf. And so all this notation is just saying that it's the difference between
+the sample average of the treated outcomes in the leaf. My end the sample average of the control outcomes in the leaf.
+And so here, what we're summing over are the units in the estimation set that lie in the same leaf as this X.
+Mean squared error objective
+Now, as I mentioned earlier, what we want to do is try to find a partition that does as good a job as possible at matching our estimated treatment effects to the actual
+treatment effects. So I can define this infeasible mean squared error objective function,
+what is the objective function If I could actually observe how I
+the true treatment effect for Mr. I, which I can't observe.
+I'm going to actually define this as a function of two sets. So my overall objective is to minimize means quarter and the test set,
+but my tau hat the estimates are going to be parameterized by the estimation
+set that I use to construct my sample average estimates as well as my partition.
+And you remember my partition in turn came from the training set.
+So the tau hat, the pi comes from the training set but the tau hat is the sample average treatment effect for lif,
+as estimated from the estimation set. And then my ultimate goal is to find a good tau hat function
+that would perform well in an independent hidden test set. So I can write this means quarter
+objective as this sum of i in the test set
+of the of the tau i minus the tau hat. I can then just do a little bit algebra to expand that out and
+see that this means quarter is that can actually be written in three terms, the tau i squared, the minus two tau i times tau hat and the tau hat squared.
+Now, I can then think about what the expected value
+of this mean squared error would be where I'm taking
+the expected value over a training set and a test set.
+And what I want to do is, at the time that I'm choosing my partition,
+I want to choose my partition pi in such a way that in expectation
+we'll do well in minimizing mean squared error and a test set.
+So at the time I choose my partition pi, I won't know my my Ste.
+So, but I'm going to try to choose my pi to do a good job on that an expectation.
+So when I check the expectation I can do a little more algebra and I should say this line, you have to do a few more lines of algebra behind
+the scenes to get to this expression. But I can transform when I take the expectation I can do a little algebra to
+express it in the way that I've done here on this last equation.
+The first term is the variance of tau hat.
+And so basically a tau hat that's more expressive
+that varies more is going to be all else equal is going
+to be good at minimizing the mean squared error of the test set.
+And one of the reasons that we know that variance is going to be good is that our tau hat by construction is going to
+be unbiased within the the leaves of the partition. And the reason we know it's going to be unbiased is that the the the estimation
+set is independent. The estimation set wasn't used to construct the pie. So we survived because we've got our tau hat defined as
+a difference in sample averages it will be an unbiased estimate.
+Because it's unbiased conditional on being unbiased,
+having a tau hat that varies more than accurately adjust with
+x is going to do a better job minimizing mean squared error on the test set.
+Then we can look at this last term going all the way to the end we have this term,
+this expectation of tau i squared. That expectation doesn't actually
+depend on my estimate tau hat. Because of that, we can
+ignore it when choosing pi.
+So whatever pi is the expectation of tau i squared is going to be the same. So even though it might be hard to estimate the expectation of tau i squared
+doesn't matter if I'm comparing and contrasting two partitions. So remember, I'm going to use this expected value of the mean squared
+error as a objective function for choosing partitions pi, that's our goal we need a good objective function for comparing pi's.
+If I compare two pis, I'm going to take the difference in the means quarter from one pi, and that means quarter in the other pi and
+this e tau i squared is going to cancel out. So I can ignore that, even though it's so even though it's hard to estimate,
+I don't have to care about it. Then the middle term is the expectation over x of tau squared.
+The tau is an unknown parameter. We don't know what the true tau is.
+But we can estimate that using the data.
+And so what this is all going to come down to is coming up with good estimators
+of these two expressions and then using that as a criteria for choosing pi.
+And I want to emphasize that this expression is making heavy use of the fact
+that in the particular algorithm we're proposing our estimates,
+tau hat will be unbiased. And that's crucial for this particular formula to
+be a good estimate of the mean squared error. If I didn't know that my tau hat was unbiased, this algebra wouldn't work and
+I wouldn't be able to have this particular representation.
+So once we've solved this problem of coming up with an objective to optimise, and again we've just derived an objective using a little bit of algebra, we figured
+out even though we can't observe tau i for any particular observation, we can come up with an estimate of the impeccable mean squared error criteria.
+Once I have a mean squared error criteria, I can then use the causal tree algorithm
+that's very close to what the original regression tree algorithms look like.
+It's just that I have a different criteria I'm optimizing over. So in particular, I'm going to use a greedy algorithm to recursively
+partition the cover itself space x into a partition pi and in each node, the split will be selected as the one that minimizes our estimate of
+expected mean squared error, over all possible binary splits. Also have some minor modifications to make sure that each time I do a split I
+actually have treated in control units and a minimum number of those in each leaf.
+I don't want to end up with a lead that has only treated units because then I can't estimate a sample average treatment effect.
+I'll use cross validation to select the depth of the partition that minimizes an estimate of the mean squared error of treatment effects using left
+out folds as the proxies for the test set. Finally I'll select this partition pi star the optimal tree by pruning my
+partition to the depth selected from cross validation, where I'm going to prune leaves that provide the smallest improvement in the goodness of fit.
+And finally, I'll estimate treatment effects in each leaf using the estimation sample SS.
+So this algorithm is exactly the same as a regression tree algorithm,
+except that instead of just minimizing mean squared error of outcomes,
+I'm now going to minimize the expected mean squared error of treatment effects.
+And I'll also put in some extra constraints to make sure that when I do splits, I have enough treated units and enough control units.
+So it's basically just a regression tree optimized for treatment effects.
+But I'm also going to use this sample splitting, which was not commonly used in the machine learning literature.
+And the sample splitting is going to ensure that instead of using the same data to choose my splits, and estimate treatment effects, I'm going to use a new
+sample to estimate the treatment effects once I have the partition. And that's going to give me the nice statistical properties that I prefer.

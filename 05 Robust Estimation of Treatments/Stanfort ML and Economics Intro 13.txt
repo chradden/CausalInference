@@ -1,0 +1,282 @@
+
+Intro
+The first thing I want to do a deep dive on today is on failure modes for
+estimators of heterogeneous treatment effects. The motivation for this is that often in an engineering setting,
+someone will propose an advocate for a machine that does something, they'll tell you that it works.
+But then you can look at some performance diagnostics and is the machine working or not?
+It's kind of hard to tell. Generally, what's considered a best practice is that if a machine
+does the job well, it solves some problems you might have had. So first, you demonstrate the problem, you could argue the problem is difficult to
+solve, then you show that the machine solves the problem. And I, at least, get some confidence that the machine is doing something useful.
+So this kind of the approach I'm going to take with methods for treatment heterogeneity in observational studies.
+I'm first going to show you some things that can go wrong. Two things in particular, I'm going to worry about our regularization bias and
+confounding bias. And then I'm going to discuss how you can design methods that avoid these problems.
+And so throughout this part of the lecture, I'm going to go by kind of example.
+I'm going to show kind of a series of baselines, methods for a treatment heterogeneity, talk about when they work, when they don't work,
+and kind of by seeing these methods either work or not work. You can kind of get an understanding of what regularization and
+confounding bias are in practice.
+Baseline Methods
+But in terms of baseline methods, the simplest thing you can do is based on the following, a direct observation.
+I remember we're working under unconfounding bias, the treatment is as good as random conditional index.
+Then kind of following the same kinds of calculations we saw in lecture two. You can see that conditional average treatment effect,
+that is the following thing, can be written as a difference.
+Mu 1 of x minus mu 0 of x, where mu 1 of x is the expectation of Y, given X.
+And treatment i set to 1, and mu 0 of x is the expectation of Y given extra controls.
+So, the point here is that these two problems here, mu 1 of x,
+mu 0 of x, these are just nonparametric regression problems.
+So we could kind of attempt to learn how to predict Y from X and W directly.
+And then try to learn mu 1 of x and mu 0 of x, take their difference, call that an estimate out of X.
+And this will obviously be consistent given an update.
+So to be a little more specific, you could try doing this in two ways.
+Two Methods
+The first is an hiraman nomenclature from this recent paper by Clinton et al.
+There's reference to it in the course outline. So, first thing you could do is what's called the T-learner,
+is you could try to solve two different regression problems. First, you're going to estimate mu hat 0 by predicting Y from X on the controls.
+And then you're going to learn mu 1 of x by predicting Y from X on the treated.
+And then you take the difference of these two regression estimates. It's called the T-learner because you ran two regressions.
+But beyond that, it's just a very direct application of kind of the identity here,
+essentially tau of it is mu 1 of x minus mu 0 of x, that relationship is true.
+Then the T-Learner just puts hats on everything at estimates mu hat 1 of x and
+mu hat 0 of x like a nonparametric regression, and then sets tau hat to be their difference.
+So that's one thing you could do. Another very similar thing you could do, but kind of algorithmically, it looks
+different, is that instead of predicting Y from X on treated and control separately. You could just kind of glob your X's and W's into a single covariant called Z,
+and learn to predict Y from X and W simultaneously. So now, you have just a single u hat function that you can
+give it covariates and a treatment status and then predict from, and then make a prediction there.
+And then you could kind of query the same mu hat function twice, once with treatment
+or set to 1, or once with treatment set to 0 and get predictions [INAUDIBLE].
+Is called S-learner because you're in a single progression [INAUDIBLE].
+So far, I've been very open-ended about how you would actually implement this.
+You need to choose some method right to predict Y from either X and X and W. There are different choices you could make.
+Methods
+Here, I want to show some examples here on random forests kind of just because
+they are easy to run, you could barely kind of do this way any other approach.
+So, okay, in order to kind of understand a little bit of what's going on here, I'm going to show just kind of a couple of
+slides to remind you about how trees and forests work. I know you've already seen it so far,
+but it's just to kind of in diagnosing what could be going right or wrong. It's just going to help you to remember what's going on specifically in
+the algorithm. If you ran this with loss or boosting in the simulations,
+you might see similar results as to what happened to show later on. But kind of understanding step by step how that happened might look a little
+different. So anyways, what's a random forest?
+Random Forest
+A random forest is a method that kind of tried to predict Y from X.
+So it's just kind of this black box predictive method and
+exactly the type we want to be core. How does it operate?
+Well, essentially, each tree on its own, it's going to kind of subdivide a space into rectangles.
+And it's going to average, is going to predict at this point X by averaging outcomes for everyone who falls within this rectangle.
+And a random forest is going to aggregate trees. So just very quickly, we've already seen this before,
+our trees kind of are going to zoom in on which rectangle is split in that by kind of recursively partitioning the feature space.
+This is a somewhat unstable procedure. So then kind of back in the day,
+there was a lot of discussion of kind of if you're training decision trees.
+If there are many different ways, you could have trained a decision tree that all look similar or perform similarly, which one should you choose?
+There was this something people work hard on until kind of at some point people realize you're better off not choosing just kind of
+if there are many reasonable looking trees. Just train all the trees, and kind of get a consensus prediction as their average.
+And that's what kind of enforce paper by Breiman does.
+And so really kind of pictorially, if you have a bunch of trees here one tree predicts by the averaging outcomes in this leaf and
+another tree predicts by averaging the outcomes in this leaf, and so forth. The random forests that's going to predict by just averaging the predictions by,
+I mean, by all the trees, so it's kind of a double average. So this is what's going on.
+There are different ways to kind of increase the diversity of the forest. But this is enough to understand what is going on with with a T-learner and
+T and S Learners
+S-learner. So anyways, what is the T-learner doing specifically for
+estimating new hat 0 of x. It's going to train trees that kind of try to find regions where kind of
+do best prediction of y given x with a control constant. Can make separate predictions in each of these regions than if you do a forest
+you kind of do this with a bunch of trees and average those predictions.
+You're going to train different trees to predict y from x on the controls versus the treated.
+And then tau hat is going to be this difference. The S-lerner is going to do something different.
+It's going to try to build trees, where kind of at each point you choose, do you make a split on one of the axes?
+That is kind of do you create heterogeneity or do you make a split on W?
+Which is kind of means creating a treatment effect. So, From a treatment effect estimation point of view but
+the S-learner reinforced, algorithmically might look a little strange but can in terms of black box prediction.
+Now forest just most like it. So this is what's going on here.
+How good are these methods of treating heterogeneity? Let's try it out.
+And just before going there, I just kind of wanted to, in case you want to copy paste on the slides. Here's kind of a few lines of code that implement the T-learner and
+the S-learner using regression forest function for random forest.
+Simulation Exercise
+All right, how well do these do? And here's kind of a very simple simulation exercise for
+estimating treatment effects. So you see, I'm kind of running a simulation with 4000 samples
+in 10 dimensions, the probability of being treated as 0.3. And salient point here is that first treatment is
+everyone is treated with probability 30%. So there's a randomized trial.
+There's no association between any kind of unit characteristics and their probability of being treated.
+So this is kind of from Republican friends point of view makes the problem a lot easier.
+The second is you have this conditional average treatment effect function that called tau here.
+It's also very simple, it's actually just the logistic shape in x3.
+If you knew that kind of the conditional average treatment effect the logistic shape you could recover it very easily by a parametric modelling.
+But, okay, the point is that machine learning, you don't need to know the parametric model a priori, we can kind of discover it from data.
+And then there's going to be this baseline effect. Max of x1, x2 and 0.
+This is a little more complicated. So essentially, This is sitting, it's supposed to be super easy.
+If you're doing the right thing the study is randomized. So there's no confounding. The treatment of the function is very simple.
+So you have to kind of focusing on the right objective. You should just nail it. But there's this kind of more complicated interactive baseline effect,
+that if you're not careful my kind of problems. And how does everyone do?
+Actually pretty terrible, right? So here kind of I'm plotting, remember the condition average treatment effect was just a function of x3.
+So I'm plotting kind of, On a test set for each data point on,
+Here in red you see kind of a true relationship between x3 and the conditional average treatment effect here and
+in black you see the estimates from the T-forest or the S-forest. And you see it's kind of disastrously bad.
+The T-forest is just kind of very, very spread out. And the S-forest is not only spread out but it's kind of systematically biased and
+under estimating the size of the treatment effects. So, This is somewhat concerning.
+You might have hoped for better, right, because I just started by writing tau of x is mu1 of x minus mu0 of x.
+Let's estimate mu1 of x, let's do so using forest, forest are okay. Let's estimate mu0 of x using a forest, again, forests are okay.
+And you think you're doing something okay, and then you kind of get this very bad empirical performance.
+So, What went wrong? And the problem is essentially things called earlier regularization biases.
+So, do you understand this, I kind of, I like this picture from this paper by Kunzel and al, I mentioned earlier.
+With theory imagining is estimating treatment effects in the following very simple study.
+Here x is one dimensional, so you only have one covariant. Y is also one dimensional, it's a randomized trial.
+And I'm plotting all the data so each control point is x and each treated point is a blue dot, red x for the control points.
+And the only wrinkle here is that you have a lot more control points than trigger points, Okay?
+What's the treatment effect here? By I it's kind of clear, right? There's this difference between the treated and
+controls is kind of always wandering. So kind of by I the treatment effect has to be one here, but
+what happens when we try to estimate that heterogeneous treatment effect?
+Let's try doing so using the T-learner box here. So what I'm going to start by doing is, remember the T-learner approach, what it
+does is first estimates mu and 0(x), and predicts y from x under controls.
+And it estimates mu and 1(x), it predicts y from x of the treated, and then it takes the difference.
+And so what's going to happen here? Well, let's say I run a tree.
+So I'm going to kind of put on infer from a tree on the controls. And I'm going to see the signal changes here and that the signal changes here.
+So I'm going to do a very good job kind of. Here's one leaf and my treatment effect here.
+Here's another leaf and my treatment effect here. And here's the third leaf on my treatment effect here.
+And you could say this tree is very good task was to fit y from x amount of controls.
+That was an obvious region in the middle where there was a shift in the response function.
+And you found it and you adapt to it. So kind of well done tree, very good.
+So now, the next thing we need to do is estimate. You had 1 of x, that predict y from x under controls.
+We're, again, going to use the tree but here we have less data, Do we see any jumps the data obviously?
+I mean, no, there should be a jump here and here, you can see it. But honestly, kind of well tuned tree given just this data,
+it probably doesn't see any patterns at all. So you tree does the reasonable thing.
+You don't see any evidence that you should split, just off.
+So, we estimate the expectation of Y given X as essentially a constant function.
+And again, that's very good. So, we're in good shape.
+We did a great job fitting. You had one of X, we did a great job fitting. You had zero of X, then, what are we going to do at the end?
+Remember, what we want is we want to fit tau
+hat x = mu hat 1(x)- mu hat 0 (x). And we've done a great job fitting both mu hat 1(x) and
+mu hat 0(x) in this picture. But now we take their difference, and what do we get?
+The difference tau (x), well here, it's big, it's big, it's big, it's big, it's big. It's a big treatment effect.
+Now, this middle zone where suddenly we have a very small treatment effect, because we had zero kind of, got bigger and now again,
+you can get a big treat and effect at the end. And wow, there's a lot of treatment, interesting, right?
+These people here and these people here really benefit from the treatment,
+but these people in between here, not so much. All right, so it looks like we've found treatment pretty much.
+But this is obviously very bad, right? We agreed that there's no treatment heterogeneity in this picture.
+The treatment effect is constant at one the whole time. And kind of the worst thing you can do in data analysis in general,
+is to claim that you found something, you found heterogeneity, you found a sigma in a case where there's none.
+So, that kind of in such a simple problem, you can be tricked into thinking there's heterogeneity when there's none, is really unexcusable.
+What went wrong? Well, the problem is that essentially you were using machine learning,
+and of course, machine learning regularizes has to kind of adapt to the shape of the function.
+And you didn't adapt to the shape of the function in a way that kind of recognized the task at hand.
+When you were fitting the function of the controls, when you finished this red line, you had a lot of data.
+So you were able kind of very kind of accurately
+see any changes in the data and respond to them.
+So you kind of regularize very little bit function aggressively, that's good.
+In fitting this blue curve, after the treated units, you had less data.
+So what you do? You don't introduce as many splits because you don't have enough data to kind of put more splits, effectively regularizing more,
+you're pushing your function more for the simpler thing. And that's again good. But, then what happens is you have a discrepancy between how much you
+regularized the the function on the treated in the controls. You regularize your function on the treated a lot and
+very little on the controls. And then just because you regularize kind of this part of the difference very little, and this part of the difference a lot,
+then you kind of inconsistently regularized tau hat. And this kind of heterogeneity emerges somehow
+in the difference, and that's no good. So okay, that's regularization bias.
+What I'm emphasizing here, is just kind of tau(x), it's true that tau(x) is mu1(x) minus mu 0(x).
+But that doesn't mean that kind of machine learning based approaches, that kind of directly are motivated kind of by this functional equivalence without
+being careful about what they're doing. Estimation wise, would it be any [INAUDIBLE].
+So that's regularization bias, what can we do about it?
+Exlearner
+And notice that regularization bias is something that kind of arises even in randomized trials. Last week, Susan talked about causal trees as kind of one
+algorithmic way of avoiding this problem in the case of tree specifically.
+Here just to kind of feel I want to talk about these topics but to kind of show you some some other ideas also on how to avoid this problem.
+Talk about the X learner, which was introduced by this paper from which I'm taking the pictures.
+So what they want to do is they're the T-Learner of X-Learner, they're very nice,
+in that you can just write them down as kind of a generic recipe. You have a generic recipe for predicting Y from X, you can just apply it and
+turn it into a treatment effect estimator. They liked that aspect of it but just kind of didn't like that.
+Gives you a lot of regularization bias. So, the X-Learner is an idea that kind of does
+the same thing, but in a slightly fancier way. We're going to start by fitting, we're going to start by fitting.
+You have 0 like before predict, Y from X. Then, once we fit Y from X,
+we on the treated units kind of predict you had 0(x).
+So this is kind of crudely you could be thinking as trying to impute for each treated unit, what would have happened if you gave them control.
+And then look at delta i1(x), that kind of the difference
+between the actual outcome for the treated unit,
+minus kind of your best guess of what you might have had,
+had you received the controller outcome. And you can think of this as a noisy proxy for
+the individual treatment effect, Y 1 minus Y0.
+If this functional form looks familiar to you and reminds you of synthetic controls, that's a good thing to be thinking about.
+It's a very different application setting, with very different considerations, but the kind of estimated structure
+looks very similar to what was done in synthetic controls. So they do this once, so they do this, and then the way they're going to
+estimate the conditional average treatment effect function is essentially by on the treated units regressing this differences.
+Yi minus mu hat (0) (Xi), actual treated minus imputed control outcome.
+They're going to kind of regress these delta i's against x0 parametrically.
+That's again, a prediction problem, you predict delta i1 from Xi on the treated units, and
+that gives you a first estimate tau hat(0)(x) of the treatment effect.
+Then what they do, sorry, that gives you first estimate tau hat(1)(x) of the treatment effect.
+And then what they're going to do is they're going to swap roles. So they're going to estimate mu hat(1) from the treated, on the controls,
+look at actual outcomes, actual control outcomes. Look at mu hat 1(x) minus Yi on the controls as another kind of proxy for
+the ITE, and then estimate tau hat(0) from there. And then they're going to pull these and turn tau hat,
+estimate the final treatment effect as a weighted average of these two CATE functions to estimate the treatment the controls.
+The thing to note here is this last step the use of the propensity score he had just heuristic.
+But the thing to note is kind of like most people are in the control than he had of X.
+Is going to be pretty close to 0. So then kind of you're essentially just going to use the data extraction
+that you get by first learning to predict y from x on the controls, and then taking these difference on the ticket.
+So, again, you want code using forests.
+But how does this work? That is much much better. This function you might be disappointed that okay.
+Shouldn't good predictions, have kind of the black dots lie on top of the red dots,
+like you would kind of if you're perfectly fit a parametric model. You might hope for that but you never get that on machine learning, one thing that.
+It really emphasized in the lecture on average treatment effects is that machine learning methods, you should hope that they're almost always pretty good, but
+never perfect. And this kind of X forest kind of in predicting the condition average
+treatment effect from x3, I think lives up to that goal.
+The black dots have the same shape, [INAUDIBLE].
+And certainly this is much, much better than the SMT forests. So why was this better?
+I think it's helpful to kind of consider the same picture as before. So remember the X learner starts by kind of fitting the same kind of red and
+blue curves that we had before. But then what it's going to do is it's going to estimate these delta items,
+so kind of these imputed treatment effects. So the way you can think of this on the picture is kind of every blue dot.
+You're going to draw a curve down to the red curve.
+And you're going to think of these as your delta I want. These are you kind of imputed, individually noisy proxies for
+the individual treatment effects for treating people. Similarly for controls, all we can look at the blue curve as an imputed with what
+happened to me under treatment. So we're going to draw all these lines here, okay?
+There's way more of them. And we're going to look at these, are going to serve a symmetrical.
+They're going to be kind of put would have called delta zeros on the previous slide.
+And then, right? The X learners can estimate the Kate by predicting delta 1 from x and
+delta 0 from x. And how does this work? Well, it turns out that kind of here remember,
+the red curve here was very good. We got the shape, new head 0 of x is very accurate.
+So, then these blue lines are going to be kind of good proxies of the treatment effect.
+So, if we're going to try to estimate tau x by regressing these blue lines on x, we're in good shape.
+On the other hand, the blue curve estimate new highs look good. So these red lines are going to be much less good proxies for the treatment.
+Like they're pretty short here, but they're much longer here. So, when we actually get this, then we're going to get tau as one of x.
+That's the thing that kind of predicted the Delta I on the treated. It's going to be a very good estimate of treatment effect essentially constant.
+We're going to also get this tap at 0x which is going to be quite bad. But then kind of remember that excellent kind of tries to pool that was
+one of the x and zero of x in a way that it most units received control.
+Then it's really just going to update out with one of x a lot. So then the kind of final prediction of the X learner is going to be some weighted
+average of talent one and Howard 0. But it's essentially just going to give you this blue curve here, which again,
+is what we wanted an accurate estimate of essentially a constant treatment effect.
+So this is what's going on kind of the exploiter looks a lot like the tiller this learner.
+And this is kind of a recipe where you just solve a bunch of prediction problems in a row.
+But kind of by being more careful about the recipe design you got
+better results and are more robust regularization wise. So, this thing you can use it.
+It's cool that in my experience X learner in randomized trials works very well.
+And it's kind of very easy to implement because it only requires prediction.
+So that's kind of a good thing to know.
+confounding bias
+All right, so that was regularization bias. The next thing, I wanted to worry about this, [LAUGH] You shouldn't worry about is confounding bias.
+That's what happens when you're outside of a randomized trial. Your treatment assignment probabilities variable x,
+and this relationship may be problematic. And again to get started with the simulation, here we have a similar
+setting except now the treatment isn't assigned uniformly at random.
+Now kind of there's a logistic shape in terms of x 3 work on the bigger X3 as the more likely to be created.
+On the other hand, the treatment effect is constant here. So if you kind of get rid of all the confounding genetic problem.
+[INAUDIBLE] But now there's more confounding because you'll
+notice not only that your probability of being treated vary with x.
+But actually generate the bigger X3 is bigger Y is going to be on average.
+So there's this correlation between your baseline effect and treatment probability.
+So, if you don't address the confounding, well, you're going to end up in trouble.
+So what happens? Well, the tea forest is outright terrible.
+The export is also terrible. The exports here isn't quite as bad, but it's definitely not good, right?
+Like the exports, it's thinks that they're bigger treatment effects here than here for example.
+It seems to be finding some heterogeneity where there is not. And kind of overall alternate methods here even though we saw that
+the treatment effect is constant at 1. There's no heterogeneity. All of these methods hallucinate heterogeneous treatment effects.
+I should emphasize the word heterogeneous on the slide also. They all kind of hallucinate heterogeneous treatment effects here.
+No other treatment that it cost. And why is this?
+Well, the theme conceptually is very closely related to what we saw earlier.
+The propensity score here isn't constant. The propensity score isn't constant, you should be worrying about how are you adjusting for that.
+When estimating the average treatment effect using AIPW was a nice way of doing this.
+We need to also be able to address the propensity scores and propensity scores aren't constant on Emissary.
+So that's going to be the focus of the next part of this lecture, but so
+recap
+just to recap, this is first part, right?
+There are many things to worry about when putting a treatment heterogeneity,
+regularization bias. There's confounding bias. Regularization bias is always there but
+even in randomized trials, but there are many ways to address it.
+The kind of causal tree construction you saw last time,
+as it is a kind of very direct way of doing that. The X learner is also a nice way of addressing regularization
+bias using kind of this prediction recipe type approach.
+But okay, in observational studies, there's also this other type of bias,
+confounding bias, and dealing with that is a little trickier.
+We're going to need to bring the propensity score to the table again. We're going to need to be very careful in kind of separating the treatment effect
+component from the problem from the confounding component of the problem. And find ways to kind of eliminate the confounding component while kind
+of appropriately fitting and expressing the treatment effect component.

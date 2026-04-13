@@ -1,0 +1,286 @@
+
+Introduction
+Hi everyone, welcome back, today we're going to continue our discussion on
+methods for treatment heterogeneity.
+So, as Susan emphasized last week, and
+Kate give many examples on treatment heterogeneity,
+is a problem that comes up in a number of application areas.
+And for this reason, it's kind of one of the big focuses of this class.
+Just to kind of give one example to get everyone back back up to speed.
+Suppose you have a new medical treatment, that you're interested in deploying.
+You think people benefit from it, but maybe some people benefit
+from it more than others, who would want to kind of based on medical history or
+other aspects prioritize the treatment, to people who benefit from it the most.
+You ended up in a problem where you want to kind of understand
+the heterogeneous effect of the intervention.
+The flip side of this is again, I suppose you have some treatment that has
+severe side effects, and the side effects actually kind of a problem.
+So you'd want to avoid giving intervention to people
+who are at high risk of side effects.
+Now understanding who are people who are the most vulnerable to side effects
+giving a new treatment that's again, a question and treating heterogeneity
+over now the outcome isn't configured thing you want to promote up.
+It's the side effect you want to avoid, but statistically the problem is the same.
+Other areas where this comes up to an industry, include targeted advertising,
+people working in these settings often have very large data sets to work with.
+So we are able to kind of tease out very subtle signals by using machine
+learning in these problems.
+All right, so is the theme of this class, today I'm going to focus
+on machine learning based methods for treatment heterogeneity.
+Something I just want to emphasize before going there though,
+is that there's a lot of discussion these days about machine learning based
+methods for treatment heterogeneity.
+But this doesn't mean that you have to use machine learning based methods to do so.
+There are also classical things you could do so run linear regression, and
+put an interactions between the treatment and the measured covariance.
+And this could also get our treatment heterogeneity in a useful way in some
+applications, and there's nothing wrong with that.
+Using machine learning methods doesn't change the nature of the problem.
+It just enables you to work with the larger, more complex data sets,
+and to end to automate some of your analysis.
+Just kind of to pick an extreme example, let's say you wanted to do personalized
+medicine, and one of the inputs to algorithm was a CT scan of your brain.
+You want to do kind of based on CT scan,
+figure out who's going to benefit from some treatment or not.
+It's a problem and treatment heterogenerity, good like doing this with
+or approaching this with linear regression though, you're probably going
+to need kind of image recognition or based machine learning tools for that.
+Overview
+All right, so last week, Susan gave an introduction on treatment heterogeity,
+with a focus on problems that come up in randomized trials.
+She also, discussed some methods for treatment with heterogeneity,
+including causal treat and forests.
+This week, what I want to do is kind of continue that discussion, but
+now no longer in the setting of randomized trials, but
+in an observational study setting.
+Where you also need to worry about some units selecting
+into treatment, and this meaning that not all units
+a priori have the same probability of getting treated.
+And this ends up being quite a delicate problem, that essentially
+combines most of the challenges we've seen in this class so far.
+There's, in week two,
+we discuss challenges in estimating average treatment effects,
+the average treatment effect and itself is a very simple parameter.
+It's just one number, but the difficulty comes from the fact that if you're
+in an observational study setting, you need to control covariates,
+you need to estimate propensity scores, and so forth.
+And doing that well make some effort.
+On the other hand, last week the focus was on treatment heterogeneity
+estimation in randomized trials, here you know In a randomized trial.
+So there's no difficulty from confounding, but the difficulty comes from the fact
+that the heterogeneous treatment defect function might be quite complicated.
+And so you need to kind of work harder to represent,
+de-represent it in terms of the treat or something else.
+Today we're going to have all of these difficulties, our target,
+is still going to be the heterogeneous treatment effect function, so
+it's going to be complicated.
+But at the same time, we're going to also have to worry about confounding
+estimating propensity scores using that to make ourselves robust,
+so we're going to have that dimension to the problem.
+It turns out though that, luckily you can combine ideas from the class so
+far in the right way, you can make everything work.
+So treatment heterogeneity and
+observational studies is our topic for today.
+And they're kind of, be three aspects of this I'm going to focus on this week.
+The first is kind of a review of key difficulties that come up, when estimating
+treatment heterogeneity, kind of regularization bias, you always get this.
+This also came up in randomized trials, and now we also have the problem
+of confounding bias, which is going to be our main focus today.
+Then after that, I'm going to talk about, and
+this might seem a little bit like a detour, but it'll be very important.
+I'm going to talk a little bit about confounding robust methods, for
+estimating constant treatment effects and observational studies.
+You might ask, why do we care about estimating costs and treatment effects,
+if we want to kind of understand how treatment effects vary and
+focus on the heterogeneity?
+But if you kind of think back to what does a causal tree do, for
+example, a call tree tries to partition your space, so
+you can find regions where the treatment effect is essentially constant.
+And then within each leaf,
+hoping that the treatment effect is roughly constant in the leaf.
+You can estimate the treatment of the leaf,
+if we're an observational study setting, this means you can't run a causal tree
+unless you have some idea about how to estimate a constant treatment effect in
+a leaf, but we hope the treatment effect is constant.
+So we're going to talk about concentrating the effect, and
+then the last part for lecture, we're going to talk about,
+how to build on these ideas to build trees and forests for.
+So that's our plan for this week, and then next week,
+we'll continue and I'll discuss kind of how to go beyond these ideas for
+trees and forests that are compounding robust.
+And kind of the old methods that really mesh with any
+generic machine learning method, so that's a plan.
+Statistical Setup
+In terms of the statistical setup, it'll be the same as usual.
+We're going to assume we get to work with a setup and independent, and
+identically distributed unit.
+Each of them has kind of a feature vector X and outcome y treatment assignment W.
+We have potential outcomes, corresponding to the outcome whether they're with or
+without treatment, that so kind of,
+the actual outcome you observe is the potential outcome,
+corresponding to the treatment assignment you actually received.
+And then, okay, what do you want to estimate?
+In lecture two, we were in this setting, and we want to estimate
+the average treatment effect on average difference in potential outcome.
+But today, we want to focus on treatment heterogeneity.
+So we're still going to focus on causal effects, this difference y one minus y
+zero, but we're not going to just want to have the average of this quantity.
+We're going to kind of want to have more nuanced picture of
+what's going on, and, all right, how could one do so?
+Estimation
+Just kind of quick thing before I talk about
+the thing we actually want to estimate.
+It's kind of if you say you want to estimate kind of personalized
+treatment effects, then it's very tempting to think
+that the quantity you want to estimate this is Yi(1)- Yi(0).
+Remember Yi(1)?
+Is the outcome you would've experienced with treatment.
+Y(0) is the outcome you would've experienced with control.
+So delta I, as defined here, is kind of literally
+the effect of the treatment on the I person.
+As defined in the potential outcomes, it's called the individual treatment effect.
+And, of course, if you could know the individual treatment effects,
+then you would want to estimate but the problem is that
+these individual treatment effects are fundamentally Unknown.
+For any specific person, either I give you the treatment or
+I don't give you the treatment.
+I can never both give you the treatment, and not give you the treatment.
+And that means that kind of for any specific person,
+either you observe Yi(1) or you observe Yi(0).
+You can never observe Yi 1 minus Yi 0.
+So you can never observe, Delta I, for
+a single person that's fundamentally unknowable and
+kind of to estimate treatment effects.
+We always need to kind of make comparisons across some people,
+who got treated and other comparable people who didn't get treated.
+In kind of targeting the average treatment effect in a randomized trial,
+for example, is a very kind of simple way of making this and
+direct way of making these comparisons work.
+So anyways, we don't want to estimate delta i, what do we want to estimate,
+we want to estimate what's called the conditional average treatment effect.
+And this is essentially like the average treatment effect.
+So it's looking at an average of treatment minus control potential outcomes,
+except instead of estimating an average overall,
+we're estimating an average conditional on covariance.
+So, we're not asking kind of for this specific person,
+what was their treatment effect?
+But if there are say some covariance you imagine the day data set,
+kind of based on gender age medical history and so forth.
+You can ask well for
+people with this type of covariates on average what was the impact, and
+kind of when when I'm going to say we want to measure treatment heterogeneity.
+What I mean is, I want to understand how the conditional average
+treatment effect varies with kind of access, you can measure.
+All right, this was just kind of like quick a quick, you've already
+talked about the conditional average treatment effect a bunch last week.
+And then just to kind of have a clear target in mind,
+today when I say we want to estimate the conditional average treatment
+effect function when I'm going to mean.
+Specifically is that we want to capture it accurately and
+mean squared error, that is kind of.
+We have a distribution of people, every person has their x covariance in terms of
+your x's you have your true tower x, your true conditional average treatment effect.
+And then we're going to estimate how that of x, a conditional
+average treatment effect for you, and we want that kind of for the typical person.
+These are close, so that's the conditional average treatment effect.
+Observational Studies
+And like I said earlier, we want to estimate conditional average treatment
+effects in observational studies.
+This is the same setting we saw in week two.
+We're not going to assume that the treatment is randomized.
+But we're going to assume that they are axes that you can measure,
+so that conditionally on x the treatment is as good as.
+This is the assumption that we saw let you identify average treatment effects.
+And also in very much the same way,
+I'll let you identify conditional average treatment effects.
+And again, the statistical difficulty when working under this
+assumption is always just how do you efficiently get rid of
+confounding effects due to X without pricing your estimates.
+So all right, just the last thing I wanted to
+say before diving into kind of the details for
+this lecture, is just to say a few words of kind of
+why is estimating kind of treatment heterogeneity
+difficult, what are things to look out for.
+And maybe also, what are situations where you think estimating treatment effect
+heterogen might be easier or harder, and kind of just so what to pay attention to.
+The reality is that kind of accurately estimating heterogeneity treatment effect
+functions is much harder.
+Then accurately estimating just an average treatment effect,
+you often need more data.
+And there are many problems settings,
+you'll see this if you work with the datasets provided in the class,
+where you might go look for heterogeneous treatment effects, and
+just kind of with the available data, you can't find anything.
+This is normal estimating treatment heterogeneity the hard task.
+It's kind of one order of magnitude harder,
+than estimating an average treatment effect, you're going to need more data.
+But also kind of it doesn't mean that it's not worth looking for
+treatment heterogeneity, because when you do active medical treatment,
+you find that the treatment not only helps on average.
+But that the treatment of some people more than others, then you can kind of be
+smart about prioritization or who should be getting the treatment or not.
+And this can have huge value.
+So when you can find heterogeneity is often very good, but
+you're not always going to be able to do so.
+And the reason, often all it takes is to think in terms of
+an application to see why this would be quite difficult.
+So imagine, we're looking at victims of hemorrhagic shock that's heavy heavy, and
+bleeding and we're looking at the effect of a treatment administering fibrinogen.
+It's something people believe helps.
+And we're looking at the effect of fibrinogen on mortality among victims of
+hemorrhagic shock.
+And let's say we also wanted to look for heterogeneity here, there some people who
+benefit more from fibrinogen than others and preventing mortality.
+So, it's an important question.
+But there are some things that kind of stand out immediately when you think
+about working the problem, first, right?
+The outcome will care about it's mortality,
+that's getting very drastic outcome.
+The condition we're looking at Hemorrhagic shock, that's also very bad.
+So there's kind of a lot of stuff happening in this problem,
+relative to that administering fibrinogen.
+Maybe it helps a little bit, but
+there's kind of a clear upper bound to how much it can help, right?
+This is data collected by first responders,
+you could imagine that there's some people you get to them.
+You'd see that they're so severely injured, that there's nothing you can do
+to help them, and they're very likely to die regardless.
+On the other hand, you might come to other people and
+see that they're bleeding, but essentially they're mostly fine.
+And they're going to survive kind of regardless.
+There might be some group of people in between who are kind of on the fence, and
+where administering paper written early might really make a difference.
+But the thing is, there are some people who kind of might be at 90
+A 90 plus percent, chance survival others but were 10.
+If administering paper increases survival chances for some people by 5%,
+that's very, very valuable.
+But the kind of magnitude of the treatment effects, is just going to be much,
+much weaker than base.
+So this kind of shows that kind of relative to everything else going on
+the problem, treatment effects even when very important.
+Might just kind of in absolute magnitude be very small.
+The other thing again in this problem is that, again you have data from first
+responders, they might be more likely to administer fibrinogen to people who
+kind of based on observed characteristic, they think might need it more.
+So they may be selection and measured features excite,
+you need to deal with this.
+And again, when paired with the fact that treatment effects are weak especially.
+Hey Britain, heterogeneity may be weak,
+you might really be worried that kind of confounding effects might be
+big relative to the size of the treatment effects you're interested in.
+So you really need to be careful in controlling for confounding.
+So these are these first two challenges,
+how to accurately estimate treatment effects.
+While recognizing that treatment effects are probably weak and
+there may be up confounding to the measured features X.
+This is what we're going to talk about today and kind of design
+methods that are kind of our best attempt to address these difficulties.
+There are other difficulties too, there may be confounding due to unmeasured
+features, there may be interference were kind of.
+Say you gave your dose of fibrinogen to one person which means you can't give it
+to someone else.
+And you have come this cross subject effects,
+these are both kind of very delicate topics.
+They're important, not going to talk about them in this lecture,
+but I just wanted to flag them.
+So you're aware to look out for them in case, they show up in your application.

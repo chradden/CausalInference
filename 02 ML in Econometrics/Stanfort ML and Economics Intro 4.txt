@@ -1,0 +1,411 @@
+Introduction
+Hi and welcome back to the third part of this webinar,
+where I give an introduction to machine learning from an applied perspective.
+Specifically targeted at researchers and practitioners of applied econometrics,
+who think about how to add machine learning to the econometric toolbox.
+And want to understand how novel tools based on machine learning can
+improve practical empirical analysis.
+Motivation
+In the first part of this webinar,
+I motivated why looking at machine learning is particularly interesting,
+specifically that machine learning is very powerful at solving prediction problems.
+And that solving such prediction problems underlies many modern
+machine intelligence services.
+In the second part of this webinar, I introduced some of
+the central ideas of what makes machine learning predict so well.
+In this last part, I want to ask, given what machine learning does,
+what can we learn from its output?
+Recap
+To recap the basics of machine learning from the last module, I argued
+that machine learning is characterized by a combination of three features.
+It uses very flexible functional forms, but
+it limits the expressiveness in order to avoid excessive overfitting,
+and it uses the data to resolve the trade off.
+Specifically, it uses the data to learn how much to regularize and
+how much overfit.
+How much expressiveness to allow.
+In this part of the webinar, I want to ask, what do these specific features?
+So what is the fact that we fit machine learning in this specific way,
+imply for the properties of the resulting prediction function?
+And how can we therefore use those prediction functions in applied work?
+To remind ourselves, here is the basic setup that we studied machine learning in.
+We considered specifically supervised learning or
+prediction where we are given a data set,
+which is the training data set of some outcome variables y and
+then some covariance x, as well as the loss function.
+And our goal is to find a prediction function so
+that we predict y well from x with respect to that loss function.
+Specifically, we wanted to produce an outcome with a low expected loss,
+where the expectation here is over a new sample point drawn
+from the same distribution as our training sample.
+So now assume we have solved that problem.
+We have found a prediction function that works really well.
+Maybe that's a regularized linear regression like a lasso or ridge.
+Or maybe that's a random forest or a boosted tree.
+What can we now learn from this function f hat about the truth?
+So specifically assume we have this prediction function that
+fits the relationship of y to x.
+Well, what can we learn about the world from the prediction function f hat?
+So often we may be interested in using a function that we have
+fitted to the relationship of y to x to make inference on
+the conditional expectation of y given x.
+So to make inference on basically the optimal true relationship between
+the outcome y and the covariance x in this regression sense.
+So that may be particularly tempting to do when the output has a very common form.
+For example, when the output as is the case in regularized linear regression like
+lasso or ridge, actually itself has the form of linear regression.
+So the question is, to which degree can we
+now use the coefficient of that regularized linear regression?
+In case some can say something about the world, for example,
+which of the features in the world, which are the covariance actually matter for
+determining the outcome.
+Or maybe even saying something about the causal relationship
+between the x variables and the y variable.
+So in typical econometrics, what we want to know about those coefficients,
+the kind of properties they may, for example, include the following.
+We may want to know whether the coefficient has bias, so
+whether on average that gets us to the truth.
+We may want to know whether the coefficient is consistent.
+Meaning in large samples it approximates the true coefficient well.
+We may want to also be able to do inference.
+Meaning, we may want to establish properties like asymptotic normality,
+or being able to calculate standard errors or be able to perform tests.
+In order to say something about the true parameter beta from what we
+learn from this data.
+And finally, we may want to understand how robust our estimate is.
+For example, whether our takeaways depend on very specific features of the data, or
+whether they generalize well, even if certain assumptions aren't exactly true.
+Lasso
+To study whether we can hope to use output from machine learning to learn something
+about the world in a similar way to what we're used to with linear regression,
+I want to start with the LASSO.
+Because it produces output, it looks very similar.
+To remind ourselves, what does a LASSO do?
+The LASSO fits a linear regression with the additional constraint
+that the coefficients aren't allowed to be too large.
+That allows us to still fit the LASSO even when
+there are a lot of x variables in our regression.
+And it allows us to fit the LASSO in a way that balances the expressiveness,
+meaning the complexity of our function against the risk of overfitting.
+And so the higher, the parameter Lambda is,
+the higher the cost of complexity is, the smaller the coefficients were be and
+potentially, the more of them will be zero.
+So specifically we saw that the LASSO does not only shrink coefficients,
+it also selects.
+Meaning many of the coefficients may be zero.
+And if there are multiple coefficients that produce a similar prediction outcome,
+then the LASSO may be capitalist and that it just chooses a winner and
+gives all to that one winner.
+So, what does that step from or less to LASSO look in an example?
+For that one, I'm using an example where our goal is to predict default.
+So say this is default probability.
+And we want to predict default from a number of information in our data set that
+would be in a typical credit file that may include a person's income, their age.
+Maybe information about the education, maybe their credit score,
+and some other variables, here I assume there are a total of 80 of them.
+So what does LASSO do relative to OLS?
+While the problem with OLS is that there may be excessive overfitting and
+that using all those variables, many of which may even be close to colinear.
+And may lead to very unstable and
+high variance coefficients that lead to bad prediction performance.
+The LASSO instead says, let's only use a subset of those by putting a penalty.
+On coefficients that are particularly high or in the case of the LASSO,
+implicitly also by coefficients with a lot of nonzero coefficients.
+So when the LASSO selects those, there is a hope here that the resulting
+sparse solutions can actually tell us a lot about the variables that matter.
+Maybe for example, the LASSO could be good at telling us which variables cause
+default to be higher or lower.
+So to study to which degree we would be able to do so,
+here's an exercise that we ran in a paper on credit scoring specifically
+the fairness of credit scoring and attempts to regulate it.
+So in that case, what we did is we didn't only run the LASSO once,
+but we ran the LASSO multiple times on different subsets of the same dataset.
+So we chose ten random subsets of the same dataset.
+So the distribution of all those ten subsets is the same.
+And then we ran the LASSO on each of them even holding the penalization
+parameter lambda constant.
+And every time we checked,
+what are the variables that are selected by the LASSO in each of the runs?
+Here's the result that we got.
+Results
+On the x axis, you see the 10 different iterations.
+On the y axis, you see the coefficients that were actually selected.
+What you can see here is that there are clearly some patterns,
+there are some coefficients that are persistently selected.
+And there are some coefficients that are persistently not selected.
+So black meaning is selected, meaning the coefficient is not 0.
+So if there is a black line all the way from the left to the right, it means that
+this coefficient was included in all of the models across all the ten runs.
+If on the other hand there is a white line, meaning the coefficient is never
+selected, then that means it was always set to 0 in all of those ten iterations.
+But the shocking thing that I think this exercise shows is that while
+there may be some persistent patterns, for many of the coefficients.
+There is no clear pattern visible in the sense that many of
+the coefficients are sometimes selected and sometimes not selected.
+So now before we think about the implications,
+let's think about what could be going on here.
+So what happens here?
+What happens
+So sometimes the LASSO will select some of the coefficients and
+other times it will select some other of the coefficients.
+That is perplexing at first because we may think that a good prediction function
+should always look similar,
+given that the data in each of those folds was basically the same.
+However, in high dimensional data, and in many typical datasets that
+we may work with that have a very high number of covariates.
+It can be the case that these covariates are very highly correlated.
+And that for example, age in this regression can very well be expressed or
+predicted by a combination of other variables.
+Now if one of those variables can very well be predicted by a combination of
+the others, then whether age is included or
+not doesn't really change much the LASSO's ability to predict.
+Because it could simply choose some of those variables that are highly correlated
+with age into those instead and still get the same predictive power.
+And indeed, it turns out that the Brechtian quality and
+even the predictions themselves do not vary too much across those ten draws.
+So what do we take away from that?
+So if he had really hoped that the LASSO tells us something about which
+variables matter,
+then at least in this example in the high dimensional case it's probably not a good
+idea to put a lot of weight on which variables were selected by the LASSO.
+Simply because of the fact that which variables get selected changed so
+much from draw to draw.
+But beyond this very general statement, we can get a little bit more precise and
+study in a little bit more detail what kind of biases can actually happen,
+when we think about which variables get selected by the LASSO and
+what their coefficients are.
+So if you want to just get the general intuition,
+Biases
+I think the example I just went through may already be enough.
+But now I want to be a little bit more precise.
+Look at one very specific example and talk about the biases that can happen here.
+Specifically, I'm assuming that there is just three variables x1,
+x2 and x3, some outcome variable y, and
+that the outcome variable only depends on x2 and x3 in a specific way.
+So what could happen when I fit the LASSO here,
+which doesn't like to include a lot of the covariance.
+First of all, there could be selection biases, where if x2 and
+x3 are very highly correlated, then the LASSO may decide not to include x3,
+because x3 by itself will not be very predictive if x2 is already included.
+Because if x2 and x3 are very highly correlated then it may be easy to
+express most of the effects of x3 by simply using x2.
+And that would reduce the cost of complexity by not making prediction much
+worse.
+So I would call this compactification bias, meaning the set of variables that
+are actually included are less than the variables that are in the true model.
+And they are in this case, a subset.
+So I'm only including x2, despite x3 also mattering in the true model.
+But they can also be the opposite thing.
+They can be expansion bias.
+It can even be that a variable gets included in the LASSO.
+That is not in the true model.
+Why can that be?
+Well, assume that x1 happens to be very correlated with y in
+the sense that it is a good expression of what the combination of x2 and
+x3 is that really matters for the outcome.
+This may be a little bit artificial, but in very high dimension,
+we can see all kinds of correlations.
+So in this case,
+x1 alone would be a better predictor than x2 alone or x3 alone.
+But including both x3 and x2 may be very costly and therefore the LASSO may
+prefer to just include the one variable that is correlated with both x2 and x3.
+Explains both reasonably well, rather than including any of the true variables.
+Beyond what is included, they can also be biases in size.
+So assume x3 is not selected,
+that doesn't mean that the variable x2 is correctly represented.
+Specifically by excluding x3, the LASSO will also bias
+the coefficient on x2 through omitted variable bias.
+So we are aware that there can be biases in any our regression when we omit certain
+variables.
+What the LASSO does is by excluding variables,
+it actively encourages or generates omitted, variable bias.
+So in that case, the LASSO decides not to include a certain
+variable because another highly coordinated variable included.
+That automatically will create omitted variable bias in the variable that
+is still included.
+Even if x2 and x3 are selected,
+there will still be some bias by shrinking the coefficients towards zero.
+So even then there will be some shrinkage bias, but
+that I think is typically second order to the omitted variable bias.
+Which may be more misleading than simply shrinking towards zero.
+So in high dimensions, I would say that such correlations can happen a lot.
+And therefore, we always have to be aware that such biases can happen and
+we should be very careful With interpreting.
+Now, Ridge may be slightly better behaved because it doesn't include things, but
+Ridge can also have biases.
+So let's recall what Ridge does.
+Ridge is socialist in nature.
+It tends to smooth out the coefficients because it penalizes very high
+coefficients by penalizing the sum of squares of those coefficients.
+In that case, the dice as we can see, And
+Bias
+we can see in a simple example, just two variables x1 and x2.
+Let's assume the outcome only depends on x2.
+In that case, we can actually explicitly write what the coefficient on x1 and
+x2 will be as a function of the correlation between x1 and x2.
+As well as a function of the regularization parameter over here,
+and for simplicity assuming that there's no noise whatsoever.
+So what happens here, here I have two kinds of biases.
+The first is an expansion bias, meaning that the Ridge regression
+puts weight on x1 despite x1 actually not mattering for
+y whenever x1 and x2 are correlated.
+Because it tends to be socialist and smooth things out.
+At the same time,
+that can be shrinkage bias where the coefficient on x2 is therefore lower.
+So in that case,
+we could see a regression where it looks like x1 has quite some effect.
+But that is really because of Ridge and regularization and
+not because x1 has a true effect.
+Furthermore, this behavior is not restricted to linear regression
+type estimators.
+For example, we could repeat something similar by looking at the trees that gets
+selected when we fit a regression tree.
+And just look at what are the variables that get selected in the top trees in
+a small tree.
+And what we will see there is something similar, and this is just for
+illustration, I don't think it's like the cleanest example for anything really.
+But just showing that, when I just look at the top variables chosen by the tree,
+sure, again there are some ones that get selected quite
+frequently like this one here on top.
+But a lot of them get selected sometimes but not that often.
+So the same thing, just looking at a tree is unlikely to tell us
+something about the true underlying stable relationship,
+just witnessed by the fact that it changes a lot from the algebra.
+So what is my takeaway from all this?
+Takeaway
+My takeaway is that we should distinguish carefully not just between the methods we
+use, but also between the questions that these methods try to answer.
+Specifically I want to distinguish between two goals here.
+One is the goal of prediction where we care about out-of-sample loss
+minimization.
+And the other is the goal of estimation where we care about inference on
+coefficients and finding out which of the x's specifically affects y.
+So in high dimensions, in a world we can have good predictions even when
+the coefficients are unstable, biased, inconsistent, estimation is hard.
+But because in big data and many functions that look quite different kind of
+similar prediction properties, it will be very hard to distinguish between those,
+and therefore it will be very hard to perform good estimation.
+So my big takeaway here is that the very features, meaning the complexity,
+the regularization and the tuning that machine learning brings in,
+that make predictions are successful also make estimation hard.
+Because they make it much harder to understand coefficients well,
+they make it harder to interpret them well because of bias.
+And they make it harder to interpret them well also because we do data driven
+tuning, which actually makes inference considerably harder.
+Therefore, my big takeaway here is that machine learning is amazing at y
+hard problems.
+Hard problems that are about finding good predictions, but
+it's not by itself built to solve beta hard problems or
+problems that are about doing inference on parameters.
+Prediction
+So, just to clarify what I mean by those terms,
+when I say machine learning does prediction, and
+kind of linear regression type estimation is having a different goal.
+So what I mean by prediction is that, of course in one way,
+machine learning is not great at prediction, it's not necessarily
+great at prediction and what would happen if I use an alternative policy.
+Which is inherently causal inference question.
+So, I don't mean the kind of what would happen if prediction or
+the what will happen tomorrow if something has changed.
+What I mean by prediction is really not this kind of factual that requires
+structural causal knowledge.
+But it is the question,
+can I get a good fit of y hat to y on data from the same distribution?
+So it's really saying prediction holding the distribution constant.
+On the other hand, when I look at estimation, and I say it's not great at
+estimation, of course in one sense, machine learning is great at estimation.
+It's great at approximating the optimum prediction function well with
+minimal loss.
+However, this loss is prediction loss.
+It doesn't really tell us much about the difference in parameters.
+It only tells us something about the difference in terms of whether this set of
+parameters produces different predictions or not.
+So when I say that machine learning is not great at estimation,
+I really mean it's not great at something like estimation consistency.
+Meaning the coefficient is close to the other coefficient in a norm that
+is not implied by prediction.
+So taking all this together, here are my take-aways for applied work.
+Summary
+Machine learning provides high quality predictions y hat.
+While the prediction quality comes with guarantees from the hold-out, so
+for example,
+I'm able to say it predicts at least that much with some statistical uncertainty.
+There's typically no guarantees about the quality of estimation, and
+no estimation consistency.
+Or at least estimation consistency,
+meaning the coefficient converging to the true coefficient getting very close to
+the true coefficient is much harder to establish than prediction consistency.
+Hence, by itself when we look at machine learning output,
+we should not interpret it structurally or
+even causally in the sense of how are the x's related to the y's,
+but we should take it as what it is, which is a great predictor.
+As a side note, it is also very hard to do inference on this f hat, because in many
+of the machine learning methods, they're very complex, they use data driven tuning.
+So it's very hard to use tools like the bootstrap, and
+the bootstrap may typically fail.
+So simply saying, well, couldn't I just have bootstrap this and
+seeing that the lasso was unstable it's not that easy.
+Because the lasso doesn't typically fulfill the kind of
+conditions under which we know that the bootstrap works.
+So therefore, where can we use machine learning?
+I'm a big fan of machine learning.
+I think it provides very good prediction.
+So in my eyes, the right answer to that is we should use it for prediction problems,
+and ask where are interesting prediction problems.
+And here are some cases.
+Prediction Problems
+First of all, we could use machine learning or
+we can use machine learning as already done for data pre processing.
+For example, using text data, using image data,
+simplifying very complex data to the most important components.
+All this can often be caused as a prediction component.
+For example, I can predict weather I can predict crop yield or
+economic outcomes from satellite image data, and
+then use satellite images in place of the data to construct good proxies.
+A second big area is tasks that are actually inherently prediction tasks.
+Meaning tasks where prediction is an interesting question of interest.
+And these have also been coined as prediction policy problems.
+And one good example would actually be poverty targeting.
+In the case of poverty targeting, I'm interested in understanding which
+household likely has low consumption, so that I know which household to help.
+And in that case,
+we could cast this as a production problem where it's really not about understanding.
+Of course, it was interesting understanding what leads to
+a household having low consumption, but
+in the end for the poverty targeting question of just where should I send help,
+it may be most important to simply have a good prediction.
+And I think there are a whole host of questions in that area,
+host of problems in that area that are pure prediction problems.
+Third, there are many questions where we care
+about parameters in some part of the problem,
+but there may be some implicit prediction problems in the background.
+Something like using high dimensional variables as control variables,
+using them for propensity scores, using high dimensional instruments.
+And in the next part of our webinar series, my colleague Susan Athi,
+will specifically talk about ways in which we can combine those two.
+In which we can enhance causal inference by using tools and
+techniques and ideas for machine learning in order to enhance them,
+which will often require to carefully adapt machine learning to
+the specific task at hand, rather than just using it out of the box.
+So with that, let me wrap up for the webinar that I presented.
+Conclusion
+Here's what I did, I first motivated this webinar by saying
+machine learning is amazing at prediction.
+And also prediction solutions actually provide a lot of value in modern
+machine intelligence tasks.
+Second, I asked the question how we can get good predictions and
+what machine learning does to get there.
+In other words, I asked the question, how can we get good y heads?
+And in this last part, I compared getting good y heads to getting good beta heads,
+or in other words, getting good estimation.
+And I derived as a takeaway,
+that machine learning is great at getting high quality y hats,
+but by itself doesn't deliver good beta hats or good estimation.
+And with that, I want to thank you for following the webinar.
+Thank you
+I would very much appreciate your feedback if there were particular parts that you
+liked that you found helpful, or especially if there
+were some parts that you didn't like as much or had a hard time following.
+Please shoot me an email and let me know, so
+that we can improve those webinars in the future.
+Thank you.

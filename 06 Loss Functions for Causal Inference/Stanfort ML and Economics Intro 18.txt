@@ -1,0 +1,258 @@
+
+
+Introduction
+So far, we've discussed a number of treatment effect estimators and this leads to a natural question.
+If you have access to many different treatment estimates, which one should you prefer?
+And that's what I want to talk about now. So far we multiple focused on simulations were we knew the right answer a priori.
+So comparing methods was easy. But in real world data, we don't know what topics is a priori.
+So, we're going to need to come up with some new ideas for evaluating estimators for CATE.
+So, some questions I want to focus on here include given two different estimates for CATE, which one is better?
+Or even more simply, given one estimate CATE, is it providing any value?
+Or is it worse than just predicting zero everywhere?
+Data
+So, for this purpose, we need to access two datasets. Hopefully data set that mirrors something you might encounter where realistically
+you might believe uncle boundedness would hold that is not a randomized trial.
+But where you have access to covariance x has been somewhat possible, that treatment would be as good as random once you condition on x.
+And for this purpose, I'm going to work based on the California gains study.
+So gain or greater avenues for independence is a welfare to work program that is a job training program
+that sought to help people get off welfare and rejoin the workforce.
+And, here, we're going to work with data from a randomized evaluation of gain that was conducted in the early 90s.
+Incidentally, this evaluation was considered a success.
+And now gain is deployed in California.
+So, anyways, and also first thing to note is that as part of this study,
+we have access to 54 covariates including past income,
+demographics as so forth, so we have plenty to work with here for this estimation.
+But anyways, what makes this dataset particularly interesting for this
+purpose is that they didn't actually run one big randomized trial to evaluate gain.
+They ran a number of small different randomized trials in different counties.
+Here we have data from Alameda, Los Angeles, Riverside and San Diego. And the counties were given quite a bit of freedom in how they ran their experiments.
+In particular, they were given freedom about who to enroll in the program.
+And they were also given freedom with a fraction of kind of people
+experiment to enroll into the treatment versus the control.
+And so then what ended up happening is that some counties focused
+on enrolling recent welfare enrollees in the program. Whereas other counties focused on more difficult cases people who have been on
+welfare for a long time. On the other hand, some counties randomized people to treatment and
+control 50 50, whereas others when, as far as 90% of people under treatment and only 10% of people into control.
+Okay, we have data from four counties. Each county ran a different type of randomized trial.
+How does this relate to what we want? Well, if you take all these four proper randomized trials,
+and you blob them into a single batch, and then you forget which county each unit was from,
+now you have an observational study. There are a lot of people in the data set.
+Everyone in the data set was randomized to either treatment or control. Everyone in the data set was randomized to either treatment or
+control with a reasonable probability overlap holds but the probability with which any given unit with randomized treatment or
+control varies are essentially based on which county they were from. Now we don't observe the county.
+But what we need to hope is that these 54 covariates we got access
+to is enough to disentangle any confounding bias introduced by kind of smushing these four different randomized trials.
+Together, essentially that uncompounded as holds given these 54 covariance.
+So that's the dataset we're going to work with. So just why do I like working with this dataset?
+Well, first I think this is actually somewhat representative of asseting where
+you might want to use unconfoundedness base methods in practice and someone might also believe the output of the analysis.
+If we had been in a situation where there was extreme selection of the treatment,
+like, someone tried to evaluate gain but there had actually been no randomization.
+You just had two groups of people, one group of people who wanted to enroll and gain and they enrolled and then you'd see outcomes for them.
+And then another group of people who did not want to enroll in gain did not then you see outcomes for them.
+It's kind of essentially impossible to believe that an uncomfortableness
+type analysis could fix this, could give you an estimate of the effect of gain because there's just such a fundamental kind of selection effect.
+People who wanted to enroll in game were probably both different in a way that you can't measure, but
+that's very important than people who didn't want to enroll in gain and
+not accounting for these unobservables which is a huge problem.
+On the other hand here, there's no aggressive selection of this type. The reason you have different treatment probabilities for different people,
+essentially depends more on where they happen to live
+then on kind of some deep unobservable features.
+So, it's plausible, that kind of biasing covariates.
+You could kind of account for this, where you live effect and be okay.
+I'm not saying that this is kind of with a dataset of this type, everyone automatically believe and understand type analysis,
+but maybe they'd at least humor it. Another thing is, I think this kind of data set, it's quite easy to end up in.
+You tried to run a randomized trial, but then something goes wrong. Maybe under the hood, you had four different studies and your data set but
+you just don't know that your data was collected at this kind of way.
+And then running unboundedness type analysis can also protect you against that. So anyways, that's one thing I like about this dataset.
+The other is that once you've run, your kind of observational study analysis on this, and
+you have some claims about how people may or may not respond to treatment,
+then if you want to check, if you got the right answer, you can kind of.
+Restratify the dataset into the four separate counties, and each of these four counties, you know the three randomization probabilities.
+So you can give a very kind of transparent objective,
+RCT type assessment of the now claims you came up
+with by working with the observational data.
+So I'm not going to do this now when evaluating methods for CATE. But in the last segment of this lecture,
+we're going to talk about learning treatment center policies. And then I am going to do that, to check that the policy we learned
+actually are better than just randomly assigning three. Okay, here's the data set.
+We wanted to measure the effect of gain on future labor market outcomes.
+So let's do it, between the T-forest, S-forest ,X-forest and causal forest here.
+These histograms show out-of-bag estimates of tau hat. And the question is, which ones of these are good, which ones are not?
+So here you probably can't see the x and y axes here, but here you can zoom in.
+The units here are essentially, they measure earnings in the average
+over the nine years post intervention.
+I don't remember what the scaling is exactly, but this corresponds to kind of hundreds of dollars of extra earnings
+on average per quarter over the nine years post intervention. So these are large treatment effects.
+And so what these plots show are histograms of the out-of-bag treatment effects you get from different forest-based methods.
+So how are we going to compare these? Guess at this point is not a huge surprise that I'd want to use the R-loss for
+this purpose. So so far we've talked about the R-loss as a tool for learning CATE estimates,
+but nothing stops you from training a causal forest, which is essentially a random forest version of an R learner.
+Training an X forest. These are two separate algorithms that may fail or succeed for a number of reasons.
+And then using the R-loss as a tool to assess both. So it seems reasonable, I did that here.
+And here's the answer. If you fit a causal forest, your R-loss is 2.39.
+If you fit an X-forest, the answer is essentially the same. Same for the T-forest.
+S- forest is a lot worse, but all these others are essentially the same. And actually, if you just fit a constant treatment effect to this dataset,
+you again get the same answer. So this is a little bit depressing as range, right?
+These treatment effect estimates look very different,
+and yet these R losses you get from them are almost the same.
+Seems odd, what's going on? And to help understand better, it's helpful to expand or
+decompose the square term involved in the R-loss. So here Y tilde I'm writing is a centered outcome, that is Y minus M and
+W tilde is the centered treatment W minus E. And kind of using the formula a minus b squared is a squared minus 2ab
+plus b squared. You can decompose R-loss into three parts.
+The average of the Y tilde squared, the inner product between the Y tilde and
+the tau hat W tilde term, and then the third term. And what we see is that this first term dominates the loss function.
+The R-loss is essentially dominated by this average of Y tilde i squared, okay?
+Another thing that's strange is that this term doesn't actually involve tau, okay?
+The constant T, S, X, causal forest are all just different choice of tau hat,
+so the second and third term are going to be different for all five methods. But this first term is going to be the same for all five methods.
+So it's kind of strange having the R-loss be dominated by this term that's actually completely uninformative about tau hat.
+I should note, this kind of thing doesn't happen in prediction. Or if it did, essentially the fact that this average of Y tilde
+i squared is very large relative to everything else. Means that this kind of pseudo outcome, Y minus m(Xi) is just very,
+very noisy relative to this tau hat Wi tilde.
+Your best prediction of the pseudo outcome on given X and W.
+And if this were a prediction problem, then just kind of having such a noisy outcome relative to predictor would just mean you have a really lousy R squared.
+And doesn't mean you have a very poor predictor. But on the other hand, are we worried about the setting of the R-loss?
+Turns out not so much, with R-loss you're always going to see things like this. And it's because even though this thing looks a lot like
+a prediction loss function, it's different. We've kind of hijacked the form of the prediction squared
+R-loss function to target a causal effect. And usually this loss function is going to be very noisy,
+not because your CATE estimates are bad, but just because the treatment effect estimation problem is, in a sense, harder.
+And this means that kind of the natural loss for treatment effect estimation is going to have more noise.
+All right, given that we see this and kind of most of the contribution in the R-loss comes from this term that's uninformative about tau, which we do.
+The idea is just look at differences of R-losses. If you take two R-losses for two different tau estimates,
+this thing here is going to cancel out because it's the same for both.
+And then you're left with kind of these two terms, which are kind of scale that capture what's going on with tau hat.
+So what we're going to do here specifically, so we're going to be interested in the R-loss of our tau hat of interest versus
+R-loss of some baseline CATE estimate. And here for this purpose,
+we're going to use a constant treatment effect estimate as our baseline.
+So now this difference is no longer asking what's the R-loss of some choice of tau hat.
+But rather what's the difference between the R-loss
+of one choice of tau hat versus just kind of predicting a constant
+treatment of everywhere and ignoring any heterogeneity.
+Comparison
+And if you do this, you get something much more manageable.
+Essentially, what happens here is that the T-forest and S-forest have positive values of delta.
+So what this method tells you is that kind of they're just doing very badly here.
+In terms of R-loss, they're doing worse than just predicting a constant everywhere.
+Whereas both the X-forest and the causal forest here have negative deltas, which
+means that they're actually improving over a constant treatment effect estimate.
+And that they are actually I did finding useful treatment heterogeneity here.
+Another thing is if you look at the t-statistics for these findings from the X and color forest they're significant.
+At the 95% level they're bigger than a 1.96 in absolute value,
+so Gaussian P-value gives you Is below 0.05. And what this means is again, this is more validation that both of these
+methods are improving over saying that there's no heterogeneity. Here the X-forest gives you actually a smaller delta than causal forest.
+So the claim here is that the X-forest is finding more heterogeneity, then causal force according to our loss.
+But the difference between these two numbers is not significant at the 95%.
+Anyways, so this is the first thing you can do to compare different
+treatment effect estimators it's to use the R-loss.
+I just wanted to emphasize if you look at the raw number of the R-loss is going to be kind of disturbing maybe because you're going to get a very large absolute
+number for the loss. That's going to be roughly the same for any method you compare,
+which is going to suggest that nothing matters. But taking differences you can cancel out this kind of uninteresting
+term that kind of made all the loss functions look big. And then you can see meaningful differences between methods, so
+Other Methods
+this is one thing you can do. Are there other methods for assessing CATE?
+Of course, and there's a large and growing number. One thing to emphasize, though, is that very often
+the reason you want to do fit a CATE estimate was for a certain purpose.
+And then the best methods for evaluating CATE will essentially the measures of digital health estimates
+enable you to accomplish the purpose of you want it to. It's almost impossible to talk about all methods for evaluating estimates for
+treatment heterogeneity entirely in the abstract without
+being connected to kind of the application you want to address.
+But here I'm just going to very briefly kind of survey a handful of ideas that have been useful in the past.
+And if you end up using estimates of heterogeneity in your own research,
+you may be able to adapt in ways that are useful.
+So a first kind of very simple thing you might want
+to think about is just a reason you want to do estimate path.
+Is to generally see are some people more responsive to treatment than the others and how much heterogeneity is there?
+And so then one very natural way to capture this is to just look at, okay?
+There are some people in your study who you predicted to have higher than average treatment effects.
+And some people in your study we predicted to have lower average treatment effects. Now on held out data, if I actually asked you to estimate the average treatment
+effect for the people whose Tau are below average. Versus the average treatment effect for
+people whose Tau has four above average, did you find any difference.
+If imagine I have a training set and my training set is going to cause rust on the test set, I go and
+divide people into who had low versus high predicted Tau hats. And then I compute average treatment effects on those two halves and
+there's no difference. It kind of really puts into question whether the causal forestland.
+Hear on the other hand, you can run this kind of exercise and you get a fairly different average treatment effect estimates in and
+the high versus low groups, so that's somewhat encouraging.
+For more about this kind of exercise, you can see this kind of application paper.
+Another way to kind of run a sanity check, so the way I think about this grouping into high versus low.
+Calibration Check
+And then looking at average treatment effects in the high versus low group,
+it's a pretty low bar to pass for treatment effects estimator.
+Usually, if you get a really good Tau estimator, you're going to want to do something more sophisticated with it than just divide people into high and
+low group and call it today. But it's a very good kind of first sanity check.
+If you're CATE estimator isn't able to reliably group people and to high versus the low group with different average treatment effects.
+You might have be suspicious about its ability to do much anything else.
+So this calibration check, unlike what next falls in the same category,
+it's again not asking a huge amount. But if it doesn't pass this, this check, you may again be worried.
+So here what we're going to do is kind of this train of thought experiment, again, you can think in there's a training set on a test set.
+So first, on my training set, I'm going to go learn Tau hats, now I'm going to go to my test set and on my test set,
+I'm going to fit a strange linear model. I'm going to run fit a linear model for the treatment effect,
+what I'm going to ask you the treatment effect is essentially of the form alpha plus beta times Tau hat of xi.
+That is on my test set with a linear model for the CATE with a single feature, which is essentially my predicted CATE from the training set.
+So concretely, the way we're going to do it. The model we're going to fit like this is we're first going to have
+this kind of your CATE on the test set should be kind of alpha times a measure of the average street.
+The average of the Tau hats saved from before, plus beta times the deviation of Tau hats from Tau bar.
+So we're going to run this regression and then we're going to get estimates for both.
+This is alpha and this here is beta and essentially, okay, if alpha and
+beta were exactly one, then what would this say?
+All right, if alpha and beta were one, then that would mean your prediction of the CATE on the test set is just Tau hat of Xi.
+That is, this regression actually liked the Tau hats you learned on the training set, and just wanting to preserve them on the test set.
+Now on the other hand, if alpha and beta are very far from one,this
+suggests that something fishy is going on, so in this setting
+This mean prediction, this asks kind of how good was the average
+of how bars evolved the trading systems and estimates for that average CATE.
+On a test set this is close to 1, which means we've been very suggestful doing very well on the average effect.
+On the other hand this differential prediction is kind of saying
+if tau hat exceeds the average prediction by some amount on the training set,
+how do you want to interpret this on test set? And here we actually get a coefficient of 1.3 which actually suggests that causal
+force here was underfitting a little bit. So this recalibration is stretching out the predictions.
+And I'm saying that kind of a high, if the tau had predictions
+you got now we're like low versus high, then it actually prefer
+on a test set to make predictions that were spread apart by a factor of 1.3.
+Which suggests that maybe actually the causal force was slightly underfitting on the training set, okay, here we get 1.3.
+This for calibration exercise in my book is actually pretty good.
+What are the things that could happen that are very bad? Essentially where I get very worried is this number here,
+the estimate, the coefficient on kind of how should you adjust the spread of your CATE estimates on a test set.
+If this thing isn't significantly different from zero or if it's even negative.
+If this were negative it'd be pretty embarrassing. It'd be saying like based on the training set if you think one observation should
+have a high CATE I think action tests should probably have a low CATE and vice versa.
+So you can think about this P value here as just an overall hypothesis test for
+did your method find any useful heterogeneity at all. And if this P value is not significant, this means that kind of when you're
+trying to reinterpret your tau hats on a test set. Then it's not even clear to you that you want to use these predictors at all,
+or maybe on the tests that you'd prefer just estimating the treatment effects overall as constant.
+So, this is the calibration check. One thing I should note as we implement this in GRF.
+Here I talked about everything in terms of training set and test set, but in GRF we implement this using out of bag predictions.
+So, kind of this tau head of Xi would be your out of bag treatment effect estimate.
+And then we run the regression kind of. But we run a regression where we kind of for each data point, or
+the predictor is kind of Xi that is the CATE estimate fitted from everyone but u.
+Genie Curve
+One final idea I wanted to mention is this thing called the QINI curve,
+which interestingly has recently become very popular in the marketing literature.
+And the QINI curve is essentially built on all this idea that in some settings, the reason you're interested in estimating heterogeneous treatment effects is
+that you have some intervention, that's probably going to be beneficial for everyone.
+But you think some people might benefit from it more than others and
+you kind of want to use your CATE estimates to rank people in terms of how much they're likely to benefit from the treatment.
+And then you're going to kind of assign people to treatment in order of the rank.
+So here, the output of this analysis typically is this QINI plot.
+And on the x-axis, you're going to have the fraction of people created from 0 to 1. And on the y-axis, you're going to have this number that measures essentially.
+Let's say here we're at 0.2. So this would be saying if I treat the top 20% of
+people with the highest estimated CATE, then what's my estimate of the average treatment effect or not that,
+the total effect the total value of treating these 20% of the people.
+So, kind of very concretely and I think this is why it's easy to imagine why or
+understand why people in marketing like this. If kind of you're sending out flyers and the cost of sending out
+a flyer is one cent, then you can think about this axis kind of directly measures the cost of the number of flyers you sent.
+And this curve could be like, if on the y-axis, the treatment effect is kind of how many people that you get to join your service.
+Then you could say, okay by sending out 200 flyers or 200,000 flyers, I can get 3000 people to join my service.
+And by sending out 400,000 flyers, I can get 5000 people to join my service, something like that.
+And then this curve kind of captures very directly this cost benefit analysis.
+So again, on the x-axis, you have the cost and on the y-axis you have an estimate of the cumulative
+gain from treating that fraction of people.
+So again in implementing the QINI curve, there are a number of subtleties and
+a number of choices to make, one overall reference that kind of presents this pretty nicely as is by Imai & Li.
+And actually, this plot it's from a paper I was working on recently, this one.
+Where we considered a setting were actually kind of the cost of intervening, not only does it benefit from intervening on different units to change but
+actually the costs are different there's kind of one unit intervening on the cheap.
+Whereas another unit intervening on them might be very expensive and we talked about methods for that problem.
+But again, kind of once the dust settles and you want to see how well you did.
+This kind of QINI curve objects again very useful. You rank people in order you want to prioritize them for treatment.
+On the x-axis you kind of plot the cumulative cost. How much you need to spend to treat that many people and
+on the y- axis you plot cumulative gain. And overall the plot retains its interpretation as a cost benefit analysis.

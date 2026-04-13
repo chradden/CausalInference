@@ -1,0 +1,338 @@
+The last thing I want to talk about is policy learning.
+In this lecture so far, we worked in a setting with
+features x outcomes y treatments w potential outcomes.
+And we wanted to estimate in the setting the conditional average treatment effect.
+Policy learning is a problem that's in the same setup, except instead of
+asking what does the conditional average treatment effect look like?
+Instead of asking you to describe the treatment effect function,
+with policy learning ask you to do is to be prescriptive to actually make
+recommendations about who should be treated and who should not be treated.
+So, specifically a treatment assignment policy pi is a mapping from
+your feature space x for recommendations 01.
+Given your features, should I send you the treatment?
+Or should I send you to control?
+And the problem of policy learning is to use data to find a good policy
+of this type.
+Now, the problem of policy learning and
+the problem of CATE estimation are obviously very closely related.
+But there are some subtle but crucial differences.
+One important difference is the end goal.
+The end goal of CATE estimation is to accurately estimate tau of x.
+The goal of policy learning is to learn a policy that achieves high
+welfare that is when you deploy it, it makes the right recommendations for
+people so you get high rewards on average.
+If you're trying to do policy learning, and as a byproduct,
+you get a reasonably accurate estimate of tau of x, but
+this doesn't help you make good decisions,
+then in terms of the goals of policy learning, that's not much use.
+So, the last thing I want to talk about in this lecture is to introduce
+formalized upon policy learning, and then to say a few words about how
+to learn good policies in our last based machine learning setup.
+The assumptions are the same as always,
+so, I'm not going to go through them in more detail.
+The interesting thing though,
+the thing that's new is this notion of a policy that maps again x to 0 or 1.
+And then the associate notion of a value of a policy.
+The value of a policy is an answer to the question, if I sampled everyone I ID,
+then when I see your covariance xi, I send you to treatment arm pi of Xi,
+if pi of xi comes out zero, I send you to control.
+If pi of xi comes out when I send you the treatment, then the value of a policy
+measures what would be the average outcome under the sampling design,
+where I assign treatment according to the policy pi, or equivalently,
+I get to see the potential outcome that's the one chosen by the policy.
+So, writing down the value of the policy, it's very simple,
+it's just that expectation of the potential outcome chosen by pi,
+there's a lot kind of packed into this notation though.
+So, if this seems confusing at first, it may may help.
+It may make sense to just like meditate on it for
+a few minutes to kind of understand what this notation is doing.
+But so anyways, we're going to assume here that outcomes are good.
+Come to wise, you'd want to get higher rather than lower values of y and so
+the goal is going to be to find a policy that makes bf pi large.
+So, in order to kind of get more intuition about this problem,
+one helpful thing to notice is that you can write
+the value of a policy V of pie as in two parts expectation of Yi 0.
+That is just the average outcome you get from the average outcome
+in the control arm or equivalently, the value of a policy who sends everyone
+to control plus a second term expectation of tau of x times pi of x,
+which essentially says, how does the value of your policy
+change due to the fact that you send some people to treatment.
+This formula is intuitive, right?
+The value of a policy is the value of doing nothing plus the value
+of doing something as recommended by your policy, but
+something we immediately see from this is that essentially,
+you'll get high utility out of a policy if you treat people
+who have a large treatment effect.
+So, in other words here, if you just wanted to have the largest outcome
+possible on the optimal policy pi would treat people with a positive
+treatment effect and not treat people with a negative treatment effect.
+If you have some cost of treatment or a budget constraint,
+then still you'll see that kind of,
+in a lot of generality that optimal nonparametric design and
+policy pi would just threshold on the tau of x threshold that C.
+So your optimal policy would be at the form pi of x
+is indicator power of x is bigger than C.
+So, at first glance, this reduction might really make it seem that
+there's nothing much to policy learning beyond Kate estimation,
+but, again, the more you look at it, the more there is.
+The first point is that, okay, it's true that nonparametricly,
+the optimal policy is one that thresholds of tau at C.
+This doesn't mean that the optimal thing to do with data is
+to first learn a case estimate tau hat and then have you policy threshhold tau hat.
+Why?
+Well, so far, we've talked about ways of estimating tau of x that essentially
+try to get estimate tau of x as accurately as possible under squared error loss, but
+actually squared error loss putao of x is not necessarily the correct loss function
+before really kind of emphasizing the objective we care about in policy learn.
+The second point.
+So the first point is mystical.
+The second point is more practical but also very important.
+It's that as soon as we move away from just describing
+the data to actually recommending action,
+there is a large number of things we need to take into
+consideration that weren't there before.
+For example, is your policy gamable?
+Or there might be some features x that you observe in your data,
+but you know that if you start using them for decision rule,
+then people will just start gaming their features and that will break your policy.
+So you don't want to use those.
+Another important one is, is it legal or
+ethical to use some variables x in your policy?
+I'm going to return to them again example later on and
+talk about kind of optimal policies or utility maximizing policies for
+prioritization eligibility to the welfare to work program.
+And this is a setting.
+We have gender in the dataset.
+Does tau of x vary with gender?
+It may or may not.
+It's not up to you, right?
+When you're just describing the data.
+You should just try to describe the data as accurately as possible.
+But then when it comes to actually recommending eligibility for
+the program you're not allowed to discriminate based on gender.
+So your policy pi should not use gender as a variable
+in determining who gets access to the program or not.
+So this is again, another dimension.
+This wasn't a statistical consideration.
+This was more a consideration saying that, yes non parametrically the optimal
+policy will be one that thresholds on Kate, but just thresholding on our backs.
+It might give him the variables x in your data set may not be feasible policy or
+may not even be a legal policy.
+So you want to learn policies pi that can satisfy
+constraints that are required by the application.
+All right how are we going to do this given being this lecture hopefully.
+It's pretty clear the goal is to come up with loss function in
+a policy learning and then to learn using this loss function.
+With the loss function should be?
+It's pretty clear.
+We want to find welfare maximizing policies.
+So our loss is going to be negative welfare.
+Or we could just have here try to make all the machine learning
+procedures be argument over the loss.
+But you could also think of machine learning is doing argmax over estimated
+welfare.
+And that's entirely fine also.
+So that's what we're going to want to do.
+And the big question is just how can we design a loss
+function that is feasible in terms of the data
+that we can optimize and use for learning?
+And when you first see this this might seem tricky.
+But there's a very nice solution.
+At first thing you can do this very simple.
+It's nicely just pressing this Kitagawa and Tetenov.
+What they notice is that you can actually get a very simple
+estimate of the value of a policy by inverse propensity weighting.
+And how is it going to go?
+Well, we want to estimate the average reward if we were
+to give everyone treatment according to policy pi.
+Well what this is going to do, IPW policy evaluation
+is going to do, it's going to look at all samples for
+who treatment matches the policy.
+If during treatment doesn't match the policy, then IPW won't consider them.
+And then it'll just take an average of the outcomes for all samples,
+where kind of the treatment actually matched your policy pi.
+But of course, you're going to be missing some samples.
+So you need to kind of correct for
+your sampling bias like an average treatment effect estimation,
+and you do this by kind of inverse propensity weighting.
+You can check that if the propensity scores or
+kind of the probability that Wi is equal to pi of Xi is known,
+then this inverse propensity weighted value estimate B
+hat pi is unbiased for the Karoubi pi.
+So, this is a reasonable value estimate.
+And then a machine learning approach might just kind of take this be hot be had pi.
+That we got out of this IPW construction.
+And then learn pi hat by just maximizing
+over V hat pi in a machine learning sense.
+So in some sense, you can just do that.
+In another sense, what's interesting is that this objective function is actually
+quite different from the type of objective functions we've worked with before.
+Before kind of in prediction, we work with squared loss.
+And for estimating Kate's, we work with the AR loss,
+which is essentially like a modified recenter square loss.
+So, learning always amounted to kind of going down
+a quadratic looking objective with some regularization.
+Here, it looks very different.
+So what's going on here is we have, right we're optimizing over policies pi.
+And the policy pi the way it enters into this value function
+is kind of through all the recommendations you make at the samples I have two n.
+So I only care about the policy
+pi based on does it recommend 0 or
+1 at all my training samples and
+then based on this kind of if pi matches
+Wi then I get awaited version of Wi into
+my sample, otherwise I don't.
+I'm not going to say much about this.
+Here other than actually carrying out learning with this kind
+of 01 type of decision rule is very different kind of algorithmically
+than carrying out learning with a squared error loss type objective.
+And Solving this problem is actually very closely related,
+it's formally equivalent to solving a weighted classification problem.
+You could qualitatively think that what you're trying
+to do is you're trying to conceptually classify people
+into the correct Treatment.This is not quite true.
+But in terms of the optimization routine, it looks a lot like that.
+So, and one example, this is that, if you want to try this,
+we have this package policy tree that
+actually solves this objective over the space of trees.
+And then if you're curious about the details of
+how this reduces to a classification problem,
+we also go into it more in the package documentation.
+So this is IPW, things work nicely, inverse propensity
+weighting gives you when the propensity scores are known,
+a nice unbiased estimate of the value of a policy that you
+can optimize overstate the space of decision trees and
+this Gives you a nice way of learning policies.
+Is there anything left to be said?
+Well, so far in this class, I've generally not let you stop at the point where
+you had an algorithm that worked well when propensity scores were known.
+In an observational study, you might worry whether if these propensity scores are not
+known, so you need to estimate them.
+And you could of course try running IPW with estimated propensity scores here,
+but that wouldn't be particularly robust.
+Can we do anything else?
+Well, remember last time we saw it IPW, it was for
+average treatment effects estimation.
+And then we realized that there was a double robust alternative to IPW, AIPW.
+AIPW had these nice robustness properties where it could recover from
+propensity scores that were perfectly estimated.
+And this gave you better properties for average treatment effect destination.
+It turns out that in policy learning, the same thing is true.
+These things here, these are what's called double robust scores.
+If you remember with AIPW does, AIPW estimates the average
+treatment effect by taking the average of these gamma hat guys.
+So I'll just write it down here to be specific
+tau hat AIPW is equal to one over N, sum I equals one up to n.
+Gamma hat i where the gamma hat i's are just the things we had before.
+It turns out if you want to do double robust policy learning,
+what you can do is you build the same double robust scores and
+then you set up an objective much like before.
+Except now you can think of what this is doing,
+is you trynna classify people into treatment or control.
+Here I centered this, so this thing here is plus one if you're treated and
+minus one of your central control.
+And with this welfare objective measure does here,
+essentially there are these double robust scores which are noisy proxies for
+the treatment effect you get for treating the eighth person.
+And essentially, if I send you the treatment, I earn better overall score.
+If I send you to control, then I pay that double robot score and
+a good policy would we want that usually one, and
+regions a feature space where frequent effects are positive.
+So gamma hat i are on average going to be positive.
+And the policy sends people to control, and
+has this thing, the -1 in regions of feature space,
+where gamma hat i is usually negative.
+So again, this is also implemented in policy tree.
+So, just to see this in action, I'm going to go back to the GAIN study
+we talked about earlier, and here, we're just going to do this.
+I'm going to form the same double robust scores as before.
+And then the way we're going to learn policies is by maximizing this objective.
+We need to somehow regularize, and here the way I'm going to regularize
+is I'm going to tell you, your decision rule can be any Depth K tree.
+I'm going to try K equals one and k equals two.
+So essentially, I'm going to ask my algorithm to just kind
+of look over the space of all the trees of depth k.
+And then see which one maximizes my estimated welfare objective,
+I have here that's all we're going to do.
+And then I'm going to deploy that tree.
+And if we run it here, then this is the output you get kind of a lot of math and
+nonparametric statistics went into producing this tree.
+But the outcome is that in the game study we talked about earlier.
+The best depth to tree or what we claim is kind of in terms of welfare,
+a depth to tree that's essentially as
+good as any depth to tree can be is the fall.
+It first looks Was a person paid three quarters ago if yes you treat
+them if they're high school graduate if no you treat them if they have dropped.
+All right, this is a recommendation that, okay,
+the claim is that from a utilitarian perspective, this does a very good job,
+allocating treatment to those who going to be most responsive to it.
+Some comments, like I mentioned earlier, when you're making
+policy recommendations there, of course, things you're not allowed to do.
+Here, we had data on race and gender in the dataset.
+But given that you're not allowed to, and
+it wouldn't be ethical to discriminate based on these.
+We just forbid the tree from splitting on race or gender.
+There are other things that are going on here.
+We're looking at,
+do the people have children in choosing with treat them or not?
+Is that okay?
+I think at some point, it's not up to kind of statisticians
+economicstrians to decide that's up to the kind of stakeholders
+to see whether this is a decision role or they're okay with or not.
+And one thing I like about this kind of policy learning over the space of trees
+approach is that in the end your recommended policy is a very simple tree.
+Then hopefully even people without mathematical training can engage with.
+So then you don't need to kind of in the abstract have an opinion about whether
+this tree is a deployable policy or not in terms of parents criteria.
+You can just go ask stakeholders, whether they like it or
+not and then take it from there.
+You might also ask is this policy any good or not?
+And here,, of course, what criteria are we going to use for
+assessing the quality of the fit?
+Well, of course, we can adjust use our estimated welfare as the criterion.
+So we're going to do some kind of cross validation type stuff,
+where we're going to kind of on one part of the data try to learn a policy.
+And then another part of the data evaluate,
+which was what is the average value of this policy?
+And pick that policy as well in terms of evaluation on this loss.
+And here we see that essentially learning in terms of depth to trees.
+The picture I showed you earlier, in terms of out of sample,
+we're kind of cross validation type devaluation on the welfare metric.
+Our does well relative to everything else, so you notice there are two columns
+here in the left column I'm Kind of working in the same regime I talked
+about earlier, where I pulled the four small experiments into one and
+then just kind of tried to estimate propensity scores.
+So this is an evaluation of how well we're doing in terms of estimated
+propensity scores on the right here.
+He cheated, and I went and brought back the true randomization probabilities
+in order to get an objective assessment and actually check that, yes.
+This policy is measurably better than the random in
+a way that we can validate by looking at the true randomization problems.
+Anyways, I went very quickly here,
+because we've talked about many things in this lecture already.
+In terms of references, for the second half, again,
+if you want to read more about policy learning,
+then this kind of a cursory introduction and I gave here,
+I'd recommend first starting from this paper by Kitagawa and Tetenov.
+They set up the problem very nicely and they propose the IPW,
+our base estimator there.
+And then what we do in this paper is we kind of propose
+the double robust policy learning estimator,
+a propose study then estimator.
+Also if you want to read more about the GAIN application and
+policy learning, then we talk about that in detail here.
+In terms of the first half of the lecture, so that is,
+robust loss functions for estimating TAUbig itself,
+the presentation today, followed most closely,
+this biometrical forthcoming paper, where in particular
+the examples I showed about say starking, barked and
+causal force, they're taken from there if you want to learn more.
+So this paper outlines the methodology for our learner and
+has some kinds of preliminary formal results.
+But more recently, there's a pair of papers that has kind
+of gone much deeper into this, proving much more general and
+also more powerful results about our learner type estimators.
+So, the two here are this paper by Foster and Syrgkanis,
+and the other is by Kennedy.
+So, again, if you're interested in theory for this kind of stuff,
+these are two very nice papers to read.
